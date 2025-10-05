@@ -1,0 +1,24 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+  workflow_dispatch:
+
+jobs:
+  test-e2e:
+    needs: slow_tests_matrix_prep
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.slow_tests_matrix_prep.outputs.matrix) }}
+    runs-on: ${{ matrix.runner }}-latest
+    timeout-minutes: 20
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4

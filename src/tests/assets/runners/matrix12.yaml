@@ -1,0 +1,22 @@
+name: Extensions
+
+on:
+  push:
+    paths:
+    - 'extension/**'
+    - 'Cargo.toml'
+    - 'Cargo.lock'
+    - '.github/workflows/extensions.yml'
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        arrays: [
+          os: { tag: "windows-latest", target: "i686-pc-windows-msvc" },
+          os: { tag: "windows-latest", target: "x86_64-pc-windows-msvc" },
+        ]
+    runs-on: ${{ matrix.arrays.os.tag }}
+    steps:
+    - name: Checkout the source code
+      uses: actions/checkout@v4

@@ -1,0 +1,79 @@
+<div class="container mt-2 mb-5">
+    <div class="row">
+        <div class="col text-center">
+            <h1 class="org display-2 fw-bold p-3 glow">{{ org }}</h1>
+        </div>
+     </div>
+
+    <div class="row mt-2">
+        <div class="col-4 repo-box">
+            <h3>{{ "{:,}".format(results.count_repos) }} Repositories</h3>
+            <div class="input-group mb-2">
+                <input type="text" class="form-control search-repo" placeholder="search">
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <span class="badge text-bg-warning"><i class="fa-solid fa-box-archive"></i> {{ "{:,}".format(results.count_archived_repos()) }} archived</span>
+                    <span class="badge text-bg-secondary"><i class="fa-solid fa-code-fork"></i> {{ "{:,}".format(results.count_forked_repos()) }} forked</span>
+                </div>
+                <div class="col-4 text-end">
+                    <span class="badge text-bg-secondary results-count"><span class="total">0</span> results</span>
+                </div>
+            </div>
+            <div class="view-height">
+                <ul class="list-group list-group-flush repo-list">
+                    {% for repo in results.repos %}
+                    <li class="list-group-item d-flex align-items-center overflow-auto ps-0 result-item">
+                        <div class="ms-2 me-auto">
+                            {% if repo.instance.archive %}
+                            <i class="fa-solid fa-box-archive text-warning" title="Archived"></i>
+                            {% elif repo.instance.fork %}
+                            <i class="fa-solid fa-code-fork text-secondary" title="Fork"></i>
+                            {% endif %}
+                            <a href="#" class="repo-link" data-name="{{ repo.instance.name }}">{{ repo.instance.name }}</a>
+                        </div>
+                        <span class="badge text-bg-secondary" title="Workflows &amp; Actions">{{ repo.count }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    const WorkflowManager = {
+        init: function() {
+            $('.search-repo').val('');
+            this.__bind();
+        },
+
+        __bind: function() {
+            $('.search-repo').keyup(function() {
+                return WorkflowManager.__search_repo($(this).val());
+            });
+        },
+
+        __search_repo: function(text) {
+            text = text.toLowerCase();
+            if (text.length === 0) {
+                $('.repo-list .result-item').removeClass('d-none');
+                $('.repo-box .total').text($('.repo-list li:visible').length);
+                return true;
+            }
+
+            $('.repo-list .result-item').addClass('d-none').each(function() {
+                let name = $(this).find('.repo-link').text().toLowerCase();
+                if (name.includes(text)) {
+                    $(this).removeClass('d-none');
+                }
+            });
+
+            $('.repo-box .total').text($('.repo-list li:visible').length);
+        },
+    };
+
+    $(document).ready(function() {
+        WorkflowManager.init();
+    });
+</script>

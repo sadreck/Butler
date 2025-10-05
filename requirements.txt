@@ -1,0 +1,6 @@
+loguru
+sqlalchemy
+pyyaml
+requests
+pytest
+jinja2

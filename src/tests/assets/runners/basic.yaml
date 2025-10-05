@@ -1,0 +1,12 @@
+name: Matrix Test
+on:
+  push:
+
+jobs:
+  job1:
+    name: This is job 1
+    runs-on: ubuntu-latest
+    steps:
+      - name: Just one step
+        shell: bash
+        run: ls -ahl /

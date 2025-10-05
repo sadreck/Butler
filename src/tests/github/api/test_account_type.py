@@ -1,0 +1,20 @@
+import pytest
+from src.tests.conftest import mock_handle_get_requests
+from src.github.exceptions import HttpNotFound
+
+
+@pytest.mark.parametrize('mock_requests_get', [mock_handle_get_requests], indirect=True)
+def test_account_type(client, mock_requests_get):
+    name = client.get_account_type('microsoft')
+    assert name == 'organization'
+
+    name = client.get_account_type('sadreck')
+    assert name == 'user'
+
+    try:
+        name = client.get_account_type(f'does-not-exist-tests')
+        assert False
+    except HttpNotFound:
+        assert True
+    except Exception:
+        assert False

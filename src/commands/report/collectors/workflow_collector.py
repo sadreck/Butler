@@ -1,0 +1,131 @@
+import os
+from loguru import logger
+from src.commands.report.helpers.workflow_results import WorkflowResults
+from src.commands.report.renderer import Renderer
+from src.database.database import Database
+from src.libs.components.org import OrgComponent
+from src.libs.components.workflow import WorkflowComponent
+from src.libs.constants import WorkflowStatus
+
+
+class WorkflowCollector(Renderer):
+    database: Database = None
+    log: logger = None
+    org: OrgComponent = None
+    config: dict = None
+    output_path: str = None
+    export_formats: list = None
+
+    def __init__(self, log: logger, database: Database, config: dict, org: OrgComponent, output_path: str, export_formats: list):
+        self.log = log
+        self.database = database
+        self.config = config
+        self.org = org
+        self.output_path = output_path
+        self.export_formats = export_formats
+
+    def run(self) -> bool:
+        data = {
+            'org': self.org.name,
+            'results': WorkflowResults()
+        }
+
+        self.log.info('Searching for workflows')
+        workflow_results = self._get_workflows(self.org.id)
+
+        self.log.info(f"Processing {len(workflow_results)} results")
+        for result in workflow_results:
+            workflow = WorkflowComponent.from_dict(result, False)
+
+            instance = data['results'].get_or_create(workflow, result['job_count'])
+            if instance['instance'].status == WorkflowStatus.MISSING:
+                # Get additional info.
+                self.log.debug(f"Getting additional information for {instance['instance']}")
+                parent_workflows = self._get_caller_workflows(instance['instance'].id)
+                for parent_workflow in parent_workflows:
+                    data['results'].add_missing_workflows(workflow, parent_workflow)
+
+        self._export(data)
+        return True
+
+    def _export(self, data: dict) -> None:
+        # if 'html' in self.export_formats:
+        #     html_file = os.path.join(self.output_path, f'{self.org.name}-workflows.html')
+        #     self.log.info(f"Saving HTML output to {html_file}")
+        #     self.render('workflows', 'Workflows', data, html_file)
+
+        if 'csv' in self.export_formats:
+            self.write_to_csv(
+                os.path.join(self.output_path, f'{self.org.name}-workflows.csv'),
+                data['results'].for_csv()
+            )
+
+    def _get_caller_workflows(self, workflow_id: int) -> list:
+        sql = f"""
+            SELECT
+                parent_id
+            FROM (
+                WITH RECURSIVE transitive(parent_id, child_id, depth) AS (
+                  SELECT parent_id, child_id, 1
+                  FROM workflow_relationships
+                  UNION
+                  SELECT t.parent_id, wr.child_id, t.depth + 1
+                  FROM transitive AS t
+                  JOIN workflow_relationships AS wr
+                    ON wr.parent_id = t.child_id
+                )
+                SELECT parent_id, child_id, depth
+                FROM transitive
+                ORDER BY parent_id
+            ) wr
+            WHERE wr.child_id = :child_id
+        """
+
+        workflows = []
+        results = self.database.select(sql, {'child_id': workflow_id})
+        for result in results:
+            workflow = self.database.get_full_workflow_from_id(result['parent_id'])
+            if workflow:
+                workflows.append(workflow)
+        return workflows
+
+    def _get_workflows(self, org_id: int) -> list:
+        sql = f"""
+            SELECT
+                o.id			        AS org_id,
+                o.name			        AS org_name,
+                r.id			        AS repo_id,
+                r.visibility	        AS repo_visibility,
+                r.name			        AS repo_name,
+                r.ref			        AS repo_ref,
+                r.ref_type		        AS repo_ref_type,
+                r.ref_commit	        AS repo_ref_commit,
+                r.resolved_ref	        AS repo_resolved_ref,
+                r.resolved_ref_type	    AS repo_resolved_ref_type,
+                r.status		        AS repo_status,
+                r.poll_status	        AS repo_poll_status,
+                r.redirect_id	        AS repo_redirect_id,
+                r.stars                 AS repo_stars,
+                r.fork                  AS repo_fork,
+                r.archive		        AS repo_archive,
+                w.id			        AS workflow_id,
+                w.redirect_id	        AS workflow_redirect_id,
+                w.path			        AS workflow_path,
+                w.type			        AS workflow_type,
+                w.status		        AS workflow_status,
+                COALESCE(js.total, 0)   AS job_count
+            FROM workflows w
+            JOIN repositories r ON r.id = w.repo_id
+            JOIN organisations o ON o.id = r.org_id
+            LEFT JOIN (
+                SELECT
+                    j.workflow_id,
+                    COUNT(j.id) AS total
+                FROM jobs j
+                GROUP BY j.workflow_id
+            ) js ON js.workflow_id = w.id
+            WHERE
+                o.id = :org_id
+        """
+
+        return self.database.select(sql, {'org_id': org_id})

@@ -1,0 +1,237 @@
+<div class="container mt-2 mb-5">
+    <div class="row">
+        <div class="col text-center">
+            <h1 class="org display-2 fw-bold p-3">{{ org }}</h1>
+        </div>
+     </div>
+
+    <div class="row mt-2">
+        <div class="col-4">
+            <h3>{{ "{:,}".format(results.count) }} Secrets &amp; Variables</h3>
+            <div class="input-group mb-1">
+                <input type="text" class="form-control search-variable" placeholder="search">
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <span class="badge text-bg-secondary">{{ "{:,}".format(results.secrets|count) }} secrets</span>
+                    <span class="badge text-bg-secondary">{{ "{:,}".format(results.variables|count) }} variables</span>
+                </div>
+                <div class="col-4 text-end">
+                    <a href="#" class="copy-variables" data-action="clipboard"><span class="badge rounded-pill text-bg-secondary"><i class="fa-solid fa-copy"></i></span></a>
+                    <a href="#" class="download-variables" data-action="download"><span class="badge rounded-pill text-bg-secondary"><i class="fa-solid fa-download"></i></span></a>
+                </div>
+            </div>
+            <div class="view-height">
+                <ul class="list-group list-group-flush variable-list">
+                    {% for name, info in results.all.items() %}
+                    {% set icon = 'fa-lock' if info.type == 'secret' else 'fa-square-root-variable' %}
+                    {% set bg = 'text-danger' if info.type == 'secret' else 'text-primary' %}
+                    <li class="list-group-item d-flex align-items-center overflow-auto ps-0 result-item">
+                        <div class="ms-2 me-auto">
+                            <span title="{{ info.type }}" class="{{ bg }} me-1"><i class="fa-solid {{ icon }}"></i></span>
+                            <a title="{{ info.type }}" href="#" class="var-link" data-type="{{ info.type }}" data-name="{{ name }}">{{ name }}</a>
+                        </div>
+                        <span class="badge text-bg-secondary">{{ info.count }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="col">
+            <h3>{{ "{:,}".format(results.workflows|count) }} Workflows</h3>
+            <div class="input-group mb-1">
+                <input type="text" class="form-control search-workflow" placeholder="search">
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <a href="#" class="filter">
+                        <span class="badge text-bg-info">
+                            <span class="filter-value"></span> <i class="fa-solid fa-xmark"></i>
+                        </span>
+                    </a>
+                </div>
+                <div class="col text-end">
+                    <a href="#" class="copy-workflows" data-action="clipboard"><span class="badge rounded-pill text-bg-secondary"><i class="fa-solid fa-copy"></i></span></a>
+                    <a href="#" class="download-workflows" data-action="download"><span class="badge rounded-pill text-bg-secondary"><i class="fa-solid fa-download"></i></span></a>
+                </div>
+            </div>
+            <ul class="list-group list-group-flush workflow-list">
+                {% for result in results.workflows %}
+                <li class="list-group-item ps-0 workflow">
+                    <div class="row">
+                        <div class="col">
+                            <div>
+                                <span class="workflow-name">
+                                    <a href="{{ result.workflow.url(True) }}" target="_blank" class="workflow-url">{{ result.workflow }}</a>
+                                </span>
+                            </div>
+                            <div class="workflow-variables">
+                                {% for secret in result.secrets %}
+                                <span title="Secret" class="badge text-bg-danger p-1" data-type="secret" data-name="{{ secret }}"><i class="fa-solid fa-lock me-1"></i>{{ secret }}</span>
+                                {% endfor %}
+                                {% for variable in result.variables %}
+                                <span title="Variable" class="badge text-bg-primary p-1" data-type="variable" data-name="{{ variable }}"><i class="fa-solid fa-square-root-variable me-1"></i>{{ variable }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    {% include "scripts.js" %}
+
+    const VariableManager = {
+        init: function() {
+            $('.filter').hide();
+            $('.search-variable').val('');
+            $('.search-workflow').val('');
+            this.__bind();
+        },
+
+        __filter_variables: function(element) {
+            let selected_type = element.data('type');
+            let selected_name = element.data('name');
+            $('.filter').show().find('.filter-value').text(selected_name);
+            $('.workflow').hide();
+            $('.workflow-variables span').each(function() {
+                if ($(this).data('type') == selected_type && $(this).data('name') == selected_name) {
+                    $(this).closest('.workflow').show();
+                }
+            });
+            return false;
+        },
+
+        __filter_clear: function(element) {
+            $('.workflow').show();
+            $(element).hide();
+            return false;
+        },
+
+        __search_variable: function(text) {
+            text = text.toLowerCase();
+            if (text.length === 0) {
+                $('.variable-list .result-item').removeClass('d-none');
+                return true;
+            }
+
+            $('.variable-list .result-item').addClass('d-none').each(function() {
+                let name = $(this).find('.var-link').text().toLowerCase();
+                if (name.includes(text)) {
+                    $(this).removeClass('d-none');
+                }
+            });
+        },
+
+        __search_workflow: function(text) {
+            text = text.toLowerCase();
+            if (text.length === 0) {
+                $('.workflow-list .workflow').removeClass('d-none');
+                return true;
+            }
+
+            $('.workflow-list .workflow').addClass('d-none').each(function() {
+                let name = $(this).find('.workflow-name').text().toLowerCase();
+                if (name.includes(text)) {
+                    $(this).removeClass('d-none');
+                }
+            });
+        },
+
+        __gather_variables: function(delimiter) {
+            let results = [
+                [
+                    'org',
+                    'name',
+                    'type'
+                ].join(delimiter)
+            ];
+            let org_name = $('.org').text();
+            $('.variable-list .var-link').each(function() {
+                let name = $(this).data('name');
+                let type = $(this).data('type');
+                results.push([
+                    org_name,
+                    name,
+                    type
+                ].join(delimiter));
+            });
+            return results.join("\n");
+        },
+
+        __gather_workflows: function(delimiter) {
+            let results = [
+                [
+                    'org',
+                    'workflow',
+                    'url',
+                    'name',
+                    'type'
+                ].join(delimiter)
+            ];
+            let org_name = $('.org').text();
+            $('.workflow-list .workflow').each(function() {
+                if ($(this).is(':hidden')) {
+                    return;
+                }
+
+                let name = $(this).find('.workflow-name').first().text().trim();
+                let url = $(this).find('.workflow-url').first().attr('href').trim();
+                $(this).find('.workflow-variables span').each(function() {
+                    let variable_name = $(this).data('name');
+                    let variable_type = $(this).data('type');
+                    results.push([
+                        org_name,
+                        name,
+                        url,
+                        variable_name,
+                        variable_type
+                    ].join(delimiter));
+                });
+            });
+            return results.join("\n");
+        },
+
+        __bind: function() {
+            $('.var-link').click(function() {
+                return VariableManager.__filter_variables($(this));
+            });
+
+            $('.filter').click(function() {
+                return VariableManager.__filter_clear($(this));
+            });
+
+            $('.search-variable').keyup(function() {
+                return VariableManager.__search_variable($(this).val());
+            });
+
+            $('.search-workflow').keyup(function() {
+                return VariableManager.__search_workflow($(this).val());
+            });
+
+            $('.copy-variables, .download-variables').click(function() {
+                return ExportManager.export_data(
+                    VariableManager.__gather_variables($(this).data('action') === 'clipboard' ? "\t" : ","),
+                    $(this).data('action'),
+                    'variables.csv'
+                );
+            });
+
+            $('.copy-workflows, .download-workflows').click(function() {
+                return ExportManager.export_data(
+                    VariableManager.__gather_workflows($(this).data('action') === 'clipboard' ? "\t" : ","),
+                    $(this).data('action'),
+                    'workflow-variables.csv'
+                );
+            });
+        },
+    };
+
+    $(document).ready(function() {
+        VariableManager.init();
+    });
+</script>

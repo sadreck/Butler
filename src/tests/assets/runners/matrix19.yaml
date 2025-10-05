@@ -1,0 +1,33 @@
+name: PreCommit Python Coverage
+on:
+  workflow_dispatch:
+
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.issue.number || github.event.pull_request.head.label || github.sha || github.head_ref || github.ref }}-${{ github.event.schedule || github.event.comment.id || github.event.sender.login }}'
+  cancel-in-progress: true
+
+env:
+  DEVELOCITY_ACCESS_KEY: ${{ secrets.DEVELOCITY_ACCESS_KEY }}
+  GRADLE_ENTERPRISE_CACHE_USERNAME: ${{ secrets.GE_CACHE_USERNAME }}
+  GRADLE_ENTERPRISE_CACHE_PASSWORD: ${{ secrets.GE_CACHE_PASSWORD }}
+  HF_INFERENCE_TOKEN: ${{ secrets.HF_INFERENCE_TOKEN }}
+
+jobs:
+  beam_PreCommit_Python_Coverage:
+    name: ${{ matrix.job_name }} (${{ matrix.job_phrase }} ${{ matrix.python_version }}) (${{ join(matrix.os, ', ') }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        job_name: [beam_PreCommit_Python_Coverage]
+        job_phrase: [Run Python_Coverage PreCommit]
+        python_version: ['3.9']
+        # Run on both self-hosted and GitHub-hosted runners.
+        # Some tests (marked require_docker_in_docker) can't run on Beam's
+        # self-hosted runners due to Docker-in-Docker environment constraint.
+        # These tests will only execute on ubuntu-latest (GitHub-hosted).
+        # Context: https://github.com/apache/beam/pull/35585
+        os: [[self-hosted, ubuntu-20.04, highmem], [ubuntu-latest]]
+    steps:
+      - uses: actions/checkout@v4

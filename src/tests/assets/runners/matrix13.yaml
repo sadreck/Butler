@@ -1,0 +1,37 @@
+name: "Perses Install Check"
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  schedule:
+    # At 07:00 UTC everyday.
+    - cron: "0 7 * * *"
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash -l {0}
+
+jobs:
+  perses-install-check:
+    name: Test on ${{ matrix.OS }}-latest, Python ${{ matrix.python-version }}, Perses ${{ matrix.perses-version }}
+    runs-on: ${{ matrix.OS }}-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ['ubuntu', 'macos']
+        python-version:
+          - 3.8
+          - 3.9
+        perses-version:
+          - 0.10.1
+
+    steps:
+      - uses: actions/checkout@v3

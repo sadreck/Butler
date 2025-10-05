@@ -1,0 +1,44 @@
+name: ' Publish To Environment'
+
+on:
+  workflow_dispatch:
+    inputs:
+      appVersion:
+        description: App version to deploy to environment(s) (current, prerelease, draft, latest or version number)
+        required: false
+        default: 'current'
+      environmentName:
+        description: Environment mask to receive the new version (* for all, PROD* for all environments starting with PROD)
+        required: true
+
+permissions:
+  actions: read
+  contents: read
+  id-token: write
+
+defaults:
+  run:
+    shell: powershell
+
+env:
+  ALGoOrgSettings: ${{ vars.ALGoOrgSettings }}
+  ALGoRepoSettings: ${{ vars.ALGoRepoSettings }}
+
+jobs:
+  Deploy:
+    needs: [ Initialization ]
+    if: needs.Initialization.outputs.environmentCount > 0
+    strategy: ${{ fromJson(needs.Initialization.outputs.environmentsMatrixJson) }}
+    runs-on: ${{ fromJson(matrix.os) }}
+    name: Deploy to ${{ matrix.environment }}
+    defaults:
+      run:
+        shell: ${{ matrix.shell }}
+    environment:
+      name: ${{ matrix.environment }}
+      url: ${{ steps.Deploy.outputs.environmentUrl }}
+    env:
+      deviceCode: ${{ needs.Initialization.outputs.deviceCode }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GitHub Workflows Butler - {{ template_nav_name }}</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.8/dist/lumen/bootstrap.min.css" integrity="sha384-VvtmOf0H1c5UOkg0sTVnp2+DaE7+6PO78xrugFKUni8B3tEbZ6V56DNytr8Zs2ZI" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        .view-height {
+            height: 60vh;
+            overflow-y: scroll;
+        }
+    </style>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="#">GitHub Workflows Butler - {{ template_nav_name }}</a>
+    </div>
+</nav>
+
+{% if template_to_load == "variables" %}
+    {% include "variables_template.html" %}
+{% elif template_to_load == "runners" %}
+    {% include "runners_template.html" %}
+{% elif template_to_load == "third_party" %}
+    {% include "third_party_template.html" %}
+{% elif template_to_load == "errors" %}
+    {% include "errors_template.html" %}
+{% elif template_to_load == "workflows" %}
+    {% include "workflows_template.html" %}
+{% endif %}
+
+</body>
+</html>

@@ -1,0 +1,34 @@
+name: Fast GPU Tests on main
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "src/diffusers/**.py"
+      - "examples/**.py"
+      - "tests/**.py"
+
+env:
+  DIFFUSERS_IS_CI: yes
+  OMP_NUM_THREADS: 8
+  MKL_NUM_THREADS: 8
+  HF_HUB_ENABLE_HF_TRANSFER: 1
+  PYTEST_TIMEOUT: 600
+  PIPELINE_USAGE_CUTOFF: 50000
+
+jobs:
+  setup_torch_cuda_pipeline_matrix:
+    name: Setup Torch Pipelines CUDA Slow Tests Matrix
+    runs-on:
+      group: aws-general-8-plus
+    container:
+      image: diffusers/diffusers-pytorch-cpu
+    outputs:
+      pipeline_test_matrix: ${{ steps.fetch_pipeline_matrix.outputs.pipeline_test_matrix }}
+    steps:
+      - name: Checkout diffusers
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2

@@ -1,0 +1,54 @@
+from src.commands.service import Service
+from src.database.models import WorkflowDataModel, JobModel, JobDataModel, StepModel, StepDataModel, WorkflowModel, VariableModel, VariableValueMapping
+from src.libs.constants import WorkflowStatus
+from src.libs.exceptions import InvalidCommandLine
+
+
+class ServiceDatabase(Service):
+    purge: bool = None
+    reprocess: bool = None
+
+    def run(self) -> bool:
+        if self.purge:
+            self.log.info("Purging database")
+            return self._purge_database()
+        elif self.reprocess:
+            self.log.info("Resetting processed data")
+            return self._reprocess_database()
+        else:
+            raise InvalidCommandLine("No valid arguments passed")
+
+    def _purge_database(self) -> bool:
+        self.log.info("Getting database tables")
+        tables = self.database.get_tables()
+        self.log.info(f"Got {len(tables)} tables")
+
+        for table in tables:
+            self.log.info(f"Purging {table}")
+            self.database.execute(f"DELETE FROM {table}")
+            self.database.commit()
+
+        return True
+
+    def _reprocess_database(self) -> bool:
+        tables = [
+            WorkflowDataModel.__tablename__,
+            JobModel.__tablename__,
+            JobDataModel.__tablename__,
+            StepModel.__tablename__,
+            StepDataModel.__tablename__,
+            VariableModel.__tablename__,
+            VariableValueMapping.__tablename__
+        ]
+
+        for table in tables:
+            self.log.info(f"Purging {table}")
+            self.database.execute(f"DELETE FROM {table}")
+            self.database.commit()
+
+        self.log.info("Updating workflow statuses")
+        sql = f"UPDATE {WorkflowModel.__tablename__} SET status = :new_status WHERE status = :old_status"
+        self.database.execute(sql, {'new_status': WorkflowStatus.DOWNLOADED, 'old_status': WorkflowStatus.PROCESSED})
+        self.database.commit()
+
+        return True

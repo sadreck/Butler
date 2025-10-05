@@ -1,0 +1,35 @@
+name: Wheel
+
+on:
+  workflow_dispatch:
+    inputs:
+      package_version:
+        required: true
+        type: string
+        description: DeepGNN version to put in wheel
+
+jobs:
+  wheels:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+      os: ["ubuntu-22.04", "windows-2022"]
+    steps:
+      - uses: actions/checkout@v3.5.3
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4.7.0
+        with:
+          python-version: "3.10"
+      - name: Start build cache proxy
+        uses: ./.github/actions/buildcache
+        env:
+          BAZEL_REMOTE_AZBLOB_SHARED_KEY : ${{ secrets.BAZEL_REMOTE_AZBLOB_SHARED_KEY }}
+      - name: build wheel
+        uses: ./.github/actions/wheel
+        with:
+          package_version: ${{ github.event.inputs.package_version }}
+      - name: Upload wheel file
+        uses: actions/upload-artifact@v4
+        with:
+          name: deepgnn-${{ matrix.os }}
+          path: src/python/dist/*.whl

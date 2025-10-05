@@ -1,0 +1,31 @@
+name: Matrix Test
+on:
+  push:
+
+jobs:
+  job1:
+    name: This is job 2
+    runs-on: ${{ matrix.config.os }}-${{ matrix.config.version }}
+    strategy:
+      matrix:
+        config:
+          - {
+              os: ubuntu,
+              version: 18.04
+          }
+          - {
+              os: ubuntu,
+              version: 20.04
+          }
+          - {
+              os: windows,
+              version: 2016
+          }
+          - {
+              os: windows,
+              version: 2019
+          }
+    steps:
+      - name: Just one step
+        shell: bash
+        run: ls -ahl /

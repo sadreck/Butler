@@ -1,0 +1,79 @@
+name: Release
+on:
+  push:
+    tags:
+      - v[0-9]+.[0-9]+.[0-9]+
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: The tag to manually run a deploy for. (example tag `v1.2.3`)
+        required: true
+      prerelease:
+        description: |
+          Is this for a prerelease?
+          (for internal testing, not announced nor published to our brew tap)
+          (example tag `v1.2.3-beta.0`)
+        type: boolean
+        default: false
+        required: true
+env:
+  CARGO_TERM_COLOR: always
+jobs:
+  github-release:
+    name: (${{ matrix.name }}) Create Github Release
+    needs: determine-tag
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            name: ubuntu-22.04
+
+          - os: [runs-on, runner=4cpu-linux-arm64, image=ubuntu22-full-arm64-python3.7-3.13, "run-id=${{ github.run_id }}"]
+            name: linux-arm64
+
+          - os: macOS-10.15-X64
+            name: macOS-10.15-X64
+
+          - os: macOS-11-ARM64
+            name: macOS-11-ARM64
+    environment: Release
+    steps:
+      - name: Checkout scie-pants ${{ needs.determine-tag.outputs.release-tag }}
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.determine-tag.outputs.release-tag }}
+      - name: Package scie-pants ${{ needs.determine-tag.outputs.release-tag }} binary
+        if: ${{ matrix.os != 'ubuntu-22.04' && matrix.name != 'linux-arm64' }}
+        run: cargo run -p package -- --dest-dir dist/ scie
+      - name: Package scie-pants ${{ needs.determine-tag.outputs.release-tag }} binary
+        if: ${{ matrix.os == 'ubuntu-22.04' || matrix.name == 'linux-arm64' }}
+        run: |
+          cargo run -p package -- --dest-dir dist/ tools
+          docker run --rm \
+            -v $PWD:/code \
+            -w /code \
+            rust:1.76.0-alpine3.19 \
+              sh -c '
+                apk add cmake make musl-dev perl && \
+                cargo run -p package -- --dest-dir dist/ scie-pants
+              '
+          cargo run -p package -- --dest-dir dist/ scie \
+            --scie-pants dist/scie-pants --tools-pex dist/tools.pex
+
+      # Build up a draft release with the artifacts from each of these jobs:
+      - name: Create ${{ needs.determine-tag.outputs.release-tag }} Release
+        # Need to pull in https://github.com/softprops/action-gh-release/pull/316 to work-around
+        # double-release-creation that happens when attempting to update a draft release to
+        # not-draft.
+        uses: huonw/action-gh-release@998f80d5380609557d7464b01d59a10d845600a0 # v2.0.9 (v2) + https://github.com/softprops/action-gh-release/pull/316
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ needs.determine-tag.outputs.release-tag }}
+          name: scie-pants ${{ needs.determine-tag.outputs.release-version }}
+          draft: true
+          # placeholder body to help someone track down why a release is still in draft:
+          body: "Release job in progress: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          files: dist/scie-pants-*
+          fail_on_unmatched_files: true

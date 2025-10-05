@@ -1,0 +1,264 @@
+<div class="container mt-2 mb-5">
+    <div class="row">
+        <div class="col text-center">
+            <h1 class="org display-2 fw-bold p-3">{{ org }}</h1>
+        </div>
+     </div>
+
+    <div class="row mt-2">
+        <div class="col-3">
+            <h3>{{ "{:,}".format(results.count) }} Runners</h3>
+            <div class="input-group mb-1">
+                <input type="text" class="form-control search-runner" placeholder="search">
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <span class="badge text-bg-secondary">{{ "{:,}".format(results.count_self_hosted) }} self-hosted</span>
+                    <span class="badge text-bg-warning">{{ "{:,}".format(results.count_unsupported) }} unsupported</span>
+                </div>
+                <div class="col-4 text-end">
+                    <a href="#" class="copy-runners" data-action="clipboard"><span class="badge rounded-pill text-bg-secondary"><i class="fa-solid fa-copy"></i></span></a>
+                    <a href="#" class="download-runners" data-action="download"><span class="badge rounded-pill text-bg-secondary"><i class="fa-solid fa-download"></i></span></a>
+                </div>
+            </div>
+            <div class="view-height">
+                <ul class="list-group list-group-flush runner-list">
+                    {% for runner in results.runners %}
+                    <li class="list-group-item d-flex align-items-center overflow-auto ps-0 result-item">
+                        <div class="ms-2 me-auto">
+                            {% if runner.self_hosted %}
+                            <span title="Self Hosted"><i class="fa-solid fa-computer"></i></span>
+                            {% else %}
+                            {% set background = '' if runner.supported else 'text-warning' %}
+                            {% set title = '' if runner.supported else '(Not Supported)' %}
+                            <span title="GitHub Hosted {{ title }}"><i class="fa-brands fa-github {{ background }}"></i></span>
+                            {% endif %}
+                            <a
+                                    title="Runner"
+                                    href="#"
+                                    class="runner-link"
+                                    data-type="runner"
+                                    data-name="{{ runner.name }}"
+                                    data-count="{{ runner.count }}"
+                                    data-supported="{{ 1 if runner.supported else 0 }}"
+                                    data-self-hosted="{{ 1 if runner.self_hosted else 0 }}"
+                            >{{ runner.name }}</a>
+                        </div>
+                        <span class="badge text-bg-secondary">{{ runner.count }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="col">
+            <h3>{{ "{:,}".format(results.count_workflows) }} Workflows</h3>
+            <div class="input-group mb-1">
+                <input type="text" class="form-control search-workflow" placeholder="search">
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <a href="#" class="filter">
+                        <span class="badge text-bg-info">
+                            <span class="filter-value"></span> <i class="fa-solid fa-xmark"></i>
+                        </span>
+                    </a>
+                </div>
+                <div class="col text-end">
+                    <a href="#" class="copy-workflows" data-action="clipboard"><span class="badge rounded-pill text-bg-secondary"><i class="fa-solid fa-copy"></i></span></a>
+                    <a href="#" class="download-workflows" data-action="download"><span class="badge rounded-pill text-bg-secondary"><i class="fa-solid fa-download"></i></span></a>
+                </div>
+            </div>
+            <ul class="list-group list-group-flush workflow-list">
+                {% for result in results.workflows %}
+                <li class="list-group-item ps-0 workflow">
+                    <div class="row">
+                        <div class="col">
+                            <div>
+                                <span class="workflow-name">
+                                    <a href="{{ result.workflow.url(True) }}" target="_blank" class="workflow-url">{{ result.workflow }}</a>
+                                </span>
+                            </div>
+                            <div class="workflow-runners">
+                                {% for runner in result.runners.values()|list %}
+                                {% set deprecated = 'text-bg-primary' if runner.supported else 'text-bg-warning' %}
+                                <span
+                                        title="Job : Runner"
+                                        class="badge p-1 {{ deprecated }}"
+                                        data-type="runner"
+                                        data-name="{{ runner.name }}"
+                                        data-supported="{{ 1 if runner.supported else 0 }}"
+                                        data-self-hosted="{{ 1 if runner.self_hosted else 0 }}"
+                                >
+                                    {% if runner.self_hosted %}
+                                    <span title="Self Hosted"><i class="fa-solid fa-computer"></i></span>
+                                    {% else %}
+                                    <span title="GitHub Hosted"><i class="fa-brands fa-github"></i></span>
+                                    {% endif %}
+                                    {{ runner.name }}
+                                </span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    {% include "scripts.js" %}
+
+    const RunnerManager = {
+        init: function() {
+            $('.filter').hide();
+            $('.search-runner').val('');
+            $('.search-workflow').val('');
+            this.__bind();
+        },
+
+        __bind: function() {
+            $('.copy-runners, .download-runners').click(function() {
+                return ExportManager.export_data(
+                    RunnerManager.__gather_runners($(this).data('action') === 'clipboard' ? "\t" : ","),
+                    $(this).data('action'),
+                    'runners.csv'
+                )
+            });
+
+            $('.copy-workflows, .download-workflows').click(function() {
+                return ExportManager.export_data(
+                    RunnerManager.__gather_workflows($(this).data('action') === 'clipboard' ? "\t" : ","),
+                    $(this).data('action'),
+                    'workflow-runners.csv'
+                )
+            });
+
+            $('.search-runner').keyup(function() {
+                return RunnerManager.__search_runner($(this).val());
+            });
+
+            $('.search-workflow').keyup(function() {
+                return RunnerManager.__search_workflow($(this).val());
+            });
+
+            $('.runner-link').click(function() {
+                return RunnerManager.__filter_runners($(this));
+            });
+
+            $('.filter').click(function() {
+                return RunnerManager.__filter_clear($(this));
+            });
+        },
+
+        __filter_clear: function(element) {
+            $('.workflow').show();
+            $(element).hide();
+            return false;
+        },
+
+        __filter_runners: function(element) {
+            let selected_type = element.data('type');
+            let selected_name = element.data('name');
+            $('.filter').show().find('.filter-value').text(selected_name);
+            $('.workflow').hide();
+            $('.workflow-runners span').each(function() {
+                if ($(this).data('type') == selected_type && $(this).data('name') == selected_name) {
+                    $(this).closest('.workflow').show();
+                }
+            });
+            return false;
+        },
+
+        __gather_runners: function(delimiter) {
+            let results = [
+                [
+                    'org',
+                    'runner',
+                    'total',
+                    'self_hosted',
+                    'supported'
+                ].join(delimiter)
+            ];
+            let org_name = $('.org').text();
+            $('.runner-list .runner-link').each(function() {
+                results.push([
+                    org_name,
+                    $(this).data('name'),
+                    $(this).data('count'),
+                    $(this).data('self-hosted'),
+                    $(this).data('supported')
+                ].join(delimiter));
+            });
+            return results.join("\n");
+        },
+
+        __gather_workflows: function(delimiter) {
+            let results = [
+                [
+                    'org',
+                    'workflow',
+                    'url',
+                    'runner',
+                    'self_hosted',
+                    'supported'
+                ].join(delimiter)
+            ];
+            let org_name = $('.org').text();
+            $('.workflow-list .workflow').each(function() {
+                if ($(this).is(':hidden')) {
+                    return;
+                }
+
+                let name = $(this).find('.workflow-name').first().text().trim();
+                let url = $(this).find('.workflow-url').first().attr('href').trim();
+                $(this).find('.workflow-runners > span').each(function() {
+                    results.push([
+                        org_name,
+                        name,
+                        url,
+                        $(this).data('name'),
+                        $(this).data('self-hosted'),
+                        $(this).data('supported')
+                    ].join(delimiter));
+                });
+            });
+            return results.join("\n");
+        },
+
+        __search_runner: function(text) {
+            text = text.toLowerCase();
+            if (text.length === 0) {
+                $('.runner-list .result-item').removeClass('d-none');
+                return true;
+            }
+
+            $('.runner-list .result-item').addClass('d-none').each(function() {
+                let name = $(this).find('.runner-link').text().toLowerCase();
+                if (name.includes(text)) {
+                    $(this).removeClass('d-none');
+                }
+            });
+        },
+
+        __search_workflow: function(text) {
+            text = text.toLowerCase();
+            if (text.length === 0) {
+                $('.workflow-list .workflow').removeClass('d-none');
+                return true;
+            }
+
+            $('.workflow-list .workflow').addClass('d-none').each(function() {
+                let name = $(this).find('.workflow-name').text().toLowerCase();
+                if (name.includes(text)) {
+                    $(this).removeClass('d-none');
+                }
+            });
+        }
+    }
+
+    $(document).ready(function() {
+        RunnerManager.init();
+    });
+</script>
