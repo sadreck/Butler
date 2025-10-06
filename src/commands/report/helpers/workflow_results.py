@@ -83,8 +83,8 @@ class WorkflowResults:
                 1 if workflow['instance'].repo.fork else 0,                         # 4
                 1 if workflow['instance'].repo.archive else 0,                      # 5
                 workflow['instance'].repo.stars,                                    # 6
-                workflow['instance'].repo.ref,                                      # 7
-                RepoVisibility(workflow['instance'].repo.visibility).name.lower(),  # 8
+                RepoVisibility(workflow['instance'].repo.visibility).name.lower(),  # 7
+                workflow['instance'].repo.ref,                                      # 8
                 GitHubRefType(workflow['instance'].repo.ref_type).name.lower(),     # 9
                 resolved_ref,                                                       # 10
                 GitHubRefType(resolved_type).name.lower(),                          # 11
