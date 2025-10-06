@@ -1,5 +1,5 @@
 from src.libs.components.workflow import WorkflowComponent
-from src.libs.constants import GitHubRefType, WorkflowType, WorkflowStatus
+from src.libs.constants import GitHubRefType, WorkflowType, WorkflowStatus, RepoVisibility
 
 
 class WorkflowResults:
@@ -40,6 +40,7 @@ class WorkflowResults:
         fork
         archived
         stars
+        visibility
         ref
         ref_type
         ref_resolved_to
@@ -54,15 +55,16 @@ class WorkflowResults:
             'fork',                     # 4
             'archived',                 # 5
             'stars',                    # 6
-            'ref',                      # 7
-            'ref_type',                 # 8
-            'ref_resolved_to',          # 9
-            'ref_resolved_type',        # 10
-            'workflow_type',            # 11
-            'workflow_url',             # 12
-            'jobs_count',               # 13
-            'workflow_status',          # 14
-            'parent_workflows',         # 15
+            'visibility',               # 7
+            'ref',                      # 8
+            'ref_type',                 # 9
+            'ref_resolved_to',          # 10
+            'ref_resolved_type',        # 11
+            'workflow_type',            # 12
+            'workflow_url',             # 13
+            'jobs_count',               # 14
+            'workflow_status',          # 15
+            'parent_workflows',         # 16
         ]
 
         rows = [header]
@@ -82,14 +84,15 @@ class WorkflowResults:
                 1 if workflow['instance'].repo.archive else 0,                      # 5
                 workflow['instance'].repo.stars,                                    # 6
                 workflow['instance'].repo.ref,                                      # 7
-                GitHubRefType(workflow['instance'].repo.ref_type).name.lower(),     # 8
-                resolved_ref,                                                       # 9
-                GitHubRefType(resolved_type).name.lower(),                          # 10
-                WorkflowType(workflow['instance'].type).name.lower(),               # 11
-                workflow['instance'].url(True),                                     # 12
-                workflow['job_count'],                                              # 13
-                self._friendly_status(workflow['instance'].status),                 # 14
-                "\n".join(self._get_parents_for_missing(workflow_name)),            # 15
+                RepoVisibility(workflow['instance'].repo.visibility).name.lower(),  # 8
+                GitHubRefType(workflow['instance'].repo.ref_type).name.lower(),     # 9
+                resolved_ref,                                                       # 10
+                GitHubRefType(resolved_type).name.lower(),                          # 11
+                WorkflowType(workflow['instance'].type).name.lower(),               # 12
+                workflow['instance'].url(True),                                     # 13
+                workflow['job_count'],                                              # 14
+                self._friendly_status(workflow['instance'].status),                 # 15
+                "\n".join(self._get_parents_for_missing(workflow_name)),            # 16
             ]
 
             rows.append(row)
