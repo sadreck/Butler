@@ -108,4 +108,15 @@ class VariableResults:
                     info['type']
                 ])
 
+            for name, info in result['variables'].items():
+                rows.append([
+                    result['workflow'].repo.org.name,
+                    result['workflow'].repo.name,
+                    result['workflow'].path,
+                    result['workflow'].repo.ref,
+                    result['workflow'].url(True),
+                    name,
+                    info['type']
+                ])
+
         return rows
