@@ -49,10 +49,10 @@ class WorkflowCollector(Renderer):
         return True
 
     def _export(self, data: dict) -> None:
-        # if 'html' in self.export_formats:
-        #     html_file = os.path.join(self.output_path, f'{self.org.name}-workflows.html')
-        #     self.log.info(f"Saving HTML output to {html_file}")
-        #     self.render('workflows', 'Workflows', data, html_file)
+        if 'html' in self.export_formats:
+            html_file = os.path.join(self.output_path, f'{self.org.name}-workflows.html')
+            self.log.info(f"Saving HTML output to {html_file}")
+            self.render('workflows', 'Workflows', data, html_file)
 
         if 'csv' in self.export_formats:
             self.write_to_csv(

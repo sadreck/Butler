@@ -10,7 +10,7 @@ from src.libs.utils import Utils
 
 class CommandReport(Command):
     _validate_token: bool = False
-    _supported_formats: list = ['csv']
+    _supported_formats: list = ['csv', 'html']
 
     @staticmethod
     def load_command_line(subparsers: any) -> None:

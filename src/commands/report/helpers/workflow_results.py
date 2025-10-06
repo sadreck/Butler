@@ -4,11 +4,16 @@ from src.libs.constants import GitHubRefType, WorkflowType, WorkflowStatus, Repo
 
 class WorkflowResults:
     _workflows: dict = None
+    _repos: dict = None
     _missing: dict = None
 
     @property
-    def workflows(self):
+    def workflows(self) -> list:
         return list(dict(sorted(self._workflows.items())).values())
+
+    @property
+    def repos(self) -> list:
+        return list(dict(sorted(self._repos.items())).values())
 
     def __init__(self) -> None:
         self._workflows = {}
@@ -21,6 +26,13 @@ class WorkflowResults:
                 'instance': workflow,
                 'job_count': job_count,
             }
+
+        if str(workflow.repo) not in self._repos:
+            self._repos[str(workflow.repo)] = {
+                'instance': workflow.repo,
+                'count': 0
+            }
+        self._repos[str(workflow.repo)]['count'] += 1
 
         return self._workflows[str(workflow)]
 
@@ -116,3 +128,44 @@ class WorkflowResults:
         elif status == WorkflowStatus.SUBMODULE:
             return 'submodule'
         return ''
+
+    def count_repos(self) -> int:
+        return len(self._repos)
+
+    def count_workflows_and_actions(self) -> int:
+        return len(self._workflows)
+
+    def count_archived_repos(self) -> int:
+        count = 0
+        for repo in self.repos:
+            if repo['instance'].archive:
+                count += 1
+        return count
+
+    def count_forked_repos(self) -> int:
+        count = 0
+        for repo in self.repos:
+            if repo['instance'].fork:
+                count += 1
+        return count
+
+    def count_workflows(self) -> int:
+        count = 0
+        for workflow in self.workflows:
+            if workflow['instance'].type == WorkflowType.WORKFLOW:
+                count += 1
+        return count
+
+    def count_actions(self) -> int:
+        count = 0
+        for workflow in self.workflows:
+            if workflow['instance'].type == WorkflowType.ACTION:
+                count += 1
+        return count
+
+    def count_docker(self) -> int:
+        count = 0
+        for workflow in self.workflows:
+            if workflow['instance'].type == WorkflowType.DOCKER:
+                count += 1
+        return count
