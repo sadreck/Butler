@@ -169,3 +169,10 @@ class WorkflowResults:
             if workflow['instance'].type == WorkflowType.DOCKER:
                 count += 1
         return count
+
+    def count_archived_workflows(self) -> int:
+        count = 0
+        for workflow in self.workflows:
+            if workflow['instance'].type == WorkflowType.WORKFLOW:
+                count += 1
+        return count

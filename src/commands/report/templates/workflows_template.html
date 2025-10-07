@@ -45,6 +45,12 @@
             </div>
             <div class="row mb-3">
                 <div class="col">
+                    <a href="#" class="filter">
+                        <span class="badge text-bg-info">
+                            <span class="filter-value"></span> <i class="fa-solid fa-xmark"></i>
+                        </span>
+                    </a>
+
                     <span class="badge text-bg-primary"><i class="fa-brands fa-git-alt"></i> {{ "{:,}".format(results.count_workflows()) }} workflows</span>
                     <span class="badge text-bg-primary"><i class="fa-brands fa-github"></i> {{ "{:,}".format(results.count_actions()) }} actions</span>
                     <span class="badge text-bg-primary"><i class="fa-brands fa-docker"></i> {{ "{:,}".format(results.count_docker()) }} docker</span>
@@ -66,7 +72,7 @@
                             <span title="Forked Repository"><i class="fa-solid fa-code-fork"></i></span>
                             {% endif %}
 
-                            <a href="{{ workflow.instance.url(True) }}" target="_blank" class="workflow-link">{{ workflow.instance }}</a>
+                            <a href="{{ workflow.instance.url(True) }}" target="_blank" class="workflow-link" data-repo="{{ workflow.instance.repo.name }}">{{ workflow.instance }}</a>
                         </div>
                         <div class="col-1 text-end">
                             {% if workflow.instance.type == 1 %}
@@ -88,6 +94,7 @@
 <script type="text/javascript">
     const WorkflowManager = {
         init: function() {
+            $('.filter').hide();
             $('.search-repo').val('');
             $('.search-workflow').val('');
             this.__bind();
@@ -97,6 +104,14 @@
         __bind: function() {
             $('.search-repo, .search-workflow').keyup(function() {
                 WorkflowManager.__apply_filters();
+            });
+
+            $('.repo-link').click(function() {
+                return WorkflowManager.__filter_workflows($(this));
+            });
+
+            $('.filter').click(function() {
+                return WorkflowManager.__filter_clear($(this));
             });
         },
 
@@ -114,8 +129,6 @@
                 });
             }
 
-            $('.repo-box .total').text($('.repo-list li:visible').length);
-
             let searchWorkflow = $('.search-workflow').val();
             if (searchWorkflow.length === 0) {
                 $('.workflow-list .result-item').removeClass('d-none');
@@ -128,8 +141,36 @@
                     }
                 });
             }
-            $('.workflow-box .total').text($('.workflow-box .result-item:visible').length);
 
+            this.__update_result_counts();
+        },
+
+        __filter_clear: function(element) {
+            $('.workflow-list .result-item').removeClass('d-none');
+            $(element).hide();
+            this.__update_result_counts();
+            return false;
+        },
+
+
+        __filter_workflows: function(element) {
+            let selected_name = element.data('name').toLowerCase();
+            $('.filter').show().find('.filter-value').text(selected_name);
+
+            $('.workflow-list .result-item').addClass('d-none').each(function() {
+                let name = $(this).find('.workflow-link').data('repo').toLowerCase();
+                if (name === selected_name) {
+                    $(this).removeClass('d-none');
+                }
+            });
+
+            this.__update_result_counts();
+            return false;
+        },
+
+        __update_result_counts: function() {
+            $('.repo-box .total').text($('.repo-list li:visible').length);
+            $('.workflow-box .total').text($('.workflow-box .result-item:visible').length);
         }
     };
 
