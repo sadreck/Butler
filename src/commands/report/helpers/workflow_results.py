@@ -149,6 +149,13 @@ class WorkflowResults:
                 count += 1
         return count
 
+    def count_source_repos(self) -> int:
+        count = 0
+        for repo in self.repos:
+            if repo['instance'].source:
+                count += 1
+        return count
+
     def count_workflows(self) -> int:
         count = 0
         for workflow in self.workflows:

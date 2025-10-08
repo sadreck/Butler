@@ -133,6 +133,10 @@ class RepoComponent(BaseComponent):
     def archive(self, value: bool):
         self._archive = value
 
+    @property
+    def source(self):
+        return self.fork is False and self.archive is False
+
     def __init__(self, name: str):
         info = self._parse_component(name)
         if len(info['org']) == 0 or len(info['repo']) == 0:
