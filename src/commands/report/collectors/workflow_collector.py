@@ -37,7 +37,7 @@ class WorkflowCollector(Renderer):
         for result in workflow_results:
             workflow = WorkflowComponent.from_dict(result, False)
 
-            instance = data['results'].get_or_create(workflow, result['job_count'])
+            instance = data['results'].get_or_create(workflow, result['job_count'], result['triggers'])
             if instance['instance'].status == WorkflowStatus.MISSING:
                 # Get additional info.
                 self.log.debug(f"Getting additional information for {instance['instance']}")
@@ -113,7 +113,8 @@ class WorkflowCollector(Renderer):
                 w.path			        AS workflow_path,
                 w.type			        AS workflow_type,
                 w.status		        AS workflow_status,
-                COALESCE(js.total, 0)   AS job_count
+                COALESCE(js.total, 0)   AS job_count,
+                COALESCE(event_triggers.triggers, '')   AS triggers
             FROM workflows w
             JOIN repositories r ON r.id = w.repo_id
             JOIN organisations o ON o.id = r.org_id
@@ -124,6 +125,17 @@ class WorkflowCollector(Renderer):
                 FROM jobs j
                 GROUP BY j.workflow_id
             ) js ON js.workflow_id = w.id
+            LEFT JOIN (
+                SELECT
+                    wd.workflow_id,
+                    GROUP_CONCAT(value, ',') AS triggers
+                FROM workflow_data wd
+                WHERE
+                    wd.property = 'on'
+                    AND LENGTH(wd.value) > 0
+                GROUP BY wd.workflow_id
+                ORDER BY wd.value
+            ) event_triggers ON event_triggers.workflow_id = w.id
             WHERE
                 o.id = :org_id
         """

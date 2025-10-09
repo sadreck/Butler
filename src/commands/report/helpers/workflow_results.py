@@ -6,6 +6,7 @@ class WorkflowResults:
     _workflows: dict = None
     _repos: dict = None
     _missing: dict = None
+    _triggers: dict = None
 
     @property
     def workflows(self) -> list:
@@ -15,16 +16,28 @@ class WorkflowResults:
     def repos(self) -> list:
         return list(dict(sorted(self._repos.items())).values())
 
+    @property
+    def triggers(self) -> dict:
+        return dict(sorted(self._triggers.items()))
+
+    @property
+    def triggers_list(self) -> list:
+        return list(self.triggers.items())
+
     def __init__(self) -> None:
         self._workflows = {}
         self._repos = {}
         self._missing = {}
+        self._triggers = {}
 
-    def get_or_create(self, workflow: WorkflowComponent, job_count: int) -> dict:
+    def get_or_create(self, workflow: WorkflowComponent, job_count: int, triggers: str) -> dict:
+        triggers = triggers.split(',')
+
         if str(workflow) not in self._workflows:
             self._workflows[str(workflow)] = {
                 'instance': workflow,
                 'job_count': job_count,
+                'triggers': triggers,
             }
 
         if str(workflow.repo) not in self._repos:
@@ -33,6 +46,14 @@ class WorkflowResults:
                 'count': 0
             }
         self._repos[str(workflow.repo)]['count'] += 1
+
+        for trigger in triggers:
+            if len(trigger) == 0:
+                continue
+
+            if trigger not in self._triggers:
+                self._triggers[trigger] = 0
+            self._triggers[trigger] += 1
 
         return self._workflows[str(workflow)]
 
@@ -77,6 +98,7 @@ class WorkflowResults:
             'jobs_count',               # 14
             'workflow_status',          # 15
             'parent_workflows',         # 16
+            'event_triggers',           # 17
         ]
 
         rows = [header]
@@ -105,6 +127,7 @@ class WorkflowResults:
                 workflow['job_count'],                                              # 14
                 self._friendly_status(workflow['instance'].status),                 # 15
                 "\n".join(self._get_parents_for_missing(workflow_name)),            # 16
+                ",".join(workflow['triggers']),                                     # 17
             ]
 
             rows.append(row)
