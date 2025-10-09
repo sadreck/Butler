@@ -1,12 +1,40 @@
 import csv
 import os
+from loguru import logger
 from pathlib import Path
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
-
 from src.libs.utils import Utils
+from src.database.database import Database
+from src.libs.components.org import OrgComponent
 
 
-class Renderer:
+class CollectorBase:
+    database: Database = None
+    log: logger = None
+    org: OrgComponent = None
+    config: dict = None
+    output_path: str = None
+    export_formats: list = None
+    outputs: dict = None
+
+    def __init__(self, log: logger, database: Database, config: dict, org: OrgComponent, output_path: str, export_formats: list):
+        self.log = log
+        self.database = database
+        self.config = config
+        self.org = org
+        self.output_path = output_path
+        self.export_formats = export_formats
+
+        self.outputs = {
+            'html': {},
+            'csv': {}
+        }
+
+        self.generate_output_paths()
+
+    def generate_output_paths(self):
+        raise NotImplementedError("__generate_output_paths not implemented")
+
     def render(self, template_name: str, template_nav_name: str, data: dict, output_file: str = None) -> str:
         templates_path = os.path.join(Path(__file__).resolve().parent, 'templates')
         if not os.path.isdir(templates_path):

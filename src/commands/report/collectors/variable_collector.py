@@ -1,27 +1,25 @@
 import os
-from loguru import logger
 from src.commands.report.helpers.variable_results import VariableResults
-from src.commands.report.renderer import Renderer
-from src.database.database import Database
-from src.libs.components.org import OrgComponent
+from src.commands.report.collector_base import CollectorBase
 from src.libs.components.workflow import WorkflowComponent
 
 
-class VariableCollector(Renderer):
-    database: Database = None
-    log: logger = None
-    org: OrgComponent = None
-    config: dict = None
-    output_path: str = None
-    export_formats: list = None
+class VariableCollector(CollectorBase):
+    def generate_output_paths(self):
+        self.outputs['html']['variables'] = {
+            'title': 'Variables',
+            'path': os.path.join(self.output_path, f'{self.org.name}-variables.html')
+        }
 
-    def __init__(self, log: logger, database: Database, config: dict, org: OrgComponent, output_path: str, export_formats: list):
-        self.log = log
-        self.database = database
-        self.config = config
-        self.org = org
-        self.output_path = output_path
-        self.export_formats = export_formats
+        self.outputs['csv']['variables'] = {
+            'title': 'Variables and Secrets',
+            'path': os.path.join(self.output_path, f'{self.org.name}-variables-and-secrets.csv')
+        }
+
+        self.outputs['csv']['variables-workflows'] = {
+            'title': 'Variables and Secrets Workflows',
+            'path': os.path.join(self.output_path, f'{self.org.name}-variables-and-secrets-workflows.csv')
+        }
 
     def run(self) -> bool:
         data = {
@@ -58,18 +56,18 @@ class VariableCollector(Renderer):
 
     def _export(self, data: dict) -> None:
         if 'html' in self.export_formats:
-            html_file = os.path.join(self.output_path, f'{self.org.name}-variables.html')
+            html_file = self.outputs['html']['variables']['path']
             self.log.info(f"Saving HTML output to {html_file}")
             self.render('variables', 'Variables', data, html_file)
 
         if 'csv' in self.export_formats:
             self.write_to_csv(
-                os.path.join(self.output_path, f'{self.org.name}-variables-and-secrets.csv'),
+                self.outputs['csv']['variables']['path'],
                 data['results'].csv_for_variables(self.org.name)
             )
 
             self.write_to_csv(
-                os.path.join(self.output_path, f'{self.org.name}-variables-and-secrets-workflows.csv'),
+                self.outputs['csv']['variables-workflows']['path'],
                 data['results'].csv_for_workflows()
             )
 

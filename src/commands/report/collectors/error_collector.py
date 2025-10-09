@@ -1,27 +1,11 @@
 import os
-from loguru import logger
-
 from src.commands.report.helpers.error_results import ErrorResults
-from src.commands.report.renderer import Renderer
-from src.database.database import Database
-from src.libs.components.org import OrgComponent
+from src.commands.report.collector_base import CollectorBase
 from src.libs.components.workflow import WorkflowComponent
 from src.libs.constants import WorkflowStatus
 
 
-class ErrorCollector(Renderer):
-    database: Database = None
-    log: logger = None
-    org: OrgComponent = None
-    config: dict = None
-    output_path: str = None
-
-    def __init__(self, log: logger, database: Database, config: dict, org: OrgComponent):
-        self.log = log
-        self.database = database
-        self.config = config
-        self.org = org
-
+class ErrorCollector(CollectorBase):
     def run(self) -> bool:
         data = {
             'org': self.org.name,

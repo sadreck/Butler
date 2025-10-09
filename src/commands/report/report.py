@@ -1,5 +1,4 @@
 import os
-from src.commands.report.collectors.error_collector import ErrorCollector
 from src.commands.report.collectors.runner_collector import RunnerCollector
 from src.commands.report.collectors.third_party_collector import ThirdPartyCollector
 from src.commands.report.collectors.variable_collector import VariableCollector
@@ -34,9 +33,6 @@ class ServiceReport(Service):
 
         third_party_collector = ThirdPartyCollector(self.log, self.database, self.config, org, self.output_path, self.export_formats)
         third_party_collector.run()
-
-        # error_collector = ErrorCollector(self.log, self.database, self.config, org, self.output_path)
-        # error_collector.run()
 
         workflow_collector = WorkflowCollector(self.log, self.database, self.config, org, self.output_path, self.export_formats)
         workflow_collector.run()

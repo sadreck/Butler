@@ -1,27 +1,25 @@
 import os
-from loguru import logger
 from src.commands.report.helpers.runner_results import RunnerResults
-from src.commands.report.renderer import Renderer
-from src.database.database import Database
-from src.libs.components.org import OrgComponent
+from src.commands.report.collector_base import CollectorBase
 from src.libs.components.workflow import WorkflowComponent
 
 
-class RunnerCollector(Renderer):
-    database: Database = None
-    log: logger = None
-    org: OrgComponent = None
-    config: dict = None
-    output_path: str = None
-    export_formats: list = None
+class RunnerCollector(CollectorBase):
+    def generate_output_paths(self):
+        self.outputs['html']['runners'] = {
+            'title': 'Runners',
+            'path': os.path.join(self.output_path, f'{self.org.name}-runners.html')
+        }
 
-    def __init__(self, log: logger, database: Database, config: dict, org: OrgComponent, output_path: str, export_formats: list):
-        self.log = log
-        self.database = database
-        self.config = config
-        self.org = org
-        self.output_path = output_path
-        self.export_formats = export_formats
+        self.outputs['csv']['runners'] = {
+            'title': 'Runners',
+            'path': os.path.join(self.output_path, f'{self.org.name}-runners.csv')
+        }
+
+        self.outputs['csv']['runners-workflows'] = {
+            'title': 'Runners Workflows',
+            'path': os.path.join(self.output_path, f'{self.org.name}-runners-workflows.csv')
+        }
 
     def run(self) -> bool:
         data = {
@@ -46,18 +44,18 @@ class RunnerCollector(Renderer):
 
     def _export(self, data: dict) -> None:
         if 'html' in self.export_formats:
-            html_file = os.path.join(self.output_path, f'{self.org.name}-runners.html')
+            html_file = self.outputs['html']['runners']['path']
             self.log.info(f"Saving HTML output to {html_file}")
             self.render('runners', 'Runners', data, html_file)
 
         if 'csv' in self.export_formats:
             self.write_to_csv(
-                os.path.join(self.output_path, f'{self.org.name}-runners.csv'),
+                self.outputs['csv']['runners']['path'],
                 data['results'].csv_for_runners(self.org.name)
             )
 
             self.write_to_csv(
-                os.path.join(self.output_path, f'{self.org.name}-runners-workflows.csv'),
+                self.outputs['csv']['runners-workflows']['path'],
                 data['results'].csv_for_workflows()
             )
 
