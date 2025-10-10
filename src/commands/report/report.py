@@ -1,4 +1,5 @@
 import os
+from src.commands.report.collectors.index_generator import IndexGenerator
 from src.commands.report.collectors.runner_collector import RunnerCollector
 from src.commands.report.collectors.third_party_collector import ThirdPartyCollector
 from src.commands.report.collectors.variable_collector import VariableCollector
@@ -25,16 +26,21 @@ class ServiceReport(Service):
             raise OrgNotFound(f"Organisation not found: {self.repo}")
         org = OrgComponent.from_model(db_org)
 
-        variable_collector = VariableCollector(self.log, self.database, self.config, org, self.output_path, self.export_formats)
-        variable_collector.run()
+        collectors = [
+            WorkflowCollector,
+            ThirdPartyCollector,
+            VariableCollector,
+            RunnerCollector,
+        ]
 
-        runner_collector = RunnerCollector(self.log, self.database, self.config, org, self.output_path, self.export_formats)
-        runner_collector.run()
+        outputs = {}
+        for collector in collectors:
+            instance = collector(self.log, self.database, self.config, org, self.output_path, self.export_formats)
+            instance.run()
+            outputs[instance.shortname] = instance.outputs
 
-        third_party_collector = ThirdPartyCollector(self.log, self.database, self.config, org, self.output_path, self.export_formats)
-        third_party_collector.run()
-
-        workflow_collector = WorkflowCollector(self.log, self.database, self.config, org, self.output_path, self.export_formats)
-        workflow_collector.run()
+        index_generator = IndexGenerator(self.log, self.database, self.config, org, self.output_path, self.export_formats)
+        index_generator.generated_outputs = outputs
+        index_generator.run()
 
         return True

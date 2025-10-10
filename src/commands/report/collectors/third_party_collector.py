@@ -6,15 +6,19 @@ from src.libs.constants import GitHubRefType
 
 
 class ThirdPartyCollector(CollectorBase):
+    _shortname = 'third_party'
+
     def generate_output_paths(self):
         self.outputs['html']['actions'] = {
             'title': 'Actions',
-            'path': os.path.join(self.output_path, f'{self.org.name}-third-party-actions.html')
+            'path': os.path.join(self.output_path, f'{self.org.name}-third-party-actions.html'),
+            'file': f'{self.org.name}-third-party-actions.html'
         }
 
         self.outputs['csv']['actions'] = {
             'title': 'Actions',
-            'path': os.path.join(self.output_path, f'{self.org.name}-third-party-actions.csv')
+            'path': os.path.join(self.output_path, f'{self.org.name}-third-party-actions.csv'),
+            'file': f'{self.org.name}-third-party-actions.csv'
         }
 
     def run(self) -> bool:
@@ -42,6 +46,9 @@ class ThirdPartyCollector(CollectorBase):
             instance = data['results'].get_or_create(workflow_action, workflow_parent, result['action_title'])
 
         self._export(data)
+        self.outputs['info'] = {
+            'count': data['results'].count
+        }
         return True
 
     def _export(self, data: dict) -> None:

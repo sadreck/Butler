@@ -6,15 +6,19 @@ from src.libs.constants import WorkflowStatus
 
 
 class WorkflowCollector(CollectorBase):
+    _shortname = 'workflows'
+
     def generate_output_paths(self):
         self.outputs['html']['workflows'] = {
-            'title': 'Variables',
-            'path': os.path.join(self.output_path, f'{self.org.name}-workflows.html')
+            'title': 'Workflows',
+            'path': os.path.join(self.output_path, f'{self.org.name}-workflows.html'),
+            'file': f'{self.org.name}-workflows.html'
         }
 
         self.outputs['csv']['workflows'] = {
-            'title': 'Variables and Secrets',
-            'path': os.path.join(self.output_path, f'{self.org.name}-workflows.csv')
+            'title': 'Workflows',
+            'path': os.path.join(self.output_path, f'{self.org.name}-workflows.csv'),
+            'file': f'{self.org.name}-workflows.csv'
         }
 
     def run(self) -> bool:
@@ -39,6 +43,10 @@ class WorkflowCollector(CollectorBase):
                     data['results'].add_missing_workflows(workflow, parent_workflow)
 
         self._export(data)
+        self.outputs['info'] = {
+            'workflows': data['results'].count_workflows(),
+            'actions': data['results'].count_actions(),
+        }
         return True
 
     def _export(self, data: dict) -> None:

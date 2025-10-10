@@ -16,6 +16,13 @@ class CollectorBase:
     output_path: str = None
     export_formats: list = None
     outputs: dict = None
+    _shortname: str = None
+
+    @property
+    def shortname(self) -> str:
+        if not self._shortname:
+            raise NotImplementedError(f"_shortname not defined in collector")
+        return self._shortname
 
     def __init__(self, log: logger, database: Database, config: dict, org: OrgComponent, output_path: str, export_formats: list):
         self.log = log
@@ -27,13 +34,17 @@ class CollectorBase:
 
         self.outputs = {
             'html': {},
-            'csv': {}
+            'csv': {},
+            'info': {}
         }
 
         self.generate_output_paths()
 
     def generate_output_paths(self):
-        raise NotImplementedError("__generate_output_paths not implemented")
+        raise NotImplementedError("generate_output_paths() not implemented")
+
+    def run(self) -> bool:
+        raise NotImplementedError("run() not implemented")
 
     def render(self, template_name: str, template_nav_name: str, data: dict, output_file: str = None) -> str:
         templates_path = os.path.join(Path(__file__).resolve().parent, 'templates')

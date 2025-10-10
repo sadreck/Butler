@@ -5,20 +5,25 @@ from src.libs.components.workflow import WorkflowComponent
 
 
 class VariableCollector(CollectorBase):
+    _shortname = 'variables'
+
     def generate_output_paths(self):
         self.outputs['html']['variables'] = {
             'title': 'Variables',
-            'path': os.path.join(self.output_path, f'{self.org.name}-variables.html')
+            'path': os.path.join(self.output_path, f'{self.org.name}-variables.html'),
+            'file': f'{self.org.name}-variables.html'
         }
 
         self.outputs['csv']['variables'] = {
             'title': 'Variables and Secrets',
-            'path': os.path.join(self.output_path, f'{self.org.name}-variables-and-secrets.csv')
+            'path': os.path.join(self.output_path, f'{self.org.name}-variables.csv'),
+            'file': f'{self.org.name}-variables.csv'
         }
 
         self.outputs['csv']['variables-workflows'] = {
             'title': 'Variables and Secrets Workflows',
-            'path': os.path.join(self.output_path, f'{self.org.name}-variables-and-secrets-workflows.csv')
+            'path': os.path.join(self.output_path, f'{self.org.name}-variables-workflows.csv'),
+            'file': f'{self.org.name}-variables-workflows.csv'
         }
 
     def run(self) -> bool:
@@ -52,6 +57,10 @@ class VariableCollector(CollectorBase):
             instance = data['results'].get_or_create(workflow, result['variable_name'])
 
         self._export(data)
+        self.outputs['info'] = {
+            'secrets': data['results'].count_secrets,
+            'variables': data['results'].count_variables,
+        }
         return True
 
     def _export(self, data: dict) -> None:

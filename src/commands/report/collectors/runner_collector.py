@@ -5,20 +5,25 @@ from src.libs.components.workflow import WorkflowComponent
 
 
 class RunnerCollector(CollectorBase):
+    _shortname = 'runners'
+
     def generate_output_paths(self):
         self.outputs['html']['runners'] = {
             'title': 'Runners',
-            'path': os.path.join(self.output_path, f'{self.org.name}-runners.html')
+            'path': os.path.join(self.output_path, f'{self.org.name}-runners.html'),
+            'file': f'{self.org.name}-runners.html'
         }
 
         self.outputs['csv']['runners'] = {
             'title': 'Runners',
-            'path': os.path.join(self.output_path, f'{self.org.name}-runners.csv')
+            'path': os.path.join(self.output_path, f'{self.org.name}-runners.csv'),
+            'file': f'{self.org.name}-runners.csv'
         }
 
         self.outputs['csv']['runners-workflows'] = {
             'title': 'Runners Workflows',
-            'path': os.path.join(self.output_path, f'{self.org.name}-runners-workflows.csv')
+            'path': os.path.join(self.output_path, f'{self.org.name}-runners-workflows.csv'),
+            'file': f'{self.org.name}-runners-workflows.csv'
         }
 
     def run(self) -> bool:
@@ -40,6 +45,10 @@ class RunnerCollector(CollectorBase):
             instance = data['results'].get_or_create(workflow, result['job_runner'])
 
         self._export(data)
+        self.outputs['info'] = {
+            'runners': data['results'].count,
+            'self_hosted': data['results'].count_self_hosted,
+        }
         return True
 
     def _export(self, data: dict) -> None:

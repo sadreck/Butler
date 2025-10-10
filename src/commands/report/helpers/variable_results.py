@@ -27,6 +27,14 @@ class VariableResults:
         secrets_and_variables = {**self._secrets, **self._variables}
         return dict(sorted(secrets_and_variables.items()))
 
+    @property
+    def count_secrets(self) -> int:
+        return len(self._secrets)
+
+    @property
+    def count_variables(self) -> int:
+        return len(self._variables)
+
     def __init__(self):
         self._secrets = {}
         self._variables = {}
