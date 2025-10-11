@@ -46,8 +46,8 @@ class RunnerCollector(CollectorBase):
 
         self._export(data)
         self.outputs['info'] = {
-            'runners': data['results'].count,
-            'self_hosted': data['results'].count_self_hosted,
+            'runners': data['results'].count('runners'),
+            'self_hosted': data['results'].count('self-hosted'),
         }
         return True
 

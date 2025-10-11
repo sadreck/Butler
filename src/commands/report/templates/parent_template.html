@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <style>
-        .view-height {
+        .sidebar {
             height: 60vh;
             overflow-y: scroll;
         }
@@ -23,6 +23,8 @@
         <a class="navbar-brand" href="https://github.com/sadreck/Butler">GitHub Workflows Butler - {{ template_nav_name }}</a>
     </div>
 </nav>
+
+{% from "components/badge-filter.html" import badge_filter %}
 
 {% if template_to_load == "variables" %}
     {% include "variables_template.html" %}

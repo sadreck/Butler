@@ -19,7 +19,7 @@ class CommandReport(Command):
         subparser.add_argument("--database", default="database.sqlite3", type=str, help="Path to SQLite database to create or connect to")
         subparser.add_argument("--repo", required=True, default='', type=str, help="Repo to generate report from")
         subparser.add_argument("--output-path", required=True, default='', type=str, help="Location to store output files")
-        subparser.add_argument("--format", default='csv', type=str, help=f"Comma separated output supported formats: {CommandReport._supported_formats}")
+        subparser.add_argument("--format", default='csv,html', type=str, help=f"Comma separated output supported formats: {CommandReport._supported_formats}")
         subparser.add_argument("--config", default=None, type=str, help="Configuration file (defaults to default_config.yaml)")
 
         Command.define_shared_arguments(subparser)

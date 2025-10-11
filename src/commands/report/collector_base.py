@@ -56,6 +56,17 @@ class CollectorBase:
         data['template_to_load'] = template_name
         data['template_nav_name'] = template_nav_name
 
+        #
+        # Define custom filters.
+        #
+        def format_number(number: int) -> str | int:
+            try:
+                return f"{int(number):,}"
+            except (ValueError, TypeError):
+                return number
+
+        env.filters['format_number'] = format_number
+
         output = template.render(data)
         if output_file:
             if not Utils.write_file(output_file, output):

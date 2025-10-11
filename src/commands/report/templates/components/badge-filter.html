@@ -1,0 +1,16 @@
+{% macro badge_filter(id, background_class, label, icon, checked) %}
+<span class="badge d-inline-flex align-items-center gap-1 p-2 {{ background_class }}">
+    <input
+            class="form-check-input m-0 align-middle filter {{ id }}"
+            data-filter="{{ id }}"
+            type="checkbox"
+            role="switch"
+            id="{{ id }}"
+            {% if checked %}checked{% endif %}
+    >
+    <label
+            class="form-check-label m-0"
+            for="{{ id }}">{{ icon }}<span class="ms-1">{{ label }}</span>
+    </label>
+</span>
+{% endmacro %}

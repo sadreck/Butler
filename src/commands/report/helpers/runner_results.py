@@ -13,21 +13,20 @@ class RunnerResults:
         self.supported_runners = [name.lower() for name in supported_runners]
         self.unsupported_runners = [name.lower() for name in unsupported_runners]
 
-    @property
-    def count(self) -> int:
-        return len(self._runners)
-
-    @property
-    def count_workflows(self) -> int:
-        return len(self._workflows)
-
-    @property
-    def count_self_hosted(self) -> int:
-        return sum(1 for item in self._runners.values() if item.get("self_hosted") is True)
-
-    @property
-    def count_unsupported(self) -> int:
-        return sum(1 for item in self._runners.values() if item.get("supported") is False)
+    def count(self, what: str) -> int:
+        match what.lower():
+            case 'runners':
+                return len(self._runners)
+            case 'workflows':
+                return len(self._workflows)
+            case 'self-hosted':
+                return sum(1 for item in self._runners.values() if item.get("self_hosted") is True)
+            case 'github':
+                return sum(1 for item in self._runners.values() if item.get("self_hosted") is False)
+            case 'unsupported':
+                return sum(1 for item in self._runners.values() if item.get("supported") is False)
+            case _:
+                return 0
 
     @property
     def runners(self) -> list:
