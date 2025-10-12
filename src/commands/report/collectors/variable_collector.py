@@ -58,8 +58,8 @@ class VariableCollector(CollectorBase):
 
         self._export(data)
         self.outputs['info'] = {
-            'secrets': data['results'].count_secrets,
-            'variables': data['results'].count_variables,
+            'secrets': data['results'].count('secrets'),
+            'variables': data['results'].count('variables'),
         }
         return True
 

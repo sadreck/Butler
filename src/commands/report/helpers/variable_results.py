@@ -15,10 +15,6 @@ class VariableResults:
         return dict(sorted(self._variables.items()))
 
     @property
-    def count(self):
-        return len(self._secrets) + len(self._variables)
-
-    @property
     def workflows(self):
         return list(self._workflows.values())
 
@@ -27,18 +23,23 @@ class VariableResults:
         secrets_and_variables = {**self._secrets, **self._variables}
         return dict(sorted(secrets_and_variables.items()))
 
-    @property
-    def count_secrets(self) -> int:
-        return len(self._secrets)
-
-    @property
-    def count_variables(self) -> int:
-        return len(self._variables)
-
     def __init__(self):
         self._secrets = {}
         self._variables = {}
         self._workflows = {}
+
+    def count(self, what: str) -> int:
+        match what.lower():
+            case 'secrets':
+                return len(self._secrets)
+            case 'variables':
+                return len(self._variables)
+            case 'all':
+                return len(self._secrets) + len(self._variables)
+            case 'workflows':
+                return len(self._workflows)
+            case _:
+                return 0
 
     def get_or_create(self, workflow: WorkflowComponent, variable_name: str) -> str:
         if not str(workflow) in self._workflows:
