@@ -47,7 +47,7 @@ class ThirdPartyCollector(CollectorBase):
 
         self._export(data)
         self.outputs['info'] = {
-            'count': data['results'].count
+            'count': data['results'].count('all')
         }
         return True
 

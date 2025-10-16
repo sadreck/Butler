@@ -1,118 +1,166 @@
 <div class="container mt-2 mb-5">
     <div class="row">
         <div class="col text-center">
-            <h1 class="org display-2 fw-bold p-3 glow">{{ org }}</h1>
+            <h1 class="org display-2 fw-bold p-3">{{ org }}</h1>
         </div>
      </div>
 
-    <div class="row mt-2">
-        <div class="col">
-            <h3>{{ "{:,}".format(results.count) }} Third Party Actions</h3>
-            <div class="row mt-2">
-                <div class="col">
-                    <div class="input-group mb-2">
-                        <input type="text" class="form-control search" placeholder="search">
-                    </div>
-                    <div class="filters mb-4">
+    <div class="row mt-2" id="container-actions">
+        <h3><span class="visible-results">{{ results.count('all') | format_number }}</span> Third Party Actions</h3>
+        <div class="input-group mb-2">
+            <input type="text" class="form-control search" placeholder="search">
+        </div>
+        <div class="filters">
+            <div class="col">
+                <!-- Trusted Organisations -->
+                {{ badge_filter(
+                    'filter-trusted-orgs',
+                    'text-bg-success',
+                    'trusted organisations (' ~ (results.count('trusted-orgs') | format_number) ~ ')',
+                    '<i class="fa-solid fa-building-shield"></i>',
+                    True)
+                }}
+
+                <!-- Untrusted Organisations -->
+                {{ badge_filter(
+                    'filter-untrusted-orgs',
+                    'text-bg-warning',
+                    'untrusted organisations (' ~ (results.count('untrusted-orgs') | format_number) ~ ')',
+                    '<i class="fa-solid fa-building-circle-exclamation"></i>',
+                    True)
+                }}
+
+                <!-- Archived -->
+                {{ badge_filter(
+                    'filter-archived',
+                    'text-bg-warning',
+                    'archived (' ~ (results.count('archived') | format_number) ~ ')',
+                    '<i class="fa-solid fa-box-archive"></i>',
+                    True)
+                }}
+
+                <!-- Forked -->
+                {{ badge_filter(
+                    'filter-forked',
+                    'text-bg-secondary',
+                    'forked (' ~ (results.count('forked') | format_number) ~ ')',
+                    '<i class="fa-solid fa-code-fork"></i>',
+                    True)
+                }}
+
+                <!-- Tags -->
+                {{ badge_filter(
+                    'filter-tags',
+                    'text-bg-primary',
+                    'tags (' ~ (results.count('tags') | format_number) ~ ')',
+                    '',
+                    True)
+                }}
+
+                <!-- Branches -->
+                {{ badge_filter(
+                    'filter-branches',
+                    'text-bg-info',
+                    'branches (' ~ (results.count('branches') | format_number) ~ ')',
+                    '',
+                    True)
+                }}
+
+                <!-- Commits -->
+                {{ badge_filter(
+                    'filter-commits',
+                    'text-bg-secondary',
+                    'commits (' ~ (results.count('commits') | format_number) ~ ')',
+                    '',
+                    True)
+                }}
+
+                <!-- Deprecated -->
+                {{ badge_filter(
+                    'filter-deprecated',
+                    'text-bg-warning',
+                    'deprecated (' ~ (results.count('deprecated') | format_number) ~ ')',
+                    '',
+                    True)
+                }}
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col">
+                {% for action in results.actions %}
+                <div
+                        class="row pb-2 mb-2 border-bottom action"
+                        data-trusted-org="{{ 1 if action.trusted else 0 }}"
+                        data-archived="{{ 1 if action.action.repo.archive else 0 }}"
+                        data-forked="{{ 1 if action.action.repo.fork else 0 }}"
+                >
+                    <div class="col">
+                        <!-- Action name and usage -->
                         <div class="row">
                             <div class="col">
-                                <span class="badge text-bg-success d-inline-flex align-items-center gap-1 p-2">
-                                    <input class="form-check-input m-0 align-middle filter filter-trusted-orgs" data-filter="trusted-orgs" type="checkbox" role="switch" id="show-trusted-orgs" checked>
-                                    <label class="form-check-label m-0" for="show-trusted-orgs"><i class="fa-solid fa-building-shield"></i> {{ results.count_trusted_organisations() }} trusted organisations</label>
-                                </span>
-                                <span class="badge text-bg-secondary d-inline-flex align-items-center gap-1 p-2">
-                                    <input class="form-check-input m-0 align-middle filter filter-untrusted-orgs" data-filter="untrusted-orgs" type="checkbox" role="switch" id="show-untrusted-orgs" checked>
-                                    <label class="form-check-label m-0" for="show-untrusted-orgs"><i class="fa-solid fa-building-circle-exclamation"></i> {{ results.count_untrusted_organisations() }} untrusted organisations</label>
-                                </span>
+                                {% if action.trusted %}
+                                <i class="fa-solid fa-building-shield text-success" title="Trusted Organisation"></i>
+                                {% else %}
+                                <i class="fa-solid fa-building-circle-exclamation text-warning" title="Untrusted Organisation"></i>
+                                {% endif %}
 
-                                <span class="badge text-bg-primary d-inline-flex align-items-center gap-1 p-2">
-                                    <input class="form-check-input m-0 align-middle filter filter-tags" data-filter="tags" type="checkbox" role="switch" id="show-tags" checked>
-                                    <label class="form-check-label m-0" for="show-tags">{{ results.count_tags() }} tags</label>
-                                </span>
-                                <span class="badge text-bg-info d-inline-flex align-items-center gap-1 p-2">
-                                    <input class="form-check-input m-0 align-middle filter filter-branches" data-filter="branches" type="checkbox" role="switch" id="show-branches" checked>
-                                    <label class="form-check-label m-0" for="show-branches">{{ results.count_branches() }} branches</label>
-                                </span>
-                               <span class="badge text-bg-secondary d-inline-flex align-items-center gap-1 p-2">
-                                    <input class="form-check-input m-0 align-middle filter filter-commits" data-filter="commits" type="checkbox" role="switch" id="show-commits" checked>
-                                    <label class="form-check-label m-0" for="show-commits">{{ results.count_commits() }} commits</label>
-                                </span>
-                                <span class="badge text-bg-warning d-inline-flex align-items-center gap-1 p-2">
-                                    <input class="form-check-input m-0 align-middle filter filter-deprecated" data-filter="deprecated" type="checkbox" role="switch" id="show-deprecated" checked>
-                                    <label class="form-check-label m-0" for="show-deprecated">{{ results.count_deprecated() }} deprecated</label>
-                                </span>
+                                <a href="#" class="action-details" data-box="action-info-{{ loop.index }}">
+                                    <i class="fa-solid fa-square-plus open"></i>
+                                    <i class="fa-solid fa-square-minus close d-none"></i>
+                                </a>
 
-                                <span class="badge text-bg-warning d-inline-flex align-items-center gap-1 p-2">
-                                    <input class="form-check-input m-0 align-middle filter filter-archived" data-filter="archived" type="checkbox" role="switch" id="show-archived" checked>
-                                    <label class="form-check-label m-0" for="show-archived"><i class="fa-solid fa-box-archive"></i> {{ results.count_archived() }} archived</label>
-                                </span>
-                                <span class="badge text-bg-secondary d-inline-flex align-items-center gap-1 p-2">
-                                    <input class="form-check-input m-0 align-middle filter filter-forked" data-filter="forked" type="checkbox" role="switch" id="show-forked" checked>
-                                    <label class="form-check-label m-0" for="show-forked"><i class="fa-solid fa-code-fork"></i> {{ results.count_forked() }} forked</label>
-                                </span>
+                                <a href="{{ action.action.url() }}" class="action-name" target="_blank">{{ action.name }}</a>
                             </div>
-                            <div class="col-1 text-end">
-                                <span class="badge text-bg-secondary results-count p-2">
-                                    <span class="total">0</span> results
-                                </span>
+                            <div class="col-2 text-end">
+                                <span class="badge text-bg-secondary" title="Usage">{{ action.usage }}</span>
                             </div>
                         </div>
+                        <!-- Action info -->
+                        <div class="row mt-1">
+                            <div class="col ms-4">
+                                <span class="badge text-bg-secondary stars"><i class="fa-solid fa-star"></i> {{ action.stars_formatted }}</span>
 
-                    </div>
+                                {% if action.action.repo.archive %}
+                                <span class="badge text-bg-warning archived"><i class="fa-solid fa-box-archive"></i></span>
+                                {% endif %}
 
-                    {% for action in results.actions %}
-                    <div class="row pb-2 mb-2 border-bottom action" data-trusted-org="{{ 1 if action.trusted else 0 }}">
-                        <div class="col">
-                            <div class="row">
-                                <div class="col">
-                                    {% if action.trusted %}
-                                    <i class="fa-solid fa-building-shield text-success" title="Trusted Organisation"></i>
+                                {% if action.action.repo.fork %}
+                                <span class="badge text-bg-secondary forked"><i class="fa-solid fa-code-fork"></i></span>
+                                {% endif %}
+
+                                <div class="d-inline refs">
+                                    {% for tag, info in action.tags.items() %}
+                                    {% if info.deprecated %}
+                                    <span class="badge ref text-bg-warning deprecated tag" data-type="tag" title="tag">{{ tag }}</span>
                                     {% else %}
-                                    <i class="fa-solid fa-building-circle-exclamation text-secondary" title="Untrusted Organisation"></i>
+                                    <span class="badge ref text-bg-primary tag" data-type="tag" title="tag">{{ tag }}</span>
                                     {% endif %}
-                                    <a href="#" class="action-details action-name" data-box="box-{{ loop.index }}">{{ action.name }}</a>
-                                </div>
-                                <div class="col-2 text-end">
-                                    <span class="badge text-bg-secondary" title="Usage">{{ action.usage }}</span>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col ms-4">
-                                    <span class="badge text-bg-secondary stars"><i class="fa-solid fa-star"></i> {{ action.stars_formatted }}</span>
+                                    {% endfor %}
 
-                                        {% if action.action.repo.archive %}
-                                        <span class="badge text-bg-warning archived"><i class="fa-solid fa-box-archive"></i></span>
-                                        {% endif %}
+                                    {% for branch, info in action.branches.items() %}
+                                    {% if info.deprecated %}
+                                    <span class="badge ref text-bg-warning deprecated branch" data-type="branch" title="branch">{{ branch }}</span>
+                                    {% else %}
+                                    <span class="badge ref text-bg-info branch" data-type="branch" title="branch">{{ branch }}</span>
+                                    {% endif %}
+                                    {% endfor %}
 
-                                        {% if action.action.repo.fork %}
-                                        <span class="badge text-bg-secondary forked"><i class="fa-solid fa-code-fork"></i></span>
-                                        {% endif %}
-
-                                    <div class="d-inline refs">
-                                        {% for tag, info in action.tags.items() %}
-                                        {% set background = 'text-bg-warning' if info.deprecated else 'text-bg-primary' %}
-                                        {% set deprecated = 'deprecated' if info.deprecated else '' %}
-                                        <span class="badge ref {{ background }} {{ deprecated }} tag" data-type="tag" title="tag">{{ tag }}</span>
-                                        {% endfor %}
-
-                                        {% for branch, info in action.branches.items() %}
-                                        {% set background = 'text-bg-warning' if info.deprecated else 'text-bg-info' %}
-                                        {% set deprecated = 'deprecated' if info.deprecated else '' %}
-                                        <span class="badge ref {{ background }} {{ deprecated }} branch" data-type="branch" title="branch">{{ branch }}</span>
-                                        {% endfor %}
-
-                                        {% for commit, info in action.commits.items() %}
-                                        {% set background = 'text-bg-warning' if info.deprecated else 'text-bg-secondary' %}
-                                        {% set deprecated = 'deprecated' if info.deprecated else '' %}
-                                        <span class="badge ref {{ background }} {{ deprecated }} commit" data-type="commit" title="commit for {{ info.resolved_type }}">{{ commit[:8] }} ({{ info.resolved_ref }})</span>
-                                        {% endfor %}
-                                    </div>
+                                    {% for commit, info in action.commits.items() %}
+                                    {% if info.deprecated %}
+                                    <span class="badge ref text-bg-warning deprecated commit" data-type="commit" title="commit for {{ info.resolved_type }}">{{ commit[:8] }} ({{ info.resolved_ref }})</span>
+                                    {% else %}
+                                    <span class="badge ref text-bg-secondary commit" data-type="commit" title="commit for {{ info.resolved_type }}">{{ commit[:8] }} ({{ info.resolved_ref }})</span>
+                                    {% endif %}
+                                    {% endfor %}
                                 </div>
                             </div>
-                            <div class="row mt-2 d-none" id="box-{{ loop.index }}">
-                                <div class="col">
-                                    <table class="table table-striped table-sm table-responsive">
-                                        <thead>
+                        </div>
+                        <!-- Action details -->
+                        <div class="row mt-2 d-none" id="action-info-{{ loop.index }}">
+                            <div class="col">
+                                <table class="table table-striped table-sm table-responsive">
+                                    <thead>
                                         <tr>
                                             <th></th>
                                             <th class="w-50">Ref</th>
@@ -121,69 +169,68 @@
                                             <th class="text-center">Supported</th>
                                             <th class="text-end">Usage</th>
                                         </tr>
-                                        </thead>
-                                        <tbody>
-                                        {% for ref, info in action.refs().items() %}
-                                        <tr>
-                                            <td class="text-center ps-4">
-                                                <a href="#" class="action-ref-details" data-box="box-ref-{{ info.unique }}">
-                                                    <i class="fa-solid fa-square-plus open"></i>
-                                                    <i class="fa-solid fa-square-minus close d-none"></i>
-                                                </a>
-                                            </td>
-                                            <td class="d-flex justify-content-between align-items-center">
-                                                <a href="{{ info.url }}" target="_blank">{{ ref }}</a>
-                                                {% if info.label|lower == 'commit' %}
-                                                <span class="badge text-bg-secondary">{{ info.resolved_ref }}</span>
-                                                {% endif %}
-                                            </td>
-                                            <td class="text-center">
-                                                {% if info.label|lower == 'tag' %}
-                                                <span class="badge text-bg-primary">tag</span>
-                                                {% elif info.label|lower == 'branch' %}
-                                                <span class="badge text-bg-info">branch</span>
-                                                {% elif info.label|lower == 'commit' %}
-                                                <span class="badge text-bg-secondary">commit</span>
-                                                {% endif %}
-                                            </td>
-                                            <td>{{ info.title }}</td>
-                                            <td class="text-center">
-                                                {% if info.deprecated %}
-                                                <i class="fa-solid fa-square-xmark text-warning"></i>
-                                                {% else %}
-                                                <i class="fa-solid fa-square-check text-success"></i>
-                                                {% endif %}
-                                            </td>
-                                            <td class="text-end">{{ info.usage }}</td>
-                                        </tr>
-                                        <tr class="d-none" id="box-ref-{{ info.unique }}">
-                                            <td></td>
-                                            <td colspan="5">
-                                                {% for workflow_name, workflow in info.workflows.items() %}
-                                                <div class="row p-1 border-bottom">
-                                                    <div class="col">
-                                                        {% if workflow.repo.archive %}
-                                                        <span title="Archived Repository"><i class="fa-solid fa-box-archive text-warning"></i></span>
-                                                        {% endif %}
-                                                        {% if workflow.repo.fork %}
-                                                        <span title="Forked Repository"><i class="fa-solid fa-code-fork"></i></span>
-                                                        {% endif %}
-                                                        <a href="{{ workflow.browser_url() }}" target="_blank">{{ workflow }}</a>
-                                                    </div>
+                                    </thead>
+                                    <tbody>
+                                    {% for ref, info in action.refs().items() %}
+                                    <tr>
+                                        <td class="text-center ps-4">
+                                            <a href="#" class="action-ref-details" data-box="box-ref-{{ info.unique }}">
+                                                <i class="fa-solid fa-square-plus open"></i>
+                                                <i class="fa-solid fa-square-minus close d-none"></i>
+                                            </a>
+                                        </td>
+                                        <td class="d-flex justify-content-between align-items-center">
+                                            <a href="{{ info.url }}" target="_blank">{{ ref }}</a>
+                                            {% if info.label|lower == 'commit' %}
+                                            <span class="badge text-bg-secondary">{{ info.resolved_ref }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-center">
+                                            {% if info.label|lower == 'tag' %}
+                                            <span class="badge text-bg-primary">tag</span>
+                                            {% elif info.label|lower == 'branch' %}
+                                            <span class="badge text-bg-info">branch</span>
+                                            {% elif info.label|lower == 'commit' %}
+                                            <span class="badge text-bg-secondary">commit</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ info.title }}</td>
+                                        <td class="text-center">
+                                            {% if info.deprecated %}
+                                            <i class="fa-solid fa-square-xmark text-warning"></i>
+                                            {% else %}
+                                            <i class="fa-solid fa-square-check text-success"></i>
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-end">{{ info.usage }}</td>
+                                    </tr>
+                                    <tr class="d-none" id="box-ref-{{ info.unique }}">
+                                        <td></td>
+                                        <td colspan="5">
+                                            {% for workflow_name, workflow in info.workflows.items() %}
+                                            <div class="row p-1 border-bottom">
+                                                <div class="col">
+                                                    {% if workflow.repo.archive %}
+                                                    <span title="Archived Repository"><i class="fa-solid fa-box-archive text-warning"></i></span>
+                                                    {% endif %}
+                                                    {% if workflow.repo.fork %}
+                                                    <span title="Forked Repository"><i class="fa-solid fa-code-fork"></i></span>
+                                                    {% endif %}
+                                                    <a href="{{ workflow.browser_url() }}" target="_blank">{{ workflow }}</a>
                                                 </div>
-                                                {% endfor %}
-                                            </td>
-                                        </tr>
-                                        <tr></tr>
-                                        {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        </td>
+                                    </tr>
+                                    <tr></tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
-                    {% endfor %}
                 </div>
+                {% endfor %}
             </div>
         </div>
     </div>
@@ -192,30 +239,15 @@
 <script type="text/javascript">
     const ActionsManager = {
         init: function() {
-            this.__bind();
-            this.__apply_filters();
-        },
-
-        __bind: function() {
-            $('.filter').change(function() {
-                ActionsManager.__apply_filters();
+            $('.filter').click(function() {
+                ActionsManager.filter($(this));
             });
 
             $('.search').keyup(function() {
-                ActionsManager.__apply_filters();
+                ActionsManager.filter($(this));
             });
 
-            $('.action-details').click(function() {
-                let box = $('#' + $(this).data('box'));
-                if ($(box).hasClass('d-none')) {
-                    $(box).removeClass('d-none');
-                } else {
-                    $(box).addClass('d-none');
-                }
-                return false;
-            });
-
-            $('.action-ref-details').click(function() {
+            $('.action-ref-details, .action-details').click(function() {
                 let box = $('#' + $(this).data('box'));
                 if ($(box).hasClass('d-none')) {
                     $(box).removeClass('d-none');
@@ -230,75 +262,97 @@
             });
         },
 
-        __apply_filters: function() {
+        filter: function(element) {
+            this.__filters();
+            this.__update_result_counts();
+        },
+
+        __count_bool: function(obj, value) {
+            return Object.values(obj).filter(v => v === value).length;
+        },
+
+        __filters: function() {
+            // Get state of current filters.
+            let filters = {};
+            $('#container-actions .filter').each(function() {
+                filters[$(this).data('filter')] = $(this).is(':checked');
+            });
+
+            // Start from a visible state.
             $('.action').find('.refs span').removeClass('d-none');
             $('.action').removeClass('d-none');
 
-            let show_trusted_orgs = $('.filter-trusted-orgs').is(':checked');
-            let show_untrusted_orgs = $('.filter-untrusted-orgs').is(':checked');
-            let show_tags = $('.filter-tags').is(':checked');
-            let show_branches = $('.filter-branches').is(':checked');
-            let show_commits = $('.filter-commits').is(':checked');
-            let show_deprecated = $('.filter-deprecated').is(':checked');
-            let show_archived = $('.filter-archived').is(':checked');
-            let show_forked = $('.filter-forked').is(':checked');
+            let only_one_checked = (this.__count_bool(filters, true) === 1);
 
-            // First filter the search string.
-            let searchFor = $('.search').val().toLowerCase();
-            if (searchFor.length > 0) {
-                $('.action-name').each(function() {
-                    let name = $(this).text().toLowerCase().trim();
-                    if (!name.includes(searchFor)) {
+            $('.action').each(function() {
+                if (only_one_checked) {
+                    switch (true) {
+                        case filters['filter-archived']:
+                            $(this).data('archived') == 1 ? false : $(this).addClass('d-none');
+                            break;
+                        case filters['filter-forked']:
+                            $(this).data('forked') == 1 ? false : $(this).addClass('d-none');
+                            break;
+                    }
+                } else {
+                    if ($(this).data('trusted-org') == 1 && !filters['filter-trusted-orgs']) {
+                        $(this).addClass('d-none');
+                    } else if ($(this).data('trusted-org') == 0 && !filters['filter-untrusted-orgs']) {
+                        $(this).addClass('d-none');
+                    } else if ($(this).data('archived') == 1 && !filters['filter-archived']) {
+                        $(this).addClass('d-none');
+                    } else if ($(this).data('forked') == 1 && !filters['filter-forked']) {
+                        $(this).addClass('d-none');
+                    }
+                }
+
+                $(this).find('.refs').each(function() {
+                    let only_deprecated = filters['filter-deprecated'] &&
+                        !filters['filter-tags'] &&
+                        !filters['filter-branches'] &&
+                        !filters['filter-commits'];
+
+                    if (!filters['filter-tags']) {
+                        $(this).find('.tag').addClass('d-none');
+                    }
+
+                    if (!filters['filter-branches']) {
+                        $(this).find('.branch').addClass('d-none');
+                    }
+
+                    if (!filters['filter-commits']) {
+                        $(this).find('.commit').addClass('d-none');
+                    }
+
+                    if (!filters['filter-deprecated']) {
+                        $(this).find('.deprecated').addClass('d-none');
+                    }
+
+                    if (only_deprecated) {
+                        $(this).find('.deprecated').removeClass('d-none');
+                    }
+
+                    if ($(this).find('span.d-none').length === $(this).find('span').length) {
                         $(this).closest('.action').addClass('d-none');
+                    }
+                })
+            });
+
+            let searchFor = $('#container-actions .search').val().toLowerCase();
+            if (searchFor.length > 0) {
+                $('#container-actions .action').each(function() {
+                    let name = $(this).find('.action-name').text().trim().toLowerCase();
+                    if (!name.includes(searchFor)) {
+                        $(this).addClass('d-none');
                     }
                 });
             }
 
-            $('.action .refs').each(function() {
-                // These are ref specific and hide their <span> elements.
-                if (!show_tags) {
-                    $(this).find('.tag').addClass('d-none');
-                }
+            this.__update_result_counts();
+        },
 
-                if (!show_branches) {
-                    $(this).find('.branch').addClass('d-none');
-                }
-
-                if (!show_commits) {
-                    $(this).find('.commit').addClass('d-none');
-                }
-
-                if (!show_deprecated) {
-                    $(this).find('.deprecated').addClass('d-none');
-                }
-            });
-
-            $('.action').each(function() {
-                if (!show_trusted_orgs && $(this).data('trusted-org') == 1) {
-                    $(this).addClass('d-none');
-                }
-
-                if (!show_untrusted_orgs && $(this).data('trusted-org') == 0) {
-                    $(this).addClass('d-none');
-                }
-
-                if (!show_archived && $(this).find('.archived').length > 0) {
-                    $(this).addClass('d-none');
-                }
-
-                if (!show_forked && $(this).find('.forked').length > 0) {
-                    $(this).addClass('d-none');
-                }
-            });
-
-            // Hide lines that have no visible refs.
-            $('.action .refs').each(function() {
-                if ($(this).find('span.d-none').length === $(this).find('span').length) {
-                    $(this).closest('.action').addClass('d-none');
-                }
-            });
-
-            $('.results-count .total').text($('.action:visible').length);
+        __update_result_counts: function() {
+            $('#container-actions .visible-results').text($('#container-actions .action:visible').length.toLocaleString());
         }
     };
 

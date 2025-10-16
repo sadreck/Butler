@@ -9,10 +9,6 @@ class ThirdPartyResults:
     deprecated_actions: list = None
 
     @property
-    def count(self) -> int:
-        return len(self._actions)
-
-    @property
     def actions(self) -> list:
         return list(self._actions.values())
 
@@ -63,66 +59,50 @@ class ThirdPartyResults:
     def _is_deprecated_ref(self, name: str, ref: str) -> bool:
         return f"{name}@{ref}".lower() in self.deprecated_actions
 
-    def count_trusted_organisations(self) -> int:
+    def count(self, what: str) -> int:
         count = 0
-        for name, action in self._actions.items():
-            if action.trusted:
-                count += 1
-        return count
+        match what.lower():
+            case 'all':
+                count = len(self._actions)
+            case 'trusted-orgs':
+                for name, action in self._actions.items():
+                    if action.trusted:
+                        count += 1
+            case 'untrusted-orgs':
+                for name, action in self._actions.items():
+                    if not action.trusted:
+                        count += 1
+            case 'tags':
+                for name, action in self._actions.items():
+                    count += len(action.tags)
+            case 'branches':
+                for name, action in self._actions.items():
+                    count += len(action.branches)
+            case 'commits':
+                for name, action in self._actions.items():
+                    count += len(action.commits)
+            case 'archived':
+                for name, action in self._actions.items():
+                    if action.action.repo.archive:
+                        count += 1
+            case 'forked':
+                for name, action in self._actions.items():
+                    if action.action.repo.fork:
+                        count += 1
+            case 'deprecated':
+                for name, action in self._actions.items():
+                    for commit_name, commit in action.commits.items():
+                        if commit['deprecated']:
+                            count += 1
 
-    def count_untrusted_organisations(self) -> int:
-        count = 0
-        for name, action in self._actions.items():
-            if not action.trusted:
-                count += 1
-        return count
+                    for branch_name, branch in action.branches.items():
+                        if branch['deprecated']:
+                            count += 1
 
-    def count_tags(self) -> int:
-        count = 0
-        for name, action in self._actions.items():
-            count += len(action.tags)
-        return count
+                    for tag_name, tag in action.tags.items():
+                        if tag['deprecated']:
+                            count += 1
 
-    def count_branches(self) -> int:
-        count = 0
-        for name, action in self._actions.items():
-            count += len(action.branches)
-        return count
-
-    def count_commits(self) -> int:
-        count = 0
-        for name, action in self._actions.items():
-            count += len(action.commits)
-        return count
-
-    def count_archived(self) -> int:
-        count = 0
-        for name, action in self._actions.items():
-            if action.action.repo.archive:
-                count += 1
-        return count
-
-    def count_deprecated(self) -> int:
-        count = 0
-        for name, action in self._actions.items():
-            for commit_name, commit in action.commits.items():
-                if commit['deprecated']:
-                    count += 1
-
-            for branch_name, branch in action.branches.items():
-                if branch['deprecated']:
-                    count += 1
-
-            for tag_name, tag in action.tags.items():
-                if tag['deprecated']:
-                    count += 1
-        return count
-
-    def count_forked(self) -> int:
-        count = 0
-        for name, action in self._actions.items():
-            if action.action.repo.fork:
-                count += 1
         return count
 
     def for_csv(self) -> list:
