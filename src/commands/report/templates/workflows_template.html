@@ -165,40 +165,50 @@
             </div>
             <div class="row mt-3">
                 <div class="col">
-                    <ul class="list-group list-group-flush">
-                        {% for workflow in results.workflows %}
-                        <li
-                                class="list-group-item d-flex align-items-center overflow-auto ps-0 workflow"
-                                data-type="{{ workflow.instance.type_name }}"
-                                data-archived="{{ 1 if workflow.instance.repo.archive else 0 }}"
-                                data-forked="{{ 1 if workflow.instance.repo.fork else 0 }}"
-                                data-name="{{ workflow.instance }}"
-                                data-repo="{{ workflow.instance.repo.name }}"
-                        >
-                            <div class="ms-2 me-auto">
-                                {% if workflow.instance.repo.visibility == 1 %}
-                                <i class="fa-solid fa-lock-open text-secondary" title="Public"></i>
-                                {% elif  workflow.instance.repo.visibility == 2 %}
-                                <i class="fa-solid fa-lock" title="Private"></i>
-                                {% endif %}
+                    {% for workflow in results.workflows %}
+                    <div
+                            class="row workflow pt-2 pb-2 border-bottom"
+                            data-type="{{ workflow.instance.type_name }}"
+                            data-archived="{{ 1 if workflow.instance.repo.archive else 0 }}"
+                            data-forked="{{ 1 if workflow.instance.repo.fork else 0 }}"
+                            data-name="{{ workflow.instance }}"
+                            data-repo="{{ workflow.instance.repo.name }}"
+                    >
+                        <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    {% if workflow.instance.repo.visibility == 1 %}
+                                    <i class="fa-solid fa-lock-open text-secondary" title="Public"></i>
+                                    {% elif  workflow.instance.repo.visibility == 2 %}
+                                    <i class="fa-solid fa-lock" title="Private"></i>
+                                    {% endif %}
 
-                                {% if  workflow.instance.repo.archive %}
-                                <i class="fa-solid fa-box-archive text-warning" title="Archived"></i>
-                                {% elif  workflow.instance.repo.fork %}
-                                <i class="fa-solid fa-code-fork text-secondary" title="Fork"></i>
-                                {% endif %}
-                                <a href="{{ workflow.instance.url(True) }}" class="name">{{ workflow.instance }}</a>
+                                    {% if  workflow.instance.repo.archive %}
+                                    <i class="fa-solid fa-box-archive text-warning" title="Archived"></i>
+                                    {% elif  workflow.instance.repo.fork %}
+                                    <i class="fa-solid fa-code-fork text-secondary" title="Fork"></i>
+                                    {% endif %}
+                                    <a href="{{ workflow.instance.url(True) }}" class="name">{{ workflow.instance }}</a>
+                                </div>
+                                <div class="col-1 text-end">
+                                    {% if workflow.instance.type_name == 'workflow' %}
+                                    <!-- Workflow -->
+                                    {% elif workflow.instance.type_name == 'action' %}
+                                    <i class="fa-brands fa-github" title="GitHub Action"></i>
+                                    {% elif workflow.instance.type_name == 'docker' %}
+                                    <i class="fa-brands fa-docker text-primary" title="Docker"></i>
+                                    {% endif %}
+                                </div>
                             </div>
-                            {% if workflow.instance.type_name == 'workflow' %}
-                            <!-- Workflow -->
-                            {% elif workflow.instance.type_name == 'action' %}
-                            <i class="fa-brands fa-github" title="GitHub Action"></i>
-                            {% elif workflow.instance.type_name == 'docker' %}
-                            <i class="fa-brands fa-docker text-primary" title="Docker"></i>
-                            {% endif %}
-                        </li>
-                        {% endfor %}
-                    </ul>
+                            <div class="row">
+                                <div class="col">
+                                    <span class="badge bg-secondary">jobs ({{ workflow.job_count }})</span>
+                                    <span class="badge bg-secondary">triggers ({{ workflow.triggers | length }})</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
