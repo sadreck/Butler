@@ -56,6 +56,10 @@ class WorkflowComponent(BaseComponent):
         self._type = value
 
     @property
+    def type_name(self) -> str:
+        return WorkflowType(self.type).name.lower()
+
+    @property
     def status(self) -> RepoStatus:
         return self._status or RepoStatus.NONE
 

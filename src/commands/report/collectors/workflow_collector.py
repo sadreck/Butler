@@ -44,8 +44,8 @@ class WorkflowCollector(CollectorBase):
 
         self._export(data)
         self.outputs['info'] = {
-            'workflows': data['results'].count_workflows(),
-            'actions': data['results'].count_actions(),
+            'workflows': data['results'].count('workflows'),
+            'actions': data['results'].count('actions'),
         }
         return True
 

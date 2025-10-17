@@ -1,5 +1,5 @@
-{% macro badge_filter(id, background_class, label, icon, checked) %}
-<span class="badge d-inline-flex align-items-center gap-1 p-2 {{ background_class }}">
+{% macro badge_filter(id, background_class, label, icon, checked, title="") %}
+<span class="badge d-inline-flex align-items-center gap-1 p-2 {{ background_class }}" title="{{ title }}">
     <input
             class="form-check-input m-0 align-middle filter {{ id }}"
             data-filter="{{ id }}"

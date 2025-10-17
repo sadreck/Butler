@@ -152,57 +152,69 @@ class WorkflowResults:
             return 'submodule'
         return ''
 
-    def count_repos(self) -> int:
-        return len(self._repos)
-
-    def count_workflows_and_actions(self) -> int:
-        return len(self._workflows)
-
-    def count_archived_repos(self) -> int:
-        count = 0
-        for repo in self.repos:
-            if repo['instance'].archive:
-                count += 1
-        return count
-
-    def count_forked_repos(self) -> int:
-        count = 0
-        for repo in self.repos:
-            if repo['instance'].fork:
-                count += 1
-        return count
-
-    def count_source_repos(self) -> int:
-        count = 0
-        for repo in self.repos:
-            if repo['instance'].source:
-                count += 1
-        return count
-
-    def count_workflows(self) -> int:
-        count = 0
-        for workflow in self.workflows:
-            if workflow['instance'].type == WorkflowType.WORKFLOW:
-                count += 1
-        return count
-
-    def count_actions(self) -> int:
-        count = 0
-        for workflow in self.workflows:
-            if workflow['instance'].type == WorkflowType.ACTION:
-                count += 1
-        return count
-
-    def count_docker(self) -> int:
-        count = 0
-        for workflow in self.workflows:
-            if workflow['instance'].type == WorkflowType.DOCKER:
-                count += 1
-        return count
-
-    def count_archived_workflows(self) -> int:
-        count = 0
-        for workflow in self.workflows:
-            if workflow['instance'].type == WorkflowType.WORKFLOW:
-                count += 1
-        return count
+    def count(self, what: str) -> int:
+        match what.lower():
+            case 'repos':
+                return len(self._repos)
+            case 'workflows_and_actions':
+                return len(self._workflows)
+            case 'archived':
+                count = 0
+                for repo in self.repos:
+                    if repo['instance'].archive:
+                        count += 1
+                return count
+            case 'forked':
+                count = 0
+                for repo in self.repos:
+                    if repo['instance'].fork:
+                        count += 1
+                return count
+            case 'sources':
+                count = 0
+                for repo in self.repos:
+                    if repo['instance'].source:
+                        count += 1
+                return count
+            case 'workflows':
+                count = 0
+                for workflow in self.workflows:
+                    if workflow['instance'].type == WorkflowType.WORKFLOW:
+                        count += 1
+                return count
+            case 'actions':
+                count = 0
+                for workflow in self.workflows:
+                    if workflow['instance'].type == WorkflowType.ACTION:
+                        count += 1
+                return count
+            case 'docker':
+                count = 0
+                for workflow in self.workflows:
+                    if workflow['instance'].type == WorkflowType.DOCKER:
+                        count += 1
+                return count
+            case 'archived_workflows':
+                count = 0
+                for workflow in self.workflows:
+                    if workflow['instance'].repo.archive == True:
+                        count += 1
+                return count
+            case 'forked_workflows':
+                count = 0
+                for workflow in self.workflows:
+                    if workflow['instance'].repo.fork == True:
+                        count += 1
+                return count
+            case 'private':
+                count = 0
+                for repo in self.repos:
+                    if repo['instance'].visibility == RepoVisibility.PRIVATE:
+                        count += 1
+                return count
+            case 'public':
+                count = 0
+                for repo in self.repos:
+                    if repo['instance'].visibility == RepoVisibility.PUBLIC:
+                        count += 1
+                return count
