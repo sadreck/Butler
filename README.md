@@ -11,9 +11,9 @@ Butler scans every repo for workflows, actions, secrets/variables, third-party a
 <div align="center">
 <img src="./docs/screenshots/report-index.png" alt="Report Index" width="400">
 <br>
-<img src="./docs/screenshots/report-workflows.png" alt="Report Workflows" width="300">
-<img src="./docs/screenshots/report-third-party.png" alt="Report Third-Party" width="300">
-<img src="./docs/screenshots/report-vars.png" alt="Report Variables" width="300">
+<img src="./docs/screenshots/report-workflows.png" alt="Report Workflows" width="200">
+<img src="./docs/screenshots/report-third-party.png" alt="Report Third-Party" width="200">
+<img src="./docs/screenshots/report-vars.png" alt="Report Variables" width="200">
 </div>
 
 **Examples**
