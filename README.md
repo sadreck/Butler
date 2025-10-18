@@ -20,8 +20,6 @@ Butler scans every repo for workflows, actions, secrets/variables, third-party a
 <img src="./docs/images/report-vars.png" alt="Report Variables" width="200">
 </div>
 
-**Examples**
-
 ## Usage
 
 Creating a view of an organisation consists of the following steps:
