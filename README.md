@@ -1,5 +1,7 @@
 # Butler - GitHub Actions Oversight <img src="https://img.shields.io/badge/beta-orange">
 
+<img src="./docs/images/butler.png" alt="Report Index" width="100">
+
 **30 seconds pitch**
 
 Do you know what workflows run across your GitHub org?
