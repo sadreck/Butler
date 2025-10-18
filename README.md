@@ -8,6 +8,8 @@ Do you know what workflows run across your GitHub org?
 
 Butler scans every repo for workflows, actions, secrets/variables, third-party actions, and produces HTML and CSV outputs to assist with security reviews, third-party dependency audits, and workflow management.
 
+[Click here for sample reports for organisations like GitHub, OpenAI, Docker, AWS Labs](https://sadreck.github.io/Butler/) - **not** mobile friendly.
+
 **Screenshots**
 
 <div align="center">
