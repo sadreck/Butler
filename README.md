@@ -77,3 +77,7 @@ python butler.py process --database ./github.db --threads 10 --very-verbose
 ```
 python butler.py report --database ./github.db --output ./report --repo "github"
 ```
+
+# Development Status
+
+This project is under active development, if you find any bugs or have any feature requests [please create an issue](https://github.com/sadreck/Butler/issues/new).
