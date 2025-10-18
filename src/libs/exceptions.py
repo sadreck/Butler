@@ -18,3 +18,6 @@ class MissingComponentDetails(Exception):
 
 class UnknownWorkflowType(Exception):
     pass
+
+class DatabaseVersionMismatch(DatabaseException):
+    pass

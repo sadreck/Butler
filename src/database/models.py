@@ -102,7 +102,7 @@ class VariableModel(Base):
     step_data_id = Column(Integer, default=0, index=True)
     name = Column(String, default='', index=True)
 
-class VariableValueMapping(Base):
+class VariableValueMappingModel(Base):
     __tablename__ = 'variables_value_mapping'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -110,4 +110,10 @@ class VariableValueMapping(Base):
     type_join_id = Column(Integer, default=0, index=True)
     group_type = Column(Integer, default=0, index=True)
     name = Column(String, default='', index=True)
+    value = Column(String, default='', index=True)
+
+class ConfigModel(Base):
+    __tablename__ = 'config'
+
+    name = Column(String, primary_key=True, index=True)
     value = Column(String, default='', index=True)

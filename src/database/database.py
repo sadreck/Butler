@@ -1,5 +1,6 @@
 import os
 from src.database.database_helper import DatabaseHelper
+from src.database.helpers.db_config import DBConfig
 from src.database.helpers.db_jobs import DBJob
 from src.database.helpers.db_repos import DBRepo
 from src.database.helpers.db_steps import DBStep
@@ -9,9 +10,11 @@ from src.database.models import Base
 from sqlalchemy import create_engine, Engine, text, MetaData, event
 from sqlalchemy.orm import sessionmaker
 from src.database.helpers.db_orgs import DBOrg
+from src.libs.exceptions import DatabaseVersionMismatch
 
 
 class Database(DatabaseHelper):
+    __VERSION__: str = '1.0.0'
     _engine: Engine = None
     _sessionmaker: sessionmaker = None
     _session = None
@@ -22,6 +25,7 @@ class Database(DatabaseHelper):
     _jobs: DBJob | None = None
     _steps: DBStep | None = None
     _vars: DBVars | None = None
+    _config: DBConfig | None = None
 
     _total_queries: int = 0
     _debug: bool = False
@@ -43,7 +47,7 @@ class Database(DatabaseHelper):
     def auto_commit(self) -> bool:
         return self._auto_commit
 
-    def __init__(self, sqlite_file, debug: bool = False, auto_commit: bool = False):
+    def __init__(self, sqlite_file, debug: bool = False, auto_commit: bool = False, check_version: bool = True):
         is_new_database = not os.path.exists(sqlite_file)
         self._debug = debug
         self._auto_commit = auto_commit
@@ -58,6 +62,16 @@ class Database(DatabaseHelper):
             @event.listens_for(Engine, "before_cursor_execute")
             def count_queries(conn, cursor, statement, parameters, context, executemany):
                 self._total_queries += 1
+
+        if check_version:
+            self._check_database_version(self.__VERSION__)
+
+    def _check_database_version(self, version: str) -> None:
+        current_version = self.config().get('db_version')
+        if not current_version:
+            self.config().set('db_version', version)
+        elif current_version != version:
+            raise DatabaseVersionMismatch(f"Code Database version {version} does not match existing database version {current_version}")
 
     def _create_tables(self) -> None:
         Base.metadata.create_all(self._engine)
@@ -91,6 +105,11 @@ class Database(DatabaseHelper):
         if not self._vars:
             self._vars = DBVars(self.session, self.auto_commit)
         return self._vars
+
+    def config(self) -> DBConfig:
+        if not self._config:
+            self._config = DBConfig(self.session, self.auto_commit)
+        return self._config
 
     def commit(self) -> None:
         self.session.commit()

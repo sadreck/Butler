@@ -26,7 +26,7 @@ class CommandDatabase(Command):
         }
 
     def execute(self, arguments: dict) -> bool:
-        database = Database(arguments['database'], arguments['db_debug'], arguments['db_debug_auto_commit'])
+        database = Database(arguments['database'], arguments['db_debug'], arguments['db_debug_auto_commit'], False)
 
         service = ServiceDatabase(self.log, database)
         service.purge = arguments['purge']

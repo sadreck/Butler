@@ -1,5 +1,5 @@
 from src.commands.service import Service
-from src.database.models import WorkflowDataModel, JobModel, JobDataModel, StepModel, StepDataModel, WorkflowModel, VariableModel, VariableValueMapping
+from src.database.models import WorkflowDataModel, JobModel, JobDataModel, StepModel, StepDataModel, WorkflowModel, VariableModel, VariableValueMappingModel, ConfigModel
 from src.libs.constants import WorkflowStatus
 from src.libs.exceptions import InvalidCommandLine
 
@@ -38,7 +38,8 @@ class ServiceDatabase(Service):
             StepModel.__tablename__,
             StepDataModel.__tablename__,
             VariableModel.__tablename__,
-            VariableValueMapping.__tablename__
+            VariableValueMappingModel.__tablename__,
+            ConfigModel.__tablename__,
         ]
 
         for table in tables:
