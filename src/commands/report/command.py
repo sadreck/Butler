@@ -14,11 +14,11 @@ class CommandReport(Command):
 
     @staticmethod
     def load_command_line(subparsers: any) -> None:
-        subparser = subparsers.add_parser("report", help="Generate report")
+        subparser = subparsers.add_parser("report", help="Generate Report for GitHub Organisation")
 
         subparser.add_argument("--database", default="database.db", type=str, help="Path to SQLite database to create or connect to")
         subparser.add_argument("--repo", required=True, default='', type=str, help="Repo to generate report from")
-        subparser.add_argument("--output-path", required=True, default='', type=str, help="Location to store output files")
+        subparser.add_argument("--output", required=True, default='', type=str, help="Location to store output files")
         subparser.add_argument("--format", default='csv,html', type=str, help=f"Comma separated output supported formats: {CommandReport._supported_formats}")
         subparser.add_argument("--config", default=None, type=str, help="Configuration file (defaults to default_config.yaml)")
 
@@ -28,7 +28,7 @@ class CommandReport(Command):
         return {
             # Strip, remove empty, and duplicates.
             'database': '' if arguments.database is None or len(arguments.database.strip()) == 0 else os.path.realpath(arguments.database.strip()),
-            'output_path': '' if arguments.output_path is None or len(arguments.output_path.strip()) == 0 else os.path.realpath(arguments.output_path.strip()),
+            'output': '' if arguments.output is None or len(arguments.output.strip()) == 0 else os.path.realpath(arguments.output.strip()),
             'repo': '' if arguments.repo is None or len(arguments.repo.strip()) == 0 else arguments.repo.strip(),
             'config': '' if arguments.config is None else os.path.realpath(arguments.config.strip()),
             'format': [] if arguments.format is None else [f.lower() for f in Utils.strip_and_clean_list(arguments.format.split(","))],
@@ -43,7 +43,7 @@ class CommandReport(Command):
         elif not os.path.isfile(arguments['database']):
             raise InvalidCommandLine(f"--database does not exist: {arguments['database']}")
 
-        if len(arguments['output_path']) == 0:
+        if len(arguments['output']) == 0:
             raise InvalidCommandLine(f"--output-path cannot be empty")
 
         if arguments['config'] is None or len(arguments['config']) == 0:
@@ -66,7 +66,7 @@ class CommandReport(Command):
         database = Database(arguments['database'], arguments['db_debug'], arguments['db_debug_auto_commit'])
 
         service = ServiceReport(self.log, database)
-        service.output_path = arguments['output_path']
+        service.output_path = arguments['output']
         service.repo = arguments['repo']
         service.config = arguments['config']
         service.export_formats = arguments['format']

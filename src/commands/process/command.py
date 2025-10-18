@@ -11,7 +11,7 @@ class CommandProcess(Command):
 
     @staticmethod
     def load_command_line(subparsers: any) -> None:
-        subparser = subparsers.add_parser("process", help="Process downloaded workflows")
+        subparser = subparsers.add_parser("process", help="Process Downloaded Workflows")
 
         subparser.add_argument("--database", default="database.db", type=str, help="Path to SQLite database to create or connect to")
         subparser.add_argument("--threads", default=1, type=int, help="Enable multithreading")

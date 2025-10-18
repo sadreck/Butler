@@ -37,7 +37,8 @@ class GitHubClient:
         fork_repos = 0
         archived_repos = 0
         count = 0
-        url = f'/orgs/{account_name}/repos'
+        account_type = 'orgs' if account_type == 'organization' else 'users'
+        url = f'/{account_type}/{account_name}/repos'
         while True:
             response_headers = {}
             try:

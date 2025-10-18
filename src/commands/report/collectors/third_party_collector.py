@@ -11,14 +11,14 @@ class ThirdPartyCollector(CollectorBase):
     def generate_output_paths(self):
         self.outputs['html']['actions'] = {
             'title': 'Actions',
-            'path': os.path.join(self.output_path, f'{self.org.name}-third-party-actions.html'),
-            'file': f'{self.org.name}-third-party-actions.html'
+            'path': os.path.join(self.output_path, f'third-party-actions.html'),
+            'file': f'third-party-actions.html'
         }
 
         self.outputs['csv']['actions'] = {
             'title': 'Actions',
-            'path': os.path.join(self.output_path, f'{self.org.name}-third-party-actions.csv'),
-            'file': f'{self.org.name}-third-party-actions.csv'
+            'path': os.path.join(self.output_path, f'third-party-actions.csv'),
+            'file': f'third-party-actions.csv'
         }
 
     def run(self) -> bool:

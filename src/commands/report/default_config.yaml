@@ -45,7 +45,6 @@ trusted-orgs:
   - actions
   - advanced-security
   - github
-  - docker
 
 deprecated-actions:
   - actions/cache@v1

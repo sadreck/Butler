@@ -10,20 +10,20 @@ class VariableCollector(CollectorBase):
     def generate_output_paths(self):
         self.outputs['html']['variables'] = {
             'title': 'Variables',
-            'path': os.path.join(self.output_path, f'{self.org.name}-variables.html'),
-            'file': f'{self.org.name}-variables.html'
+            'path': os.path.join(self.output_path, f'variables.html'),
+            'file': f'variables.html'
         }
 
         self.outputs['csv']['variables'] = {
             'title': 'Variables and Secrets',
-            'path': os.path.join(self.output_path, f'{self.org.name}-variables.csv'),
-            'file': f'{self.org.name}-variables.csv'
+            'path': os.path.join(self.output_path, f'variables.csv'),
+            'file': f'variables.csv'
         }
 
         self.outputs['csv']['variables-workflows'] = {
             'title': 'Variables and Secrets Workflows',
-            'path': os.path.join(self.output_path, f'{self.org.name}-variables-workflows.csv'),
-            'file': f'{self.org.name}-variables-workflows.csv'
+            'path': os.path.join(self.output_path, f'variables-workflows.csv'),
+            'file': f'variables-workflows.csv'
         }
 
     def run(self) -> bool:

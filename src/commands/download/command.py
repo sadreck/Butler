@@ -11,7 +11,7 @@ from src.github.client import GitHubClient
 class CommandDownload(Command):
     @staticmethod
     def load_command_line(subparsers: any) -> None:
-        subparser = subparsers.add_parser("download", help="Download workflows")
+        subparser = subparsers.add_parser("download", help="Download Workflows from GitHub")
 
         subparser.add_argument("--repo", action="append", type=str, help="Target formatted as: org, org/name, or org/name@branch. To load targets from file use an absolute path or a path starting with ./")
         subparser.add_argument("--workflow", action="append", type=str, help="Download specific workflows, extension is optional")

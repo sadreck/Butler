@@ -11,14 +11,14 @@ class WorkflowCollector(CollectorBase):
     def generate_output_paths(self):
         self.outputs['html']['workflows'] = {
             'title': 'Workflows',
-            'path': os.path.join(self.output_path, f'{self.org.name}-workflows.html'),
-            'file': f'{self.org.name}-workflows.html'
+            'path': os.path.join(self.output_path, f'workflows.html'),
+            'file': f'workflows.html'
         }
 
         self.outputs['csv']['workflows'] = {
             'title': 'Workflows',
-            'path': os.path.join(self.output_path, f'{self.org.name}-workflows.csv'),
-            'file': f'{self.org.name}-workflows.csv'
+            'path': os.path.join(self.output_path, f'workflows.csv'),
+            'file': f'workflows.csv'
         }
 
     def run(self) -> bool:

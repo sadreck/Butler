@@ -10,20 +10,20 @@ class RunnerCollector(CollectorBase):
     def generate_output_paths(self):
         self.outputs['html']['runners'] = {
             'title': 'Runners',
-            'path': os.path.join(self.output_path, f'{self.org.name}-runners.html'),
-            'file': f'{self.org.name}-runners.html'
+            'path': os.path.join(self.output_path, f'runners.html'),
+            'file': f'runners.html'
         }
 
         self.outputs['csv']['runners'] = {
             'title': 'Runners',
-            'path': os.path.join(self.output_path, f'{self.org.name}-runners.csv'),
-            'file': f'{self.org.name}-runners.csv'
+            'path': os.path.join(self.output_path, f'runners.csv'),
+            'file': f'runners.csv'
         }
 
         self.outputs['csv']['runners-workflows'] = {
             'title': 'Runners Workflows',
-            'path': os.path.join(self.output_path, f'{self.org.name}-runners-workflows.csv'),
-            'file': f'{self.org.name}-runners-workflows.csv'
+            'path': os.path.join(self.output_path, f'runners-workflows.csv'),
+            'file': f'runners-workflows.csv'
         }
 
     def run(self) -> bool:

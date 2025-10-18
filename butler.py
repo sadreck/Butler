@@ -7,6 +7,7 @@ from src.libs.exceptions import InvalidCommandLine
 from src.commands.download.command import CommandDownload
 
 
+__VERSION__ = '0.9.0 Beta'
 commands = {
     'download': CommandDownload,
     'database': CommandDatabase,
@@ -14,7 +15,7 @@ commands = {
     'report': CommandReport,
 }
 
-parser = argparse.ArgumentParser(prog="butler", description="GitHub Actions Butler")
+parser = argparse.ArgumentParser(prog="butler", description=f"Butler - GitHub Actions Oversight v{__VERSION__}")
 subparsers = parser.add_subparsers(dest="command")
 
 for name, command in commands.items():

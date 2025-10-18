@@ -10,7 +10,7 @@ class CommandDatabase(Command):
 
     @staticmethod
     def load_command_line(subparsers: any) -> None:
-        subparser = subparsers.add_parser("database", help="Database Functions")
+        subparser = subparsers.add_parser("database", help="Manage Existing Databases")
 
         subparser.add_argument("--database", default="database.db", type=str, help="Path to SQLite database to create or connect to")
         subparser.add_argument("--purge", default=False, action="store_true", help="Purge entire database")

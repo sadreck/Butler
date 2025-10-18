@@ -352,7 +352,7 @@ class ServiceDownload(Service, DownloadHelper):
             return True
 
         try:
-            self.log.debug(f"Validating repo {repo}")
+            self.log.info(f"Validating repo {repo}")
             self.github_client.fulfill_component(repo)
 
             with self.lock:
