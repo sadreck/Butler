@@ -43,4 +43,5 @@ class ServiceReport(Service):
         index_generator.generated_outputs = outputs
         index_generator.run()
 
+        self.log.success(f"Report generated and saved at {index_generator.outputs['html']}")
         return True

@@ -135,6 +135,18 @@
                 RunnerManager.filter(null);
                 return false;
             });
+
+            this.clear();
+        },
+
+        clear: function() {
+            $('.filter').each(function() {
+                $(this).prop('checked', true);
+            });
+
+            $('.search').each(function() {
+                $(this).val('');
+            });
         },
 
         filter: function(element) {

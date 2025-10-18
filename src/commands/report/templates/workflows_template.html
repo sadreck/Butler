@@ -236,6 +236,18 @@
                 WorkflowManager.filter(null);
                 return false;
             });
+
+            this.clear();
+        },
+
+        clear: function() {
+            $('.filter').each(function() {
+                $(this).prop('checked', true);
+            });
+
+            $('.search').each(function() {
+                $(this).val('');
+            });
         },
 
         filter: function(element) {
@@ -287,7 +299,7 @@
             let searchFor = $('#container-workflows .search').val().toLowerCase();
             if (searchFor.length > 0) {
                 $('#container-workflows .workflow').each(function() {
-                    if (!$(this).data('name').includes(searchFor)) {
+                    if (!$(this).data('name').toLowerCase().includes(searchFor)) {
                         $(this).addClass('d-none');
                     }
                 });
@@ -349,7 +361,7 @@
             let searchFor = $('#container-repos .search').val().toLowerCase();
             if (searchFor.length > 0) {
                 $('#container-repos .repo').each(function() {
-                    if (!$(this).data('name').includes(searchFor)) {
+                    if (!$(this).data('name').toLowerCase().includes(searchFor)) {
                         $(this).addClass('d-none');
                     }
                 });
@@ -365,7 +377,7 @@
 
             $('#container-workflows .workflow').each(function() {
                 let name = $(this).data('repo');
-                if (name === repo_name) {
+                if (name.toLowerCase() === repo_name.toLowerCase()) {
                     $(this).removeClass('d-none');
                 }
             });
