@@ -71,7 +71,7 @@ def mock_handle_get_requests(url, *args, **kwargs):
 
 @pytest.fixture
 def database():
-    db_file = os.path.join(tempfile.gettempdir(), 'tests.sqlite3')
+    db_file = os.path.join(tempfile.gettempdir(), 'tests.db')
     database = Database(db_file)
 
     yield database

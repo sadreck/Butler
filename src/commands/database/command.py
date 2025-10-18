@@ -12,7 +12,7 @@ class CommandDatabase(Command):
     def load_command_line(subparsers: any) -> None:
         subparser = subparsers.add_parser("database", help="Database Functions")
 
-        subparser.add_argument("--database", default="database.sqlite3", type=str, help="Path to SQLite database to create or connect to")
+        subparser.add_argument("--database", default="database.db", type=str, help="Path to SQLite database to create or connect to")
         subparser.add_argument("--purge", default=False, action="store_true", help="Purge entire database")
         subparser.add_argument("--reprocess", default=False, action="store_true", help="Reset all processed data")
 

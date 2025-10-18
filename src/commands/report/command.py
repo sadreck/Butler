@@ -16,7 +16,7 @@ class CommandReport(Command):
     def load_command_line(subparsers: any) -> None:
         subparser = subparsers.add_parser("report", help="Generate report")
 
-        subparser.add_argument("--database", default="database.sqlite3", type=str, help="Path to SQLite database to create or connect to")
+        subparser.add_argument("--database", default="database.db", type=str, help="Path to SQLite database to create or connect to")
         subparser.add_argument("--repo", required=True, default='', type=str, help="Repo to generate report from")
         subparser.add_argument("--output-path", required=True, default='', type=str, help="Location to store output files")
         subparser.add_argument("--format", default='csv,html', type=str, help=f"Comma separated output supported formats: {CommandReport._supported_formats}")
@@ -38,8 +38,8 @@ class CommandReport(Command):
         # Validate database.
         if len(arguments['database']) == 0:
             raise InvalidCommandLine(f"--database cannot be empty")
-        elif not arguments['database'].lower().endswith('.sqlite3'):
-            raise InvalidCommandLine(f"--database {arguments['database']} is not a SQLite database (must end with .sqlite3)")
+        elif not arguments['database'].lower().endswith('.sqlite3') and not arguments['database'].lower().endswith('.db'):
+            raise InvalidCommandLine(f"--database {arguments['database']} is not a SQLite database (must end with .sqlite3 or .db)")
         elif not os.path.isfile(arguments['database']):
             raise InvalidCommandLine(f"--database does not exist: {arguments['database']}")
 

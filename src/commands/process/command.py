@@ -13,7 +13,7 @@ class CommandProcess(Command):
     def load_command_line(subparsers: any) -> None:
         subparser = subparsers.add_parser("process", help="Process downloaded workflows")
 
-        subparser.add_argument("--database", default="database.sqlite3", type=str, help="Path to SQLite database to create or connect to")
+        subparser.add_argument("--database", default="database.db", type=str, help="Path to SQLite database to create or connect to")
         subparser.add_argument("--threads", default=1, type=int, help="Enable multithreading")
 
         Command.define_shared_arguments(subparser)
@@ -29,8 +29,8 @@ class CommandProcess(Command):
         # Validate database.
         if len(arguments['database']) == 0:
             raise InvalidCommandLine(f"--database cannot be empty")
-        elif not arguments['database'].lower().endswith('.sqlite3'):
-            raise InvalidCommandLine(f"--database {arguments['database']} is not a SQLite database (must end with .sqlite3)")
+        elif not arguments['database'].lower().endswith('.sqlite3') and not arguments['database'].lower().endswith('.db'):
+            raise InvalidCommandLine(f"--database {arguments['database']} is not a SQLite database (must end with .sqlite3 or .db)")
         elif not os.path.isfile(arguments['database']):
             raise InvalidCommandLine(f"--database does not exist: {arguments['database']}")
 

@@ -15,7 +15,7 @@ class CommandDownload(Command):
 
         subparser.add_argument("--repo", action="append", type=str, help="Target formatted as: org, org/name, or org/name@branch. To load targets from file use an absolute path or a path starting with ./")
         subparser.add_argument("--workflow", action="append", type=str, help="Download specific workflows, extension is optional")
-        subparser.add_argument("--database", default="database.sqlite3", type=str, help="Path to SQLite database to create or connect to")
+        subparser.add_argument("--database", default="database.db", type=str, help="Path to SQLite database to create or connect to")
         subparser.add_argument("--resume-next", default=True, action="store_true", help="Resume downloads on server errors")
         subparser.add_argument("--all-branches", default=False, action="store_true", help="Download all branches, only works with --repo")
         subparser.add_argument("--all-tags", default=False, action="store_true", help="Download all tags, only works with --repo")
@@ -67,8 +67,8 @@ class CommandDownload(Command):
         # Validate database.
         if len(arguments['database']) == 0:
             raise InvalidCommandLine(f"--database cannot be empty")
-        elif not arguments['database'].lower().endswith('.sqlite3'):
-            raise InvalidCommandLine(f"--database {arguments['database']} is not a SQLite database (must end with .sqlite3)")
+        elif not arguments['database'].lower().endswith('.sqlite3') and not arguments['database'].lower().endswith('.db'):
+            raise InvalidCommandLine(f"--database {arguments['database']} is not a SQLite database (must end with .sqlite3 or .db)")
 
         if arguments['threads'] <= 0:
             arguments['threads'] = 1
