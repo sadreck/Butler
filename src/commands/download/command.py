@@ -21,6 +21,7 @@ class CommandDownload(Command):
         subparser.add_argument("--all-tags", default=False, action="store_true", help="Download all tags, only works with --repo")
         subparser.add_argument("--include-forks", default=False, action="store_true", help="Include forked repos when --repo is an org")
         subparser.add_argument("--include-archived", default=False, action="store_true", help="Include archived repos when --repo is an org")
+        subparser.add_argument("--all-repos", default=False, action="store_true", help="Download all repos, including archived and forks")
         subparser.add_argument("--threads", default=1, type=int, help="Enable multithreading")
 
         Command.define_shared_arguments(subparser)
@@ -36,6 +37,7 @@ class CommandDownload(Command):
             'all_tags': arguments.all_tags or False,
             'include_forks': arguments.include_forks or False,
             'include_archived': arguments.include_archived or False,
+            'all_repos': arguments.all_repos or False,
             'threads': int(arguments.threads),
         }
 
@@ -72,6 +74,10 @@ class CommandDownload(Command):
 
         if arguments['threads'] <= 0:
             arguments['threads'] = 1
+
+        if arguments['all_repos']:
+            arguments['include_forks'] = True
+            arguments['include_archived'] = True
 
     def execute(self, arguments: dict) -> bool:
         database = Database(arguments['database'], arguments['db_debug'], arguments['db_debug_auto_commit'])

@@ -44,7 +44,7 @@ export GITHUB_TOKEN=ghp_wpB...
 ### Download
 
 ```
-python butler.py download --repo "github" --database ./github.db --threads 10 --include-forks --include-archived --very-verbose
+python butler.py download --repo "github" --database ./github.db --threads 10 --all-repos --very-verbose
 ```
 
 #### Using multiple GitHub tokens
