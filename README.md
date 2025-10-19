@@ -2,7 +2,7 @@
 
 <img src="./docs/images/butler.png" alt="Report Index" width="100">
 
-**30 seconds pitch**
+**30-second pitch**
 
 Do you know what workflows run across your GitHub org?
 
