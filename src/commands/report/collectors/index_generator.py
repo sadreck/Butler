@@ -14,10 +14,10 @@ class IndexGenerator(CollectorBase):
 
         data = {
             'org': self.org.name,
-            'workflows': self.generated_outputs['workflows'],
-            'third_party': self.generated_outputs['third_party'],
-            'variables': self.generated_outputs['variables'],
-            'runners': self.generated_outputs['runners'],
+            'workflows': self.generated_outputs.get('workflows', None),
+            'third_party': self.generated_outputs.get('third_party', None),
+            'variables': self.generated_outputs.get('variables', None),
+            'runners': self.generated_outputs.get('runners', None),
         }
 
         self.render('index', self.org.name, data, self.outputs['html'])
