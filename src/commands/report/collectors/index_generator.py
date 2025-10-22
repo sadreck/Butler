@@ -18,6 +18,7 @@ class IndexGenerator(CollectorBase):
             'third_party': self.generated_outputs.get('third_party', None),
             'variables': self.generated_outputs.get('variables', None),
             'runners': self.generated_outputs.get('runners', None),
+            'errors': self.generated_outputs.get('errors', None),
         }
 
         self.render('index', self.org.name, data, self.outputs['html'])

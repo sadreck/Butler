@@ -4,6 +4,7 @@ from src.commands.report.collectors.runner_collector import RunnerCollector
 from src.commands.report.collectors.third_party_collector import ThirdPartyCollector
 from src.commands.report.collectors.variable_collector import VariableCollector
 from src.commands.report.collectors.workflow_collector import WorkflowCollector
+from src.commands.report.collectors.error_collector import ErrorCollector
 from src.commands.service import Service
 from src.github.exceptions import OrgNotFound
 from src.libs.components.org import OrgComponent
@@ -27,10 +28,11 @@ class ServiceReport(Service):
         org = OrgComponent.from_model(db_org)
 
         collectors = [
-            WorkflowCollector,
-            ThirdPartyCollector,
-            VariableCollector,
-            RunnerCollector,
+            # WorkflowCollector,
+            # ThirdPartyCollector,
+            # VariableCollector,
+            # RunnerCollector,
+            ErrorCollector,
         ]
 
         outputs = {}

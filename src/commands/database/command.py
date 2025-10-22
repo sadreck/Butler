@@ -15,6 +15,7 @@ class CommandDatabase(Command):
         subparser.add_argument("--database", default="database.db", type=str, help="Path to SQLite database to create or connect to")
         subparser.add_argument("--purge", default=False, action="store_true", help="Purge entire database")
         subparser.add_argument("--reprocess", default=False, action="store_true", help="Reset all processed data")
+        subparser.add_argument("--list-orgs", default=False, action="store_true", help="List downloaded orgs")
 
         Command.define_shared_arguments(subparser)
 
@@ -22,7 +23,8 @@ class CommandDatabase(Command):
         return {
             'database': '' if arguments.database is None or len(arguments.database.strip()) == 0 else os.path.realpath(arguments.database.strip()),
             'purge': arguments.purge or False,
-            'reprocess': arguments.reprocess or False
+            'reprocess': arguments.reprocess or False,
+            'list_orgs': arguments.list_orgs or False,
         }
 
     def execute(self, arguments: dict) -> bool:
@@ -31,4 +33,5 @@ class CommandDatabase(Command):
         service = ServiceDatabase(self.log, database)
         service.purge = arguments['purge']
         service.reprocess = arguments['reprocess']
+        service.list_orgs = arguments['list_orgs']
         return service.run()

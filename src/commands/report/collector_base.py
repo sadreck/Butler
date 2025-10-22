@@ -83,3 +83,21 @@ class CollectorBase:
             writer.writerows(rows)
 
         return None
+
+    def get_caller_workflows(self, workflow_id: int) -> list:
+        sql = "SELECT parent_id FROM workflow_tree WHERE child_id = :child_id"
+
+        workflows = []
+        results = self.database.select(sql, {'child_id': workflow_id})
+        for result in results:
+            workflow = self.database.get_full_workflow_from_id(result['parent_id'])
+            if workflow:
+                workflows.append(workflow)
+        return workflows
+
+    def extract_result_dict(self, data: dict, prefix: str) -> dict:
+        return {
+            key.replace(prefix, "", 1): value
+            for key, value in data.items()
+            if key.startswith(prefix)
+        }

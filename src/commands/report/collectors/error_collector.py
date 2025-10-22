@@ -1,107 +1,188 @@
 import os
-from src.commands.report.helpers.error_results import ErrorResults
+# from src.commands.report.helpers.error_results import ErrorResults
 from src.commands.report.collector_base import CollectorBase
+from src.commands.report.helpers.error_results import ErrorResults
 from src.libs.components.workflow import WorkflowComponent
 from src.libs.constants import WorkflowStatus
 
 
 class ErrorCollector(CollectorBase):
+    _shortname = 'errors'
+
+    def generate_output_paths(self):
+        self.outputs['html']['errors'] = {
+            'title': 'Errors',
+            'path': os.path.join(self.output_path, f'errors.html'),
+            'file': f'errors.html'
+        }
+
     def run(self) -> bool:
         data = {
             'org': self.org.name,
-            'results': ErrorResults(),
+            'results': ErrorResults()
         }
-        output_file = os.path.join(self.output_path, 'errors.html')
+        """
+        [ ] Missing tags/branches/commits.
+        [ ] Repos that don't exist.
+        [ ] Invalid yaml files.
+        [ ] Workflows that don't exist.
+        """
+        self.log.info("Searching for missing actions")
+        missing_actions = self._get_missing_actions(self.org.id)
 
-        self.log.info('Searching for errors')
-        error_results = self._get_errors(self.org.id)
+        self.log.info("Searching for actions with errors")
+        error_actions = self._get_error_actions(self.org.id)
 
-        self.log.info(f"Processing {len(error_results)} results")
-        for result in error_results:
-            parent_dict = {
-                key.replace("parent_", "", 1): value
-                for key, value in result.items()
-                if key.startswith("parent_")
-            }
-            workflow_error = WorkflowComponent.from_dict(result, False)
-            workflow_parent = WorkflowComponent.from_dict(parent_dict, False)
+        self.log.info(f"Processing {len(missing_actions)} calls to missing actions")
+        for result in missing_actions:
+            missing_dict = self.extract_result_dict(result, "missing_")
+            missing_workflow = WorkflowComponent.from_dict(missing_dict, False)
+            workflow = WorkflowComponent.from_dict(result, True)
 
-            instance = data['results'].get_or_create(workflow_error, workflow_parent)
+            instance = data['results'].add_missing_workflow(workflow, missing_workflow)
 
-        self.log.info(f"Rendering output to {output_file}")
-        output = self.render('error', 'Errors', data, output_file)
+        self.log.info(f"Processing {len(error_actions)} calls to actions with errors")
+        for result in error_actions:
+            error_dict = self.extract_result_dict(result, "error_")
+            error_workflow = WorkflowComponent.from_dict(error_dict, False)
+            workflow = WorkflowComponent.from_dict(result, True)
+
+            instance = data['results'].add_error_workflow(workflow, error_workflow)
+
+
+        self._export(data)
         return True
 
-    def _get_errors(self, org_id: int) -> list:
-        sql = f"""
-            SELECT
-                o.id			AS org_id,
-                o.name			AS org_name,
-                r.id			AS repo_id,
-                r.visibility	AS repo_visibility,
-                r.name			AS repo_name,
-                r.ref			AS repo_ref,
-                r.ref_type		AS repo_ref_type,
-                r.ref_commit	AS repo_ref_commit,
-                r.resolved_ref	AS repo_resolved_ref,
-                r.resolved_ref_type	AS repo_resolved_ref_type,
-                r.status		AS repo_status,
-                r.poll_status	AS repo_poll_status,
-                r.redirect_id	AS repo_redirect_id,
-                r.stars         AS repo_stars,
-                r.fork          AS repo_fork,
-                r.archive		AS repo_archive,
-                w.id			AS workflow_id,
-                w.redirect_id	AS workflow_redirect_id,
-                w.path			AS workflow_path,
-                w.type			AS workflow_type,
-                w.status		AS workflow_status,
-                
-                o2.id			AS parent_org_id,
-                o2.name			AS parent_org_name,
-                r2.id			AS parent_repo_id,
-                r2.visibility	AS parent_repo_visibility,
-                r2.name			AS parent_repo_name,
-                r2.ref			AS parent_repo_ref,
-                r2.ref_type		AS parent_repo_ref_type,
-                r2.resolved_ref	AS parent_repo_resolved_ref,
-                r2.resolved_ref_type	AS parent_repo_resolved_ref_type,
-                r2.ref_commit	AS parent_repo_ref_commit,
-                r2.status		AS parent_repo_status,
-                r2.poll_status	AS parent_repo_poll_status,
-                r2.redirect_id	AS parent_repo_redirect_id,
-                r2.stars        AS parent_repo_stars,
-                r2.fork         AS parent_repo_fork,
-                r2.archive		AS parent_repo_archive,
-                w2.id			AS parent_workflow_id,
-                w2.redirect_id	AS parent_workflow_redirect_id,
-                w2.path			AS parent_workflow_path,
-                w2.type			AS parent_workflow_type,
-                w2.status		AS parent_workflow_status
-            FROM workflows w
-            JOIN repositories r ON r.id = w.repo_id
-            JOIN organisations o ON o.id = r.org_id
-            JOIN (
-                WITH RECURSIVE transitive(parent_id, child_id, depth) AS (
-                  SELECT parent_id, child_id, 1
-                  FROM workflow_relationships
-                  UNION
-                  SELECT t.parent_id, wr.child_id, t.depth + 1
-                  FROM transitive AS t
-                  JOIN workflow_relationships AS wr
-                    ON wr.parent_id = t.child_id
-                )
-                SELECT parent_id, child_id, depth
-                FROM transitive
-                ORDER BY parent_id
-            ) wr ON wr.child_id = w.id
-            JOIN workflows w2 ON w2.id = wr.parent_id
-            JOIN repositories r2 ON r2.id = w2.repo_id
-            JOIN organisations o2 ON o2.id = r2.org_id
-            WHERE
-                w.status IN(:error, :missing)
-                AND o2.id = :org_id
-                AND NOT (LOWER(o.name) = 'github' AND LOWER(w.path) LIKE 'action/%')
-        """
+    def _export(self, data: dict) -> None:
+        if 'html' in self.outputs:
+            html_file = self.outputs['html']['errors']['path']
+            self.log.info(f"Saving HTML output to {html_file}")
+            self.render('errors', 'Errors', data, html_file)
 
-        return self.database.select(sql, {'org_id': org_id, 'error': WorkflowStatus.ERROR, 'missing': WorkflowStatus.MISSING})
+    def _get_error_actions(self, org_id: int) -> list:
+        sql = """
+            SELECT
+                o.id			AS error_org_id,
+                o.name			AS error_org_name,
+                r.id			AS error_repo_id,
+                r.visibility	AS error_repo_visibility,
+                r.name			AS error_repo_name,
+                r.ref			AS error_repo_ref,
+                r.ref_type		AS error_repo_ref_type,
+                r.resolved_ref	AS error_repo_resolved_ref,
+                r.resolved_ref_type	AS error_repo_resolved_ref_type,
+                r.ref_commit	AS error_repo_ref_commit,
+                r.status		AS error_repo_status,
+                r.poll_status	AS error_repo_poll_status,
+                r.redirect_id	AS error_repo_redirect_id,
+                r.stars         AS error_repo_stars,
+                r.fork          AS error_repo_fork,
+                r.archive		AS error_repo_archive,
+                w.id			AS error_workflow_id,
+                w.redirect_id	AS error_workflow_redirect_id,
+                w.path			AS error_workflow_path,
+                w.type			AS error_workflow_type,
+                w.status		AS error_workflow_status,
+                
+                o2.id			AS org_id,
+                o2.name			AS org_name,
+                r2.id			AS repo_id,
+                r2.visibility	AS repo_visibility,
+                r2.name			AS repo_name,
+                r2.ref			AS repo_ref,
+                r2.ref_type		AS repo_ref_type,
+                r2.resolved_ref	AS repo_resolved_ref,
+                r2.resolved_ref_type	AS repo_resolved_ref_type,
+                r2.ref_commit	AS repo_ref_commit,
+                r2.status		AS repo_status,
+                r2.poll_status	AS repo_poll_status,
+                r2.redirect_id	AS repo_redirect_id,
+                r2.stars         AS repo_stars,
+                r2.fork          AS repo_fork,
+                r2.archive		AS repo_archive,
+                w2.id			AS workflow_id,
+                w2.redirect_id	AS workflow_redirect_id,
+                w2.path			AS workflow_path,
+                w2.type			AS workflow_type,
+                w2.status		AS workflow_status,
+                w2.contents     AS workflow_contents,
+                w2.data			AS workflow_data
+            FROM workflows      w
+            JOIN repositories   r ON r.id = w.repo_id
+            JOIN organisations  o ON o.id = r.org_id
+            JOIN workflow_tree  wt ON wt.child_id = w.id
+            JOIN workflows      w2 ON w2.id = wt.parent_id
+            JOIN repositories   r2 ON r2.id = w2.repo_id
+            JOIN organisations  o2 ON o2.id = r2.org_id
+            WHERE
+                w.status = :error
+                AND o.name != '_'
+                AND o.name NOT LIKE '%/%'
+                AND NOT (o.name = 'github' AND r.name = 'codeql-action')
+                AND o2.id = :org_id
+        """
+        return self.database.select(sql, {'error': WorkflowStatus.ERROR, 'org_id': org_id})
+
+    def _get_missing_actions(self, org_id: int) -> list:
+        sql = """
+            SELECT
+                o.id			AS missing_org_id,
+                o.name			AS missing_org_name,
+                r.id			AS missing_repo_id,
+                r.visibility	AS missing_repo_visibility,
+                r.name			AS missing_repo_name,
+                r.ref			AS missing_repo_ref,
+                r.ref_type		AS missing_repo_ref_type,
+                r.resolved_ref	AS missing_repo_resolved_ref,
+                r.resolved_ref_type	AS missing_repo_resolved_ref_type,
+                r.ref_commit	AS missing_repo_ref_commit,
+                r.status		AS missing_repo_status,
+                r.poll_status	AS missing_repo_poll_status,
+                r.redirect_id	AS missing_repo_redirect_id,
+                r.stars         AS missing_repo_stars,
+                r.fork          AS missing_repo_fork,
+                r.archive		AS missing_repo_archive,
+                w.id			AS missing_workflow_id,
+                w.redirect_id	AS missing_workflow_redirect_id,
+                w.path			AS missing_workflow_path,
+                w.type			AS missing_workflow_type,
+                w.status		AS missing_workflow_status,
+                
+                o2.id			AS org_id,
+                o2.name			AS org_name,
+                r2.id			AS repo_id,
+                r2.visibility	AS repo_visibility,
+                r2.name			AS repo_name,
+                r2.ref			AS repo_ref,
+                r2.ref_type		AS repo_ref_type,
+                r2.resolved_ref	AS repo_resolved_ref,
+                r2.resolved_ref_type	AS repo_resolved_ref_type,
+                r2.ref_commit	AS repo_ref_commit,
+                r2.status		AS repo_status,
+                r2.poll_status	AS repo_poll_status,
+                r2.redirect_id	AS repo_redirect_id,
+                r2.stars         AS repo_stars,
+                r2.fork          AS repo_fork,
+                r2.archive		AS repo_archive,
+                w2.id			AS workflow_id,
+                w2.redirect_id	AS workflow_redirect_id,
+                w2.path			AS workflow_path,
+                w2.type			AS workflow_type,
+                w2.status		AS workflow_status,
+                w2.contents     AS workflow_contents,
+                w2.data			AS workflow_data
+            FROM workflows      w
+            JOIN repositories   r ON r.id = w.repo_id
+            JOIN organisations  o ON o.id = r.org_id
+            JOIN workflow_tree  wt ON wt.child_id = w.id
+            JOIN workflows      w2 ON w2.id = wt.parent_id
+            JOIN repositories   r2 ON r2.id = w2.repo_id
+            JOIN organisations  o2 ON o2.id = r2.org_id
+            WHERE
+                w.status = :missing
+                AND o.name != '_'
+                AND o.name NOT LIKE '%/%'
+                AND NOT (o.name = 'github' AND r.name = 'codeql-action')
+                AND o2.id = :org_id
+        """
+        return self.database.select(sql, {'missing': WorkflowStatus.MISSING, 'org_id': org_id})

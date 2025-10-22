@@ -87,6 +87,14 @@ class WorkflowComponent(BaseComponent):
     def data_string(self) -> str:
         return json.dumps(self.data) if self.data else ''
 
+    @property
+    def name(self) -> str:
+        name = str(self.repo)
+        if len(self.path) > 0:
+            name += f'/{self.path}'
+        name += '' if len(self.repo.ref) == 0 else f"@{self.repo.ref}"
+        return name
+
     def __init__(self, name: str):
         info = self._parse_component(name)
         self._repo = RepoComponent(name)
@@ -131,11 +139,7 @@ class WorkflowComponent(BaseComponent):
         return f'https://github.com/{self.repo.org.name}/{self.repo.name}/blob/{self.repo.ref}/{self.path}'
 
     def __str__(self) -> str:
-        name = str(self.repo)
-        if len(self.path) > 0:
-            name += f'/{self.path}'
-        name += '' if len(self.repo.ref) == 0 else f"@{self.repo.ref}"
-        return name
+        return self.name
 
     def action_name(self) -> str:
         name = str(self.repo)
