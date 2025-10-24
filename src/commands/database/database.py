@@ -52,8 +52,8 @@ class ServiceDatabase(Service):
             self.database.commit()
 
         self.log.info("Updating workflow statuses")
-        sql = f"UPDATE {WorkflowModel.__tablename__} SET status = :new_status WHERE status = :old_status"
-        self.database.execute(sql, {'new_status': WorkflowStatus.DOWNLOADED, 'old_status': WorkflowStatus.PROCESSED})
+        sql = f"UPDATE {WorkflowModel.__tablename__} SET status = :new_status WHERE status = :old_status OR status = :error"
+        self.database.execute(sql, {'new_status': WorkflowStatus.DOWNLOADED, 'old_status': WorkflowStatus.PROCESSED, 'error': WorkflowStatus.ERROR})
         self.database.commit()
 
         return True

@@ -135,7 +135,7 @@ class Utils:
         Utils.wait_for_threads(threads, True)
 
     @staticmethod
-    def load_yaml(text: str, treat_as_text: bool = True) -> dict | None:
+    def load_yaml(text: str, treat_as_text: bool = True, debug: dict = None) -> dict | None:
         # https://stackoverflow.com/a/36463915
         def add_bool(self, node):
             return self.construct_scalar(node)
@@ -151,6 +151,8 @@ class Utils:
         try:
             return yaml.load(text, yaml.loader.Loader)
         except Exception as e:
+            if debug:
+                debug['error'] = str(e)
             return None
 
     @staticmethod

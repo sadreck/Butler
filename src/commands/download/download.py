@@ -322,14 +322,17 @@ class ServiceDownload(Service, DownloadHelper):
                 return None
 
         data = {} if contents else None
+        debug = {'error': ''}
         if workflow.type != WorkflowType.DOCKER:
-            data = self._process_contents(workflow, contents)
+            data = self._process_contents(workflow, contents, debug)
 
         with self.lock:
             if data is None:
+                self.database.workflows().update_contents(workflow.id, contents, debug['error'])
                 self.database.workflows().update_status(workflow.id, WorkflowStatus.ERROR)
-            self.database.workflows().update_contents(workflow.id, contents, data)
-            self.database.workflows().update_status(workflow.id, WorkflowStatus.DOWNLOADED)
+            else:
+                self.database.workflows().update_contents(workflow.id, contents, data)
+                self.database.workflows().update_status(workflow.id, WorkflowStatus.DOWNLOADED)
 
         return None
 

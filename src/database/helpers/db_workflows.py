@@ -70,7 +70,7 @@ class DBWorkflow(DBBase):
         )
         self.update_statement(statement)
 
-    def update_contents(self, id: int, contents: str, data: dict | None) -> None:
+    def update_contents(self, id: int, contents: str, data: dict | str | None) -> None:
         if id == 0:
             raise MissingComponentDetails("Missing workflow component details: id")
 
