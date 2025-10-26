@@ -90,3 +90,6 @@ class DBRepo(DBBase):
             RepositoryModel.id == id
         ).values(resolved_ref=resolved_ref, resolved_ref_type=resolved_ref_type)
         self.update_statement(statement)
+
+    def count(self) -> int:
+        return self.session.query(RepositoryModel).count()

@@ -62,8 +62,36 @@ def github_responses() -> dict:
         '/repositories/41881900/branches?per_page=10&page=2': MockResponse('microsoft/branches-page-2.json', None, 200)
     }
 
+def github_responses_download_vscode() -> dict:
+    return {
+        '/rate_limit': MockResponse('rate_limit.json', None, 200),
+        '/repos/microsoft/vscode/contents/.github/workflows': MockResponse('vscode-download/892f4e116195aedff0de1d6d7588fd76.contents.json', 'vscode-download/892f4e116195aedff0de1d6d7588fd76.headers.json', 200, is_json_contents=True),
+        '/repos/microsoft/vscode': MockResponse('vscode-download/f5faff61819877c0da6afeccf1fd3c8b.contents.json', 'vscode-download/f5faff61819877c0da6afeccf1fd3c8b.headers.json', 200, is_json_contents=True),
+        '/repos/microsoft/vscode/git/ref/heads/main': MockResponse('vscode-download/095c1955551c5577e8d699bc8c09fc27.contents.json', 'vscode-download/095c1955551c5577e8d699bc8c09fc27.headers.json', 200, is_json_contents=True),
+        'https://raw.githubusercontent.com/microsoft/vscode/refs/heads/main/.github/workflows/copilot-setup-steps.yml': MockResponse('vscode-download/3948b8bdc82dc947ffdc4c2b673d4b81.contents.json', 'vscode-download/3948b8bdc82dc947ffdc4c2b673d4b81.headers.json', 200, is_json_contents=False),
+        '/repos/actions/checkout': MockResponse('vscode-download/c345337398ea8c1a15bdaf7e722deae0.contents.json', 'vscode-download/c345337398ea8c1a15bdaf7e722deae0.headers.json', 200, is_json_contents=True),
+        '/repos/actions/checkout/git/ref/heads/v5': MockResponse('vscode-download/c7878066c016a3a303020ac4715c1768.contents.json', 'vscode-download/c7878066c016a3a303020ac4715c1768.headers.json', 404, is_json_contents=True),
+        '/repos/actions/checkout/git/ref/tags/v5': MockResponse('vscode-download/063f45e95f4e09e8403e248372ff5555.contents.json', 'vscode-download/063f45e95f4e09e8403e248372ff5555.headers.json', 200, is_json_contents=True),
+        'https://raw.githubusercontent.com/actions/checkout/refs/tags/v5/action.yml': MockResponse('vscode-download/42a1150ef36f03038e8565f6292c7006.contents.json', 'vscode-download/42a1150ef36f03038e8565f6292c7006.headers.json', 200, is_json_contents=False),
+        '/repos/actions/setup-node': MockResponse('vscode-download/6d15b6455836628bf1c55cf80261461d.contents.json', 'vscode-download/6d15b6455836628bf1c55cf80261461d.headers.json', 200, is_json_contents=True),
+        '/repos/actions/setup-node/git/ref/heads/v6': MockResponse('vscode-download/356017b26b7f59175fa6037f54dee751.contents.json', 'vscode-download/356017b26b7f59175fa6037f54dee751.headers.json', 404, is_json_contents=True),
+        '/repos/actions/setup-node/git/ref/tags/v6': MockResponse('vscode-download/f7620e4fe6a0cf98a8fd9a39f5ab0057.contents.json', 'vscode-download/f7620e4fe6a0cf98a8fd9a39f5ab0057.headers.json', 200, is_json_contents=True),
+        'https://raw.githubusercontent.com/actions/setup-node/refs/tags/v6/action.yml': MockResponse('vscode-download/efc66b8d4fb488a21854e02f3e547af4.contents.json', 'vscode-download/efc66b8d4fb488a21854e02f3e547af4.headers.json', 200, is_json_contents=False),
+        '/repos/actions/cache': MockResponse('vscode-download/c575cb06fa7fd1f94ce6d09833190bc5.contents.json', 'vscode-download/c575cb06fa7fd1f94ce6d09833190bc5.headers.json', 200, is_json_contents=True),
+        '/repos/actions/cache/git/ref/heads/v4': MockResponse('vscode-download/14f542de73a332596fc782d58123706d.contents.json', 'vscode-download/14f542de73a332596fc782d58123706d.headers.json', 404, is_json_contents=True),
+        '/repos/actions/cache/git/ref/tags/v4': MockResponse('vscode-download/54955d07cc05701c8c7fed1eb0c79100.contents.json', 'vscode-download/54955d07cc05701c8c7fed1eb0c79100.headers.json', 200, is_json_contents=True),
+        'https://raw.githubusercontent.com/actions/cache/refs/tags/v4/restore/action.yml': MockResponse('vscode-download/0e71032eaeba7e8a8500ef85797ab873.contents.json', 'vscode-download/0e71032eaeba7e8a8500ef85797ab873.headers.json', 200, is_json_contents=False),
+    }
+
 def mock_handle_get_requests(url, *args, **kwargs):
     responses = github_responses()
+    url = url.replace('https://api.github.com', '')
+    if not url in responses:
+        raise ValueError(f"Unmocked URL: {url}")
+    return responses[url].response()
+
+def mock_handle_get_requests_download_vscode(url, *args, **kwargs):
+    responses = github_responses_download_vscode()
     url = url.replace('https://api.github.com', '')
     if not url in responses:
         raise ValueError(f"Unmocked URL: {url}")

@@ -142,3 +142,6 @@ class DBWorkflow(DBBase):
                     )
                 ).order_by(WorkflowDataModel.id).limit(count).all()
             )
+
+    def count(self) -> int:
+        return self.session.query(WorkflowModel).count()

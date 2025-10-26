@@ -37,3 +37,6 @@ class DBOrg(DBBase):
             OrganisationModel.id == id
         ).values(status=status)
         self.update_statement(statement)
+
+    def count(self) -> int:
+        return self.session.query(OrganisationModel).count()
