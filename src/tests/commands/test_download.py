@@ -133,3 +133,35 @@ def test_download_missing_workflow(logger, mock_requests_get):
     assert vscode.id > 0
 
     assert vscode.status == RepoStatus.NO_WORKFLOWS
+
+@pytest.mark.parametrize('mock_requests_get', ['renamed_branch'], indirect=True)
+def test_download_renamed_branch(logger, mock_requests_get):
+    command = CommandDownload(logger)
+
+    output_database = _get_db_path()
+    args = _args_download(repo=["apache/datafusion-ballista-python"], database=output_database, very_verbose=True, workflow=['comment_bot.yml'])
+    assert command.run(args) == True
+
+    database = Database(output_database)
+    assert database.orgs().count() == 3
+
+    r_lib = database.orgs().find('r-lib')
+    assert r_lib.id > 0
+
+    actions = database.repos().find(r_lib.id, 'actions', None)
+    assert actions.id > 0
+    assert actions.ref == 'old'
+    assert actions.ref_commit == '2acb5b24ed4d2f8a065b600c903d5ee62bbbe893'
+    assert actions.ref_old_name == 'master'
+    assert actions.ref_type == GitHubRefType.BRANCH
+    assert actions.status == RepoStatus.OK
+
+    pr_fetch = database.workflows().find(actions.id, 'pr-fetch/action.yml')
+    pr_push = database.workflows().find(actions.id, 'pr-push/action.yml')
+    assert pr_fetch.id > 0
+    assert pr_fetch.type == GitHubRefType.TAG
+    assert pr_fetch.status == WorkflowStatus.DOWNLOADED
+
+    assert pr_push.id > 0
+    assert pr_push.type == GitHubRefType.TAG
+    assert pr_push.status == WorkflowStatus.DOWNLOADED

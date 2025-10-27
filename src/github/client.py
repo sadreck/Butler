@@ -119,7 +119,8 @@ class GitHubClient:
     def _identify_ref(self, repo: RepoComponent) -> dict:
         result = {
             'type': GitHubRefType.UNKNOWN,
-            'sha': None
+            'sha': None,
+            'renamed': None
         }
         if len(repo.ref) == 0:
             return result
@@ -159,7 +160,24 @@ class GitHubClient:
             result['sha'] = commit['sha']
             return result
 
+        # If a ref wasn't identified, check if it's actually a branch that has been renamed.
+        # This is intentionally checked at the end to avoid making extra API requests when
+        # the ref is a tag or commit.
+        branch = self._get_git_branch(repo, repo.ref)
+        if branch:
+            self.log.trace(f"{repo.ref} is a branch for {repo}")
+            result['type'] = GitHubRefType.BRANCH
+            result['sha'] = branch['commit']['sha']
+            result['renamed'] = branch['name']
+            return result
+
         return result
+
+    def _get_git_branch(self, repo: RepoComponent, branch: str) -> dict | None:
+        try:
+            return self._api.get(f'/repos/{repo.org.name}/{repo.name}/branches/{branch}')
+        except GitHubException:
+            return None
 
     def _get_git_ref(self, repo: RepoComponent, ref: str) -> dict | None:
         try:
@@ -214,6 +232,9 @@ class GitHubClient:
             # This will update the passed object as well.
             repo.ref_type = ref_info['type']
             repo.ref_commit = ref_info['sha']
+            if ref_info['renamed']:
+                repo.ref_old_name = repo.ref
+                repo.ref = ref_info['renamed']
             repo.status = RepoStatus.OK
             return True
 

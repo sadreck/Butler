@@ -23,6 +23,7 @@ class RepositoryModel(Base):
     ref = Column(String, default='', index=True)
     ref_type = Column(Integer, default=0, index=True)
     ref_commit = Column(String, default='')
+    ref_old_name = Column(String, default='', index=True)
     resolved_ref = Column(String, default='', index=True)
     resolved_ref_type = Column(Integer, default=0, index=True)
     visibility = Column(Integer, default=0, index=True)

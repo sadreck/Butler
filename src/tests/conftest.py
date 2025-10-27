@@ -21,6 +21,8 @@ def mock_requests_get(request):
                 responses = missing_repo()
             case 'missing_workflow':
                 responses = missing_workflow()
+            case 'renamed_branch':
+                responses = renamed_branch()
             case _:
                 responses = default()
 
