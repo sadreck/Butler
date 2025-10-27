@@ -55,7 +55,6 @@ class ServiceProcess(Service, ProcessHelper):
         if workflow.type == WorkflowType.WORKFLOW:
             instance = WorkflowInstance(workflow.data, workflow.repo)
             with self.lock:
-                self.database.workflows().set_data(workflow.id, 'name', instance.name)
                 for trigger, properties in instance.on_data.items():
                     self.database.workflows().set_data(workflow.id, 'on', trigger)
                     for name, value in properties.items():

@@ -61,3 +61,6 @@ class DBJob(DBBase):
 
     def count(self) -> int:
         return self.session.query(JobModel).count()
+
+    def jobdata_count(self) -> int:
+        return self.session.query(JobDataModel).count()

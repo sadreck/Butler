@@ -56,8 +56,8 @@ def test_download_vscode(logger, mock_requests_get):
     assert checkout.fork == False
     assert checkout.archive == False
 
-    vscode_workflow = database.workflows().find(microsoft.id, '.github/workflows/copilot-setup-steps.yml')
-    checkout_workflow = database.workflows().find(actions.id, 'action.yml')
+    vscode_workflow = database.workflows().find(vscode.id, '.github/workflows/copilot-setup-steps.yml')
+    checkout_workflow = database.workflows().find(checkout.id, 'action.yml')
 
     assert vscode_workflow.id > 0
     assert checkout_workflow.id > 0

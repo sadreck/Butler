@@ -145,3 +145,6 @@ class DBWorkflow(DBBase):
 
     def count(self) -> int:
         return self.session.query(WorkflowModel).count()
+
+    def workflowdata_count(self) -> int:
+        return self.session.query(WorkflowDataModel).count()
