@@ -1,6 +1,6 @@
 from src.libs.components.repo import RepoComponent
 from src.libs.components.workflow import WorkflowComponent
-from src.libs.constants import PollStatus, WorkflowStatus, RepoStatus, GitHubRefType
+from src.libs.constants import PollStatus, WorkflowStatus, RepoStatus, GitHubRefType, WorkflowType
 
 
 class DatabaseHelper:
@@ -113,10 +113,11 @@ class DatabaseHelper:
             JOIN organisations  o ON o.id = r.org_id
             WHERE
                 w.status = :status
+                AND w.type != :docker
             LIMIT {int(count)}
         """
 
-        rows = self.select(sql, {'status': WorkflowStatus.NONE})
+        rows = self.select(sql, {'status': WorkflowStatus.NONE, 'docker': WorkflowType.DOCKER})
         if len(rows) == 0:
             return None
         elif count == 1:

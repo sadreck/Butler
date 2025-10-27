@@ -134,6 +134,8 @@ class DownloadHelper:
         workflow = WorkflowComponent(uses)
         workflow.repo.id = repo.id
         workflow.repo.org.id = repo.org.id
+        if uses.lower().startswith('docker://'):
+            workflow.type = WorkflowType.DOCKER
         workflow_db = self.database.workflows().create(workflow)
         workflow.id = workflow_db.id
 
