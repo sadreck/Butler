@@ -1,7 +1,5 @@
 import pytest
-import os
-import argparse
-import tempfile
+from src.tests.helpers import _args_download, _get_db_path
 from src.commands.download.command import CommandDownload
 from src.database.database import Database
 from src.libs.constants import GitHubRefType, RepoVisibility, PollStatus, RepoStatus, WorkflowType, WorkflowStatus
@@ -12,7 +10,7 @@ def test_download_vscode(logger, mock_requests_get):
     command = CommandDownload(logger)
 
     output_database = _get_db_path()
-    args = _args(repo=["microsoft/vscode"], database=output_database, very_verbose=True, workflow=['copilot-setup-steps.yml'])
+    args = _args_download(repo=["microsoft/vscode"], database=output_database, very_verbose=True, workflow=['copilot-setup-steps.yml'])
     assert command.run(args) == True
 
     database = Database(output_database)
@@ -71,34 +69,3 @@ def test_download_vscode(logger, mock_requests_get):
     assert checkout_workflow.contents != ''
     assert checkout_workflow.data != ''
     assert checkout_workflow.status == WorkflowStatus.DOWNLOADED
-
-def _get_db_path() -> str:
-    output_database = os.path.join(tempfile.gettempdir(), "butler-testing.db")
-    if os.path.isfile(output_database):
-        os.remove(output_database)
-    return output_database
-
-def _args(**overrides) -> argparse.Namespace:
-    defaults = {
-        # Shared
-        'verbose': False,
-        'very_verbose': False,
-        'token': [],
-        'db_debug': False,
-        'db_debug_auto_commit': False,
-
-        # Per Command
-        'repo': [],
-        'workflow': [],
-        'database': 'database.db',
-        'resume_next': True,
-        'all_branches': False,
-        'all_tags': False,
-        'include_forks': False,
-        'include_archived': False,
-        'all_repos': False,
-        'threads': 1,
-    }
-
-    data = {**defaults, **overrides}
-    return argparse.Namespace(**data)
