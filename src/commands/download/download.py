@@ -7,7 +7,7 @@ from src.github.exceptions import TooManyRequests, ApiRateLimitExceeded, OrgNotF
 from src.libs.components.org import OrgComponent
 from src.libs.components.repo import RepoComponent
 from src.libs.components.workflow import WorkflowComponent
-from src.libs.constants import PollStatus, RepoStatus, GitHubRefType, WorkflowStatus, WorkflowType
+from src.libs.constants import PollStatus, RepoStatus, GitHubRefType, WorkflowStatus, WorkflowType, OrgStatus
 from src.libs.exceptions import InvalidCommandLine
 from src.libs.utils import Utils
 
@@ -127,7 +127,7 @@ class ServiceDownload(Service, DownloadHelper):
                         self._save_repo(repo)
             except OrgNotFound as e:
                 self.log.error(f"Organisation {org.name} not found")
-                self.database.orgs().set_status(org_db.id, RepoStatus.MISSING)
+                self.database.orgs().set_status(org_db.id, OrgStatus.MISSING)
 
             self.database.orgs().set_poll_status(org_db.id, PollStatus.SCANNED)
 

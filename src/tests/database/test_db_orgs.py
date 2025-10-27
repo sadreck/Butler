@@ -1,6 +1,6 @@
 from src.database.database import Database
 from src.libs.components.org import OrgComponent
-from src.libs.constants import PollStatus, RepoStatus
+from src.libs.constants import PollStatus, RepoStatus, OrgStatus
 
 
 def test_db_orgs(database: Database):
@@ -32,8 +32,8 @@ def test_db_orgs(database: Database):
     assert aws.poll_status == PollStatus.NONE
 
     database.orgs().set_poll_status(aws.id, PollStatus.SCANNED)
-    database.orgs().set_status(aws.id, RepoStatus.MISSING)
+    database.orgs().set_status(aws.id, OrgStatus.MISSING)
 
     database.refresh_record(aws)
     assert aws.poll_status == PollStatus.SCANNED
-    assert aws.status == RepoStatus.MISSING
+    assert aws.status == OrgStatus.MISSING

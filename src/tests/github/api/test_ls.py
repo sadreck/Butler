@@ -1,10 +1,9 @@
 import pytest
 from src.github.exceptions import HttpNotFound
 from src.libs.components.repo import RepoComponent
-from src.tests.conftest import mock_handle_get_requests
 
 
-@pytest.mark.parametrize('mock_requests_get', [mock_handle_get_requests], indirect=True)
+@pytest.mark.parametrize('mock_requests_get', ['default'], indirect=True)
 def test_ls(client, mock_requests_get):
     repo = RepoComponent('microsoft/vscode')
     files = client.ls(repo, '.github/workflows')
@@ -21,7 +20,7 @@ def test_ls(client, mock_requests_get):
 
     assert len(expected_files) == 0
 
-@pytest.mark.parametrize('mock_requests_get', [mock_handle_get_requests], indirect=True)
+@pytest.mark.parametrize('mock_requests_get', ['default'], indirect=True)
 def test_ls_inexistent(client, mock_requests_get):
     repo = RepoComponent('microsoft/vscode')
     try:

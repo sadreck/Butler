@@ -32,11 +32,15 @@ def convert(http_log: str, asset_parent_folder: str, asset_path: str) -> str:
 if __name__ == '__main__':
     input_file = sys.argv[1] if len(sys.argv) > 1 else None
     output_path = sys.argv[2] if len(sys.argv) > 2 else None
+    asset_parent_folder = sys.argv[3] if len(sys.argv) > 3 else None
     if input_file is None:
         print("No input file set")
         exit(1)
     elif output_path is None:
         print("No output path set")
         exit(1)
-    output = convert(input_file, 'vscode-download', output_path)
+    elif asset_parent_folder is None:
+        print("No asset parent folder set")
+        exit(1)
+    output = convert(input_file, asset_parent_folder, output_path)
     print(output)

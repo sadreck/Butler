@@ -3,9 +3,8 @@ from src.tests.helpers import _args_download, _args_process, _get_db_path
 from src.commands.download.command import CommandDownload
 from src.commands.process.command import CommandProcess
 from src.database.database import Database
-from src.tests.conftest import mock_handle_get_requests_download_vscode
 
-@pytest.mark.parametrize('mock_requests_get', [mock_handle_get_requests_download_vscode], indirect=True)
+@pytest.mark.parametrize('mock_requests_get', ['download_vscode'], indirect=True)
 def test_process_vscode(logger, mock_requests_get):
     command = CommandDownload(logger)
 

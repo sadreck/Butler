@@ -5,12 +5,31 @@ from unittest.mock import patch
 from src.database.database import Database
 from src.github.client import GitHubClient
 from src.libs.utils import Utils
-from src.tests.mock_response import MockResponse
-
+from mock_responses import *
 
 @pytest.fixture
 def mock_requests_get(request):
-    with patch('requests.get', side_effect=request.param):
+    source = request.param
+
+    def _side_effect(url, *args, **kwargs):
+        match source.lower():
+            case 'download_vscode':
+                responses = download_vscode()
+            case 'missing_org':
+                responses = missing_org()
+            case 'missing_repo':
+                responses = missing_repo()
+            case 'missing_workflow':
+                responses = missing_workflow()
+            case _:
+                responses = default()
+
+        url = url.replace('https://api.github.com', '')
+        if not url in responses:
+            raise ValueError(f"Unmocked URL: {url}")
+        return responses[url].response()
+
+    with patch('requests.get', side_effect=_side_effect):
         yield
 
 @pytest.fixture
@@ -22,80 +41,6 @@ def logger():
 def client(logger):
     client = GitHubClient([os.getenv('GITHUB_TOKEN', '')], logger)
     yield client
-
-def github_responses() -> dict:
-    return {
-        '/rate_limit': MockResponse('rate_limit.json', None, 200),
-        '/users/microsoft': MockResponse('accounts/microsoft.json', None, 200),
-        '/users/sadreck': MockResponse('accounts/sadreck.json', None, 200),
-        '/users/does-not-exist-tests': MockResponse('accounts/does-not-exist-tests.json', None, 404),
-        '/repos/microsoft/vscode': MockResponse('microsoft/fulfillment-vscode.json', None, 200),
-        '/repos/microsoft/vscode/git/ref/heads/main': MockResponse('microsoft/fulfillment-vscode-ref-heads-main.json', None, 200),
-        '/repos/microsoft/vscode/git/ref/tags/1.100.0': MockResponse('microsoft/fulfillment-vscode-ref-tags-1.100.0.json', None, 200),
-        '/repos/microsoft/vscode/commits/19c72e4d24fe4ac9a7fc7b8161a3a852246282a2': MockResponse('microsoft/fulfillment-vscode-ref-commits-19c72e4d.json', None, 200),
-        '/repos/microsoft/vscode/git/ref/heads/1.100.0': MockResponse('microsoft/fulfillment-vscode-ref-heads-1.100.0.json', None, 404),
-        '/repos/microsoft/vscode/git/ref/heads/19c72e4d24fe4ac9a7fc7b8161a3a852246282a2': MockResponse('microsoft/fulfillment-vscode-ref-heads-19c72e4d.json', None, 404),
-        '/repos/microsoft/vscode/git/ref/tags/19c72e4d24fe4ac9a7fc7b8161a3a852246282a2': MockResponse('microsoft/fulfillment-vscode-ref-tags-19c72e4d.json', None, 404),
-        '/repos/aws-actions/configure-aws-credentials': MockResponse('aws-actions/repo-aws-creds.json', None, 200),
-        '/repos/aws-actions/configure-aws-credentials/commits/5579c002bb4778aa43395ef1df492868a9a1c83f': MockResponse('aws-actions/fulfillment-aws-creds-commits.json', None, 422),
-        '/repos/aws-actions/configure-aws-credentials/git/ref/heads/5579c002bb4778aa43395ef1df492868a9a1c83f': MockResponse('aws-actions/fulfillment-aws-creds-ref-heads.json', None, 404),
-        '/repos/aws-actions/configure-aws-credentials/git/ref/tags/5579c002bb4778aa43395ef1df492868a9a1c83f': MockResponse('aws-actions/fulfillment-aws-creds-ref-tags.json', None, 404),
-        '/repos/aws-actions/configure-aws-credentials/git/tags/5579c002bb4778aa43395ef1df492868a9a1c83f': MockResponse('aws-actions/fulfillment-aws-creds-git-tags.json', None, 200),
-        '/orgs/microsoft/repos': MockResponse('microsoft/microsoft-page-1-contents.json', 'microsoft/microsoft-page-1-headers.json', 200),
-        '/organizations/6154722/repos?per_page=10&sort=full_name&page=2': MockResponse('microsoft/microsoft-page-2-contents.json', 'microsoft/microsoft-page-2-headers.json', 200),
-        '/organizations/6154722/repos?per_page=10&sort=full_name&page=3': MockResponse('microsoft/microsoft-page-3-contents.json', None, 200),
-        '/repos/microsoft/vscode/contents/.github/workflows': MockResponse('microsoft/vscode-ls-workflows.json', None, 200),
-        '/repos/microsoft/vscode/contents/.github/workflows-meh': MockResponse('microsoft/vscode-ls-workflows-not-found.json', None, 404),
-        'https://raw.githubusercontent.com/microsoft/vscode/main/.github/workflows/telemetry.yml': MockResponse('microsoft/file-vscode-telemetry.yml', None, 200, is_json_contents=False),
-        '/repos/microsoft/vscode/contents/.github/workflows/telemetry.yml?ref=main': MockResponse('microsoft/file-vscode-telemetry.json', None, 200),
-        'https://raw.githubusercontent.com/microsoft/vscode/main/.github/workflows/telemetry-does-not-exist.yml': MockResponse('microsoft/file-vscode-telemetry-does-not-exist.json', None, 404),
-        '/repos/actions/checkout/contents/action.yml?ref=v4': MockResponse('actions/checkout-v4.json', None, 200),
-        '/repos/ossf/scorecard-action/contents/action.yml?ref=main': MockResponse('ossf/scorecard-action-404.json', None, 404),
-        '/repos/ossf/scorecard-action/contents/action.yaml?ref=main': MockResponse('ossf/scorecard-action-main.json', None, 200),
-        '/repos/microsoft/vscode/contents/action.yml?ref=main': MockResponse('microsoft/action-yml-404.json', None, 404),
-        '/repos/microsoft/vscode/contents/action.yaml?ref=main': MockResponse('microsoft/action-yaml-404.json', None, 404),
-        '/repos/microsoft/vscode/contents/Dockerfile?ref=main': MockResponse('microsoft/action-yaml-404.json', None, 404),
-        '/repos/spotify/beam/contents/.github/actions/cancel-workflow-runs': MockResponse('spotify/beam-action.json', None, 200),
-        '/repos/microsoft/vscode/tags': MockResponse('microsoft/tags-page-1.json', 'microsoft/tags-page-1-headers.json', 200),
-        '/repositories/41881900/tags?per_page=10&page=2': MockResponse('microsoft/tags-page-2.json', None, 200),
-        '/repos/microsoft/vscode/branches': MockResponse('microsoft/branches-page-1.json', 'microsoft/branches-page-1-headers.json', 200),
-        '/repositories/41881900/branches?per_page=10&page=2': MockResponse('microsoft/branches-page-2.json', None, 200)
-    }
-
-def github_responses_download_vscode() -> dict:
-    return {
-        '/rate_limit': MockResponse('rate_limit.json', None, 200),
-        '/repos/microsoft/vscode/contents/.github/workflows': MockResponse('vscode-download/892f4e116195aedff0de1d6d7588fd76.contents.json', 'vscode-download/892f4e116195aedff0de1d6d7588fd76.headers.json', 200, is_json_contents=True),
-        '/repos/microsoft/vscode': MockResponse('vscode-download/f5faff61819877c0da6afeccf1fd3c8b.contents.json', 'vscode-download/f5faff61819877c0da6afeccf1fd3c8b.headers.json', 200, is_json_contents=True),
-        '/repos/microsoft/vscode/git/ref/heads/main': MockResponse('vscode-download/095c1955551c5577e8d699bc8c09fc27.contents.json', 'vscode-download/095c1955551c5577e8d699bc8c09fc27.headers.json', 200, is_json_contents=True),
-        'https://raw.githubusercontent.com/microsoft/vscode/refs/heads/main/.github/workflows/copilot-setup-steps.yml': MockResponse('vscode-download/3948b8bdc82dc947ffdc4c2b673d4b81.contents.json', 'vscode-download/3948b8bdc82dc947ffdc4c2b673d4b81.headers.json', 200, is_json_contents=False),
-        '/repos/actions/checkout': MockResponse('vscode-download/c345337398ea8c1a15bdaf7e722deae0.contents.json', 'vscode-download/c345337398ea8c1a15bdaf7e722deae0.headers.json', 200, is_json_contents=True),
-        '/repos/actions/checkout/git/ref/heads/v5': MockResponse('vscode-download/c7878066c016a3a303020ac4715c1768.contents.json', 'vscode-download/c7878066c016a3a303020ac4715c1768.headers.json', 404, is_json_contents=True),
-        '/repos/actions/checkout/git/ref/tags/v5': MockResponse('vscode-download/063f45e95f4e09e8403e248372ff5555.contents.json', 'vscode-download/063f45e95f4e09e8403e248372ff5555.headers.json', 200, is_json_contents=True),
-        'https://raw.githubusercontent.com/actions/checkout/refs/tags/v5/action.yml': MockResponse('vscode-download/42a1150ef36f03038e8565f6292c7006.contents.json', 'vscode-download/42a1150ef36f03038e8565f6292c7006.headers.json', 200, is_json_contents=False),
-        '/repos/actions/setup-node': MockResponse('vscode-download/6d15b6455836628bf1c55cf80261461d.contents.json', 'vscode-download/6d15b6455836628bf1c55cf80261461d.headers.json', 200, is_json_contents=True),
-        '/repos/actions/setup-node/git/ref/heads/v6': MockResponse('vscode-download/356017b26b7f59175fa6037f54dee751.contents.json', 'vscode-download/356017b26b7f59175fa6037f54dee751.headers.json', 404, is_json_contents=True),
-        '/repos/actions/setup-node/git/ref/tags/v6': MockResponse('vscode-download/f7620e4fe6a0cf98a8fd9a39f5ab0057.contents.json', 'vscode-download/f7620e4fe6a0cf98a8fd9a39f5ab0057.headers.json', 200, is_json_contents=True),
-        'https://raw.githubusercontent.com/actions/setup-node/refs/tags/v6/action.yml': MockResponse('vscode-download/efc66b8d4fb488a21854e02f3e547af4.contents.json', 'vscode-download/efc66b8d4fb488a21854e02f3e547af4.headers.json', 200, is_json_contents=False),
-        '/repos/actions/cache': MockResponse('vscode-download/c575cb06fa7fd1f94ce6d09833190bc5.contents.json', 'vscode-download/c575cb06fa7fd1f94ce6d09833190bc5.headers.json', 200, is_json_contents=True),
-        '/repos/actions/cache/git/ref/heads/v4': MockResponse('vscode-download/14f542de73a332596fc782d58123706d.contents.json', 'vscode-download/14f542de73a332596fc782d58123706d.headers.json', 404, is_json_contents=True),
-        '/repos/actions/cache/git/ref/tags/v4': MockResponse('vscode-download/54955d07cc05701c8c7fed1eb0c79100.contents.json', 'vscode-download/54955d07cc05701c8c7fed1eb0c79100.headers.json', 200, is_json_contents=True),
-        'https://raw.githubusercontent.com/actions/cache/refs/tags/v4/restore/action.yml': MockResponse('vscode-download/0e71032eaeba7e8a8500ef85797ab873.contents.json', 'vscode-download/0e71032eaeba7e8a8500ef85797ab873.headers.json', 200, is_json_contents=False),
-    }
-
-def mock_handle_get_requests(url, *args, **kwargs):
-    responses = github_responses()
-    url = url.replace('https://api.github.com', '')
-    if not url in responses:
-        raise ValueError(f"Unmocked URL: {url}")
-    return responses[url].response()
-
-def mock_handle_get_requests_download_vscode(url, *args, **kwargs):
-    responses = github_responses_download_vscode()
-    url = url.replace('https://api.github.com', '')
-    if not url in responses:
-        raise ValueError(f"Unmocked URL: {url}")
-    return responses[url].response()
 
 @pytest.fixture
 def database():

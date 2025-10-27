@@ -2,7 +2,7 @@ from sqlalchemy import func, update
 from src.database.helpers.db_base import DBBase
 from src.database.models import OrganisationModel
 from src.libs.components.org import OrgComponent
-from src.libs.constants import PollStatus, RepoStatus
+from src.libs.constants import PollStatus, OrgStatus
 
 
 class DBOrg(DBBase):
@@ -32,7 +32,7 @@ class DBOrg(DBBase):
         ).values(poll_status=poll_status)
         self.update_statement(statement)
 
-    def set_status(self, id: int, status: RepoStatus) -> None:
+    def set_status(self, id: int, status: OrgStatus) -> None:
         statement = update(OrganisationModel).where(
             OrganisationModel.id == id
         ).values(status=status)

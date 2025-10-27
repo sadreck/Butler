@@ -3,9 +3,8 @@ from src.tests.helpers import _args_download, _get_db_path
 from src.commands.download.command import CommandDownload
 from src.database.database import Database
 from src.libs.constants import GitHubRefType, RepoVisibility, PollStatus, RepoStatus, WorkflowType, WorkflowStatus
-from src.tests.conftest import mock_handle_get_requests_download_vscode
 
-@pytest.mark.parametrize('mock_requests_get', [mock_handle_get_requests_download_vscode], indirect=True)
+@pytest.mark.parametrize('mock_requests_get', ['download_vscode'], indirect=True)
 def test_download_vscode(logger, mock_requests_get):
     command = CommandDownload(logger)
 
@@ -69,3 +68,68 @@ def test_download_vscode(logger, mock_requests_get):
     assert checkout_workflow.contents != ''
     assert checkout_workflow.data != ''
     assert checkout_workflow.status == WorkflowStatus.DOWNLOADED
+
+@pytest.mark.parametrize('mock_requests_get', ['missing_org'], indirect=True)
+def test_download_missing_org(logger, mock_requests_get):
+    command = CommandDownload(logger)
+
+    output_database = _get_db_path()
+    args = _args_download(repo=["microsoft-does-not-exist/vscode"], database=output_database, very_verbose=True)
+    assert command.run(args) == True
+
+    database = Database(output_database)
+
+    assert database.orgs().count() == 1
+    assert database.repos().count() == 1
+
+    microsoft = database.orgs().find('microsoft-does-not-exist')
+    assert microsoft.id > 0
+
+    vscode = database.repos().find(microsoft.id, 'vscode', 'main')
+    assert vscode is None
+
+    vscode = database.repos().find(microsoft.id, 'vscode', None)
+    assert vscode.id > 0
+    assert vscode.status == RepoStatus.MISSING
+
+@pytest.mark.parametrize('mock_requests_get', ['missing_repo'], indirect=True)
+def test_download_missing_repo(logger, mock_requests_get):
+    command = CommandDownload(logger)
+
+    output_database = _get_db_path()
+    args = _args_download(repo=["microsoft/vscode-does-not-exist"], database=output_database, very_verbose=True)
+    assert command.run(args) == True
+
+    database = Database(output_database)
+
+    assert database.orgs().count() == 1
+    assert database.repos().count() == 1
+
+    microsoft = database.orgs().find('microsoft')
+    assert microsoft.id > 0
+
+    vscode = database.repos().find(microsoft.id, 'vscode-does-not-exist', None)
+    assert vscode.id > 0
+    assert vscode.status == RepoStatus.MISSING
+
+@pytest.mark.parametrize('mock_requests_get', ['missing_workflow'], indirect=True)
+def test_download_missing_workflow(logger, mock_requests_get):
+    command = CommandDownload(logger)
+
+    output_database = _get_db_path()
+    args = _args_download(repo=["microsoft/vscode"], database=output_database, very_verbose=True, workflow=['does-not-exist.yaml'])
+    assert command.run(args) == True
+
+    database = Database(output_database)
+
+    assert database.orgs().count() == 1
+    assert database.repos().count() == 1
+    assert database.workflows().count() == 0
+
+    microsoft = database.orgs().find('microsoft')
+    assert microsoft.id > 0
+
+    vscode = database.repos().find(microsoft.id, 'vscode', 'main')
+    assert vscode.id > 0
+
+    assert vscode.status == RepoStatus.NO_WORKFLOWS
