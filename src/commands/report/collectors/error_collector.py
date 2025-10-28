@@ -34,12 +34,6 @@ class ErrorCollector(CollectorBase):
             'results': ErrorResults(),
             'generated_at': datetime.now().strftime("%Y-%m-%d %H:%M")
         }
-        """
-        [ ] Missing tags/branches/commits.
-        [ ] Repos that don't exist.
-        [ ] Invalid yaml files.
-        [ ] Workflows that don't exist.
-        """
         self.log.info("Searching for missing actions")
         missing_actions = self._get_missing_actions(self.org.id)
 

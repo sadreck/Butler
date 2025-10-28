@@ -28,10 +28,10 @@ class ServiceReport(Service):
         org = OrgComponent.from_model(db_org)
 
         collectors = [
-            # WorkflowCollector,
-            # ThirdPartyCollector,
-            # VariableCollector,
-            # RunnerCollector,
+            WorkflowCollector,
+            ThirdPartyCollector,
+            VariableCollector,
+            RunnerCollector,
             ErrorCollector,
         ]
 
