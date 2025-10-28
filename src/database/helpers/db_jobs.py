@@ -58,3 +58,9 @@ class DBJob(DBBase):
                     )
                 ).order_by(JobDataModel.id).limit(count).all()
             )
+
+    def count(self) -> int:
+        return self.session.query(JobModel).count()
+
+    def jobdata_count(self) -> int:
+        return self.session.query(JobDataModel).count()

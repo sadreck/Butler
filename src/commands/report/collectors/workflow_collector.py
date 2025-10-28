@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from src.commands.report.helpers.workflow_results import WorkflowResults
 from src.commands.report.collector_base import CollectorBase
 from src.libs.components.workflow import WorkflowComponent
@@ -24,7 +25,8 @@ class WorkflowCollector(CollectorBase):
     def run(self) -> bool:
         data = {
             'org': self.org.name,
-            'results': WorkflowResults()
+            'results': WorkflowResults(),
+            'generated_at': datetime.now().strftime("%Y-%m-%d %H:%M")
         }
 
         self.log.info('Searching for workflows')
@@ -38,7 +40,7 @@ class WorkflowCollector(CollectorBase):
             if instance['instance'].status == WorkflowStatus.MISSING:
                 # Get additional info.
                 self.log.debug(f"Getting additional information for {instance['instance']}")
-                parent_workflows = self._get_caller_workflows(instance['instance'].id)
+                parent_workflows = self.get_caller_workflows(instance['instance'].id)
                 for parent_workflow in parent_workflows:
                     data['results'].add_missing_workflows(workflow, parent_workflow)
 
@@ -60,35 +62,6 @@ class WorkflowCollector(CollectorBase):
                 self.outputs['csv']['workflows']['path'],
                 data['results'].for_csv()
             )
-
-    def _get_caller_workflows(self, workflow_id: int) -> list:
-        sql = f"""
-            SELECT
-                parent_id
-            FROM (
-                WITH RECURSIVE transitive(parent_id, child_id, depth) AS (
-                  SELECT parent_id, child_id, 1
-                  FROM workflow_relationships
-                  UNION
-                  SELECT t.parent_id, wr.child_id, t.depth + 1
-                  FROM transitive AS t
-                  JOIN workflow_relationships AS wr
-                    ON wr.parent_id = t.child_id
-                )
-                SELECT parent_id, child_id, depth
-                FROM transitive
-                ORDER BY parent_id
-            ) wr
-            WHERE wr.child_id = :child_id
-        """
-
-        workflows = []
-        results = self.database.select(sql, {'child_id': workflow_id})
-        for result in results:
-            workflow = self.database.get_full_workflow_from_id(result['parent_id'])
-            if workflow:
-                workflows.append(workflow)
-        return workflows
 
     def _get_workflows(self, org_id: int) -> list:
         sql = f"""

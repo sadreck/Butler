@@ -12,6 +12,7 @@ class RepoComponent(BaseComponent):
     _ref: str = None
     _ref_type: GitHubRefType = None
     _ref_commit: str = None
+    _ref_old_name: str = None
     _resolved_ref: str = None
     _resolved_ref_type: GitHubRefType = None
     _visibility: RepoVisibility = None
@@ -60,6 +61,14 @@ class RepoComponent(BaseComponent):
     @ref_type.setter
     def ref_type(self, value: GitHubRefType):
         self._ref_type = value
+
+    @property
+    def ref_old_name(self) -> str:
+        return self._ref_old_name or ''
+
+    @ref_old_name.setter
+    def ref_old_name(self, value: str):
+        self._ref_old_name = value
 
     @property
     def resolved_ref(self) -> str:

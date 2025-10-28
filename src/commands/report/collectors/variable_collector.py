@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from src.commands.report.helpers.variable_results import VariableResults
 from src.commands.report.collector_base import CollectorBase
 from src.libs.components.workflow import WorkflowComponent
@@ -29,7 +30,8 @@ class VariableCollector(CollectorBase):
     def run(self) -> bool:
         data = {
             'org': self.org.name,
-            'results': VariableResults()
+            'results': VariableResults(),
+            'generated_at': datetime.now().strftime("%Y-%m-%d %H:%M")
         }
 
         self.log.info(f"Searching for workflow variables & secrets")

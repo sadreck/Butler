@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from src.commands.report.collector_base import CollectorBase
 
 
@@ -14,10 +15,12 @@ class IndexGenerator(CollectorBase):
 
         data = {
             'org': self.org.name,
+            'generated_at': datetime.now().strftime("%Y-%m-%d %H:%M"),
             'workflows': self.generated_outputs.get('workflows', None),
             'third_party': self.generated_outputs.get('third_party', None),
             'variables': self.generated_outputs.get('variables', None),
             'runners': self.generated_outputs.get('runners', None),
+            'errors': self.generated_outputs.get('errors', None),
         }
 
         self.render('index', self.org.name, data, self.outputs['html'])

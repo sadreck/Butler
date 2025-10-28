@@ -3,10 +3,9 @@ from src.github.exceptions import ErrorDownloadingFile
 from src.libs.components.workflow import WorkflowComponent
 from src.libs.constants import RepoVisibility
 from src.libs.utils import Utils
-from src.tests.conftest import mock_handle_get_requests
 
 
-@pytest.mark.parametrize('mock_requests_get', [mock_handle_get_requests], indirect=True)
+@pytest.mark.parametrize('mock_requests_get', ['default'], indirect=True)
 def test_download(client, mock_requests_get):
     component = WorkflowComponent('microsoft/vscode/.github/workflows/telemetry.yml@main')
     component.repo.visibility = RepoVisibility.PUBLIC

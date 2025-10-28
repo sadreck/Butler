@@ -5,48 +5,105 @@
         </div>
      </div>
 
+    <div class="alert alert-warning">
+        <h5 class="alert-heading">False Positives</h5>
+        <p class="mb-0">
+            Parsing GitHub Workflows isn't an exact science and while every effort was made to ensure there
+            are no false positives in this report, due to parsing complexities some may still be present.
+        </p>
+    </div>
+
     <div class="row mt-2">
         <div class="col">
-            <h3>{{ "{:,}".format(results.count) }} Errors &amp; Missing Components</h3>
-            <div class="row mt-2">
-                <div class="col">
-                    {% for error_workflow_name, error_workflow in results.workflows.items() %}
-                    <div class="row pb-2 mb-2 border-bottom action">
+            <ul class="nav nav-tabs" id="tabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="missing-tab" data-bs-toggle="tab" data-bs-target="#missing-tab-pane" type="button" role="tab" aria-controls="missing-tab-pane" aria-selected="true">Missing Actions<span class="badge text-bg-danger ms-1" title="Count">{{ results.count('missing') }}</span></button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="error-tab" data-bs-toggle="tab" data-bs-target="#error-tab-pane" type="button" role="tab" aria-controls="error-tab-pane" aria-selected="true">Parsing Errors<span class="badge text-bg-danger ms-1" title="Count">{{ results.count('errors') }}</span></button>
+                </li>
+            </ul>
+            <div class="tab-content" id="pills-tabContent">
+                <!-- Missing -->
+                <div class="tab-pane fade show active p-2" id="missing-tab-pane" role="tabpanel" aria-labelledby="missing-tab" tabindex="0">
+                    <div class="row mt-2">
                         <div class="col">
-                            <div class="row">
+                            <h2><span class="visible-results">{{ results.count('missing') | format_number }}</span> Missing Actions</h2>
+                        </div>
+                    </div>
+                    {% for parent_name, parent_result in results.missing.items() %}
+                    <div class="row workflow pt-2 pb-2 border-bottom">
+                        <div class="col">
+                            <div class="row pb-1">
                                 <div class="col">
-                                    {% if error_workflow.workflow.status == 4 %}
-                                    <i class="fa-solid fa-bug text-warning" title="Error Parsing Action"></i>
-                                    {% elif error_workflow.workflow.status == 5 %}
-                                    <i class="fa-solid fa-notdef text-danger" title="Missing Action"></i>
+                                    {% if  parent_result.instance.repo.archive %}
+                                    <i class="fa-solid fa-box-archive text-warning" title="Archived"></i>
+                                    {% elif  parent_result.instance.repo.fork %}
+                                    <i class="fa-solid fa-code-fork text-secondary" title="Fork"></i>
                                     {% endif %}
-
-                                    <a href="#" class="action-details action-name" data-box="box-{{ loop.index }}">{{ error_workflow_name }}</a>
-                                    {% if error_workflow.workflow.status == 4 %}
-                                    <a href="{{ error_workflow.workflow.url() }}" target="_blank" class="ms-1"><i class="fa-solid fa-up-right-from-square"></i></a>
-                                    {% endif %}
-                                </div>
-                                <div class="col-2 text-end">
-                                    <span class="badge text-bg-secondary" title="Usage">{{ error_workflow.parents|count }}</span>
+                                    <a href="{{ parent_result.instance.url(True) }}">{{ parent_name }}</a>
                                 </div>
                             </div>
-                            <div class="row mt-2 d-none" id="box-{{ loop.index }}">
+                            {% for child_name, child_result in parent_result.workflows.items() %}
+                            <div class="row ps-3 pb-2">
                                 <div class="col">
-                                    {% for parent_workflow_name, parent_workflow in error_workflow.parents.items() %}
-                                    <div class="row p-1 border-bottom">
-                                        <div class="col ms-4">
-                                            {% if parent_workflow.repo.archive %}
-                                            <span title="Archived Repository"><i class="fa-solid fa-box-archive text-warning"></i></span>
-                                            {% endif %}
-                                            {% if parent_workflow.repo.fork %}
-                                            <span title="Forked Repository"><i class="fa-solid fa-code-fork"></i></span>
-                                            {% endif %}
-                                            <a href="{{ parent_workflow.browser_url() }}" target="_blank">{{ parent_workflow_name }}</a>
-                                        </div>
+                                    <div>
+                                        {% if child_result.external %}
+                                        <span class="badge bg-danger me-1">external</span>
+                                        {% endif %}
+                                        <a href="https://github.com/{{ child_result.instance.repo.org.name }}/{{ child_result.instance.repo.name }}">{{ child_result.instance }}</a>
                                     </div>
+                                    {% for location in child_result.locations %}
+                                    <span class="badge bg-secondary">
+                                        called from job {{ location.job_shortname }}, step {{ location.step }}
+                                        {% if location.step_name | length > 0 %}
+                                        ({{ location.step_name }})
+                                        {% endif %}
+                                    </span>
                                     {% endfor %}
                                 </div>
                             </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Errors -->
+                <div class="tab-pane fade p-2" id="error-tab-pane" role="tabpanel" aria-labelledby="error-tab" tabindex="0">
+                    <div class="row mt-2">
+                        <div class="col">
+                            <h2><span class="visible-results">{{ results.count('errors') | format_number }}</span> Errors</h2>
+                        </div>
+                    </div>
+                    {% for parent_name, parent_result in results.errors.items() %}
+                    <div class="row workflow pt-2 pb-2 border-bottom">
+                        <div class="col">
+                            <div class="row pb-1">
+                                <div class="col">
+                                    {% if  parent_result.instance.repo.archive %}
+                                    <i class="fa-solid fa-box-archive text-warning" title="Archived"></i>
+                                    {% elif  parent_result.instance.repo.fork %}
+                                    <i class="fa-solid fa-code-fork text-secondary" title="Fork"></i>
+                                    {% endif %}
+                                    <a href="{{ parent_result.instance.url(True) }}">{{ parent_name }}</a>
+                                </div>
+                            </div>
+                            {% for child_name, child_result in parent_result.workflows.items() %}
+                            <div class="row ps-3 pb-2">
+                                <div class="col">
+                                    <div>{{ child_result.instance }}</div>
+                                    {% for location in child_result.locations %}
+                                    <span class="badge bg-secondary">
+                                        called from job {{ location.job_shortname }}, step {{ location.step }}
+                                        {% if location.step_name | length > 0 %}
+                                        ({{ location.step_name }})
+                                        {% endif %}
+                                    </span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endfor %}
                         </div>
                     </div>
                     {% endfor %}
@@ -55,28 +112,3 @@
         </div>
     </div>
 </div>
-
-<script type="text/javascript">
-    const ErrorsManager = {
-        init: function () {
-            this.__bind();
-            // this.__apply_filters();
-        },
-
-        __bind: function() {
-            $('.action-details').click(function() {
-                let box = $('#' + $(this).data('box'));
-                if ($(box).hasClass('d-none')) {
-                    $(box).removeClass('d-none');
-                } else {
-                    $(box).addClass('d-none');
-                }
-                return false;
-            });
-        }
-    };
-
-    $(document).ready(function() {
-        ErrorsManager.init();
-    });
-</script>

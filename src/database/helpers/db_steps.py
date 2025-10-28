@@ -54,3 +54,9 @@ class DBStep(DBBase):
                     )
                 ).order_by(StepDataModel.id).limit(count).all()
             )
+
+    def count(self) -> int:
+        return self.session.query(StepModel).count()
+
+    def stepdata_count(self) -> int:
+        return self.session.query(StepDataModel).count()

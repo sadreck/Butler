@@ -14,6 +14,7 @@
         }
     </style>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 </head>
 
@@ -22,6 +23,9 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-black">
     <div class="container">
         <a class="navbar-brand" href="https://github.com/sadreck/Butler">GitHub Workflows Butler - {{ template_nav_name }}</a>
+        <div class="d-flex text-white">
+            Generated at: {{ generated_at }}
+        </div>
     </div>
 </nav>
 
@@ -37,6 +41,8 @@
     {% include "errors_template.html" %}
 {% elif template_to_load == "workflows" %}
     {% include "workflows_template.html" %}
+{% elif template_to_load == "errors" %}
+    {% include "errors_template.html" %}
 {% elif template_to_load == "index" %}
     {% include "index.html" %}
 {% endif %}

@@ -1,10 +1,9 @@
 import pytest
 from src.libs.components.repo import RepoComponent
 from src.libs.constants import GitHubRefType, RepoStatus, RepoVisibility, WorkflowType
-from src.tests.conftest import mock_handle_get_requests
 
 
-@pytest.mark.parametrize('mock_requests_get', [mock_handle_get_requests], indirect=True)
+@pytest.mark.parametrize('mock_requests_get', ['default'], indirect=True)
 def test_fulfillment_branch(client, mock_requests_get):
     component = RepoComponent('microsoft/vscode@main')
     client.fulfill_component(component)
@@ -27,7 +26,7 @@ def test_fulfillment_branch(client, mock_requests_get):
     assert component.status == RepoStatus.OK
     assert component.visibility == RepoVisibility.PUBLIC
 
-@pytest.mark.parametrize('mock_requests_get', [mock_handle_get_requests], indirect=True)
+@pytest.mark.parametrize('mock_requests_get', ['default'], indirect=True)
 def test_fulfillment_signed(client, mock_requests_get):
     # Sometimes the passed commit is a reference to a signed tag which is not directly accessible through the UI.
     # For example:

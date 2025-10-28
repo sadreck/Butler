@@ -29,6 +29,11 @@ class RepoStatus(IntEnum):
     NO_WORKFLOWS = 9
     UNKNOWN = 99
 
+class OrgStatus(IntEnum):
+    NONE = 0
+    OK = 1
+    MISSING = 2
+
 class RepoVisibility(IntEnum):
     NONE = 0
     PUBLIC = 1

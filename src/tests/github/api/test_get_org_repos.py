@@ -1,8 +1,7 @@
 import pytest
-from src.tests.conftest import mock_handle_get_requests
 
 
-@pytest.mark.parametrize('mock_requests_get', [mock_handle_get_requests], indirect=True)
+@pytest.mark.parametrize('mock_requests_get', ['default'], indirect=True)
 def test_get_org_repos(client, mock_requests_get):
     all_repos = [
         '.github', '.Net-Interactive-Kernels-ADS', '.NET-Modernization-In-a-Day', '0xDeCA10B',

@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from src.commands.report.helpers.third_party_results import ThirdPartyResults
 from src.commands.report.collector_base import CollectorBase
 from src.libs.components.workflow import WorkflowComponent
@@ -27,7 +28,8 @@ class ThirdPartyCollector(CollectorBase):
             'results': ThirdPartyResults(
                 self.config.get('trusted-orgs', []),
                 self.config.get('deprecated-actions', [])
-            )
+            ),
+            'generated_at': datetime.now().strftime("%Y-%m-%d %H:%M")
         }
 
         self.log.info('Searching for third party actions')
@@ -35,11 +37,7 @@ class ThirdPartyCollector(CollectorBase):
 
         self.log.info(f"Processing {len(third_party_results)} results")
         for result in third_party_results:
-            third_party_dict = {
-                key.replace("third_party_", "", 1): value
-                for key, value in result.items()
-                if key.startswith("third_party_")
-            }
+            third_party_dict = self.extract_result_dict(result, "third_party_")
             workflow_parent = WorkflowComponent.from_dict(result, False)
             workflow_action = WorkflowComponent.from_dict(third_party_dict, False)
 
@@ -110,26 +108,13 @@ class ThirdPartyCollector(CollectorBase):
                 w2.type			AS third_party_workflow_type,
                 w2.status		AS third_party_workflow_status,
                 
-                wr.depth		        AS action_depth,
+                wt.depth		        AS action_depth,
                 COALESCE(wd2.value, '') AS action_title
             FROM organisations o
             JOIN repositories r ON r.org_id = o.id
             JOIN workflows w ON w.repo_id = r.id
-            JOIN (
-                WITH RECURSIVE transitive(parent_id, child_id, depth) AS (
-                  SELECT parent_id, child_id, 1
-                  FROM workflow_relationships
-                  UNION
-                  SELECT t.parent_id, wr.child_id, t.depth + 1
-                  FROM transitive AS t
-                  JOIN workflow_relationships AS wr
-                    ON wr.parent_id = t.child_id
-                )
-                SELECT parent_id, child_id, depth
-                FROM transitive
-                ORDER BY parent_id
-            ) wr ON wr.parent_id = w.id
-            JOIN workflows w2 ON w2.id = wr.child_id
+            JOIN workflow_tree wt ON wt.parent_id = w.id
+            JOIN workflows w2 ON w2.id = wt.child_id
             JOIN repositories r2 ON r2.id = w2.repo_id
             JOIN organisations o2 ON o2.id = r2.org_id
             LEFT JOIN workflow_data wd2 ON wd2.workflow_id = w2.id AND wd2.property = 'name'

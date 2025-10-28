@@ -14,7 +14,7 @@ from src.libs.exceptions import DatabaseVersionMismatch
 
 
 class Database(DatabaseHelper):
-    __VERSION__: str = '1.0.0'
+    __VERSION__: str = '1.0.1'
     _engine: Engine = None
     _sessionmaker: sessionmaker = None
     _session = None
@@ -57,6 +57,7 @@ class Database(DatabaseHelper):
 
         if is_new_database:
             self._create_tables()
+        self._update_views()
 
         if self.debug:
             @event.listens_for(Engine, "before_cursor_execute")
@@ -75,6 +76,28 @@ class Database(DatabaseHelper):
 
     def _create_tables(self) -> None:
         Base.metadata.create_all(self._engine)
+
+    def _update_views(self) -> None:
+        sql = "DROP VIEW IF EXISTS workflow_tree"
+        self.execute(sql)
+
+        sql = """
+            CREATE VIEW IF NOT EXISTS workflow_tree AS
+            WITH RECURSIVE transitive(parent_id, child_id, depth) AS (
+              SELECT parent_id, child_id, 1
+              FROM workflow_relationships
+              UNION
+              SELECT t.parent_id, wr.child_id, t.depth + 1
+              FROM transitive AS t
+              JOIN workflow_relationships AS wr
+                ON wr.parent_id = t.child_id
+            )
+            SELECT parent_id, child_id, depth
+            FROM transitive
+            ORDER BY parent_id
+        """
+        self.execute(sql)
+
 
     def orgs(self) -> DBOrg:
         if not self._orgs:

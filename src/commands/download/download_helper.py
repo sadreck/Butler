@@ -98,10 +98,10 @@ class DownloadHelper:
     def _mark_missing(self, workflow: WorkflowComponent) -> None:
         self.database.workflows().update_status(workflow.id, WorkflowStatus.MISSING)
 
-    def _process_contents(self, workflow: WorkflowComponent, contents: str) -> dict:
-        data = Utils.load_yaml(contents)
+    def _process_contents(self, workflow: WorkflowComponent, contents: str, debug_result: dict) -> dict | None:
+        data = Utils.load_yaml(contents, debug=debug_result)
         if not data or isinstance(data, str):
-            self.log.trace(f"Could not load YAML")
+            self.log.warning(f"Could not load YAML")
             return None
 
         instance = WorkflowInstance(data, workflow.repo)
@@ -134,6 +134,8 @@ class DownloadHelper:
         workflow = WorkflowComponent(uses)
         workflow.repo.id = repo.id
         workflow.repo.org.id = repo.org.id
+        if uses.lower().startswith('docker://'):
+            workflow.type = WorkflowType.DOCKER
         workflow_db = self.database.workflows().create(workflow)
         workflow.id = workflow_db.id
 

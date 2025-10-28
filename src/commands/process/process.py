@@ -46,7 +46,7 @@ class ServiceProcess(Service, ProcessHelper):
 
     def _process_workflow(self, workflow: WorkflowComponent) -> bool:
         self.log.info(f"Processing workflow {workflow}")
-        if not workflow.data:
+        if not workflow.data and workflow.type != WorkflowType.DOCKER:
             self.log.error(f"Could not load JSON for {workflow}")
             with self.lock:
                 self.database.workflows().update_status(workflow.id, WorkflowStatus.ERROR)
@@ -55,7 +55,6 @@ class ServiceProcess(Service, ProcessHelper):
         if workflow.type == WorkflowType.WORKFLOW:
             instance = WorkflowInstance(workflow.data, workflow.repo)
             with self.lock:
-                self.database.workflows().set_data(workflow.id, 'name', instance.name)
                 for trigger, properties in instance.on_data.items():
                     self.database.workflows().set_data(workflow.id, 'on', trigger)
                     for name, value in properties.items():
