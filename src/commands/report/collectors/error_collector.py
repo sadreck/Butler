@@ -75,6 +75,17 @@ class ErrorCollector(CollectorBase):
             self.log.info(f"Saving HTML output to {html_file}")
             self.render('errors', 'Errors', data, html_file)
 
+        if 'csv' in self.outputs:
+            self.write_to_csv(
+                self.outputs['csv']['missing']['path'],
+                data['results'].csv_for_missing()
+            )
+
+            self.write_to_csv(
+                self.outputs['csv']['errors']['path'],
+                data['results'].csv_for_errors()
+            )
+
     def _get_error_actions(self, org_id: int) -> list:
         sql = """
             SELECT

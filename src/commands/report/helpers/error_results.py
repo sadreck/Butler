@@ -1,4 +1,5 @@
 from src.libs.components.workflow import WorkflowComponent
+from src.libs.constants import GitHubRefType
 from src.libs.instances.workflow import WorkflowInstance
 
 
@@ -83,3 +84,51 @@ class ErrorResults:
                 return len(self.errors)
             case _:
                 return 0
+
+    def csv_for_missing(self) -> list:
+        header = [
+            'parent_org',
+            'parent_repo',
+            'parent_workflow',
+            'parent_ref',
+            'parent_ref_type',
+            'parent_fork',
+            'parent_archived',
+            'parent_job',
+            'parent_step',
+            'parent_url',
+            'missing_org',
+            'missing_repo'
+            'missing_workflow',
+            'missing_ref',
+            'missing_external',
+            'missing_url'
+        ]
+        rows = [header]
+
+        for parent_name, parent_workflow in self.missing.items():
+            for child_name, child_workflow in parent_workflow['workflows'].items():
+                for location in child_workflow['locations']:
+                    rows.append([
+                        parent_workflow['instance'].repo.org.name,
+                        parent_workflow['instance'].repo.name,
+                        parent_workflow['instance'].path,
+                        parent_workflow['instance'].repo.ref,
+                        GitHubRefType(parent_workflow['instance'].repo.ref_type).name.lower(),
+                        1 if parent_workflow['instance'].repo.fork else 0,
+                        1 if parent_workflow['instance'].repo.archive else 0,
+                        parent_workflow['instance'].url(True),
+                        location['job_shortname'],
+                        location['step'],
+                        child_workflow['instance'].repo.org.name,
+                        child_workflow['instance'].repo.name,
+                        child_workflow['instance'].path,
+                        child_workflow['instance'].repo.ref,
+                        1 if child_workflow['external'] else 0,
+                        child_workflow['instance'].url(True),
+                    ])
+
+        return rows
+
+    def csv_for_errors(self) -> list:
+        return []
