@@ -1,5 +1,5 @@
 import os
-# from src.commands.report.helpers.error_results import ErrorResults
+from datetime import datetime
 from src.commands.report.collector_base import CollectorBase
 from src.commands.report.helpers.error_results import ErrorResults
 from src.libs.components.workflow import WorkflowComponent
@@ -16,10 +16,23 @@ class ErrorCollector(CollectorBase):
             'file': f'errors.html'
         }
 
+        self.outputs['csv']['missing'] = {
+            'title': 'Missing Actions',
+            'path': os.path.join(self.output_path, f'missing-actions.csv'),
+            'file': f'missing-actions.csv'
+        }
+
+        self.outputs['csv']['errors'] = {
+            'title': 'Parsing Errors',
+            'path': os.path.join(self.output_path, f'parsing-errors.csv'),
+            'file': f'parsing-errors.csv'
+        }
+
     def run(self) -> bool:
         data = {
             'org': self.org.name,
-            'results': ErrorResults()
+            'results': ErrorResults(),
+            'generated_at': datetime.now().strftime("%Y-%m-%d %H:%M")
         }
         """
         [ ] Missing tags/branches/commits.
@@ -49,8 +62,11 @@ class ErrorCollector(CollectorBase):
 
             instance = data['results'].add_error_workflow(workflow, error_workflow)
 
-
         self._export(data)
+        self.outputs['info'] = {
+            'missing': data['results'].count('missing'),
+            'errors': data['results'].count('errors'),
+        }
         return True
 
     def _export(self, data: dict) -> None:

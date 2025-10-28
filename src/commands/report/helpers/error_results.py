@@ -36,6 +36,7 @@ class ErrorResults:
         if not child_action in self.missing[action_name]['workflows']:
             self.missing[action_name]['workflows'][child_action] = {
                 'instance': missing_workflow,
+                'external': missing_workflow.repo.org.name.lower() != workflow.repo.org.name.lower(),
                 'locations': []
             }
         self.missing[action_name]['workflows'][child_action]['locations'].extend(locations)

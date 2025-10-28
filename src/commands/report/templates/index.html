@@ -95,6 +95,33 @@
         {% endif %}
         <div class="col"></div>
     </div>
+
+    <div class="row">
+        <div class="col"></div>
+        {% if errors %}
+        <div class="col-3">
+            <div class="card border-black">
+                <div class="card-header">Missing Actions &amp; Errors</div>
+                <div class="card-body">
+                    <div class="text-center">
+                        <a href="{{ errors.html.errors.file }}">
+                            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAB2AAAAdgB+lymcgAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAARESURBVHic7ZtbiE9BHMc/u8u67Ea77AOLlKJc1wOL5MGDSy4ll0eKhMQDEeVJuWyJ8iDCi5Rs1Hogad0TktwSuSwPElYuy8r9eJjddfx35j9zZuZcxLd+/evfme/v+/udc2bmNzMH/kQnYBlwBngJBCnaR+AWsBXoQwIYCTxOKLio9glYHl/oIvgPGQhUZ+viCL4T2b3zufYDGOs7AUszEFgUq/edgDMZCCqKfQcqfAVfCAz3RZYQioDBvsgKgXJfZAmipy+iQqDAF1mCKMwc0d+KDobXvQGuImZnJigFqvlLXi9dr3sBKLPgLQMuGvDb2FwLPUronI1w4B5pwJ9qAkz6gCcO/A0ObROBSQImOfBPdmibGHSPWyPikSuNwFkKzGtpm+lXwGQU6AnU+nKYNfzz84D/CUhbQNr45xNgOhU+DJwEmmPUUgQMA1YSbcRxhm7I2ZykGGA08E2jKdGpcC+fzgxxSaMp0alwGkhsjcKkD1gJrI9bSAjVwKic/+4i1i7vIUrzy76cFSAeKR1qEZ2g6XqADYoQ65Mr+N0J1gEbgRsx+o1lru5q74FZcQYdRtrB5to7xDpCYkg74LD9JIUSOu2gw7ZXo3UoMAMYB3R2jLsNaQfdaq9Rr/dPAO5Irl+NhyFTJ6wRmA2UWPL3BrYY+FmgaD8FsR2marfLUlcbdMJmuzpoQW0eH+eQ38kemK0qOWnUkXdzIQ9hkYL/C+q9vn0G+gLgOdDdVpiOvMqWOAeq10BVbI1HjAqmfch2W2E64ou47/BUIz+B0gB0lVzfAbhpoC1s37GYP5hOhd8CV7CbClciSlxZ3TEdOC75fy1QY+HrGjAG8eQYI0qWfdpRhZ6+uJ1XWhol+LQS0Az0V+ipc+R+R8Q1jDQSsEqhZaon/gNZTsBtoKNERwnwVNP2EGI43QQ05bnuJzAxiwn4gZjHy1Cjabsp53rd2uE9xBHATCVgj0LDEOCrpq3svdatHW7IUgJUxU4BcNagvQz5ptcB4ojtgKwkYL7C/0LD9jYJCBBLeakn4ALyYqcceBVzAgJgTpoJyFfs7I/A45KAvMVSlILDxnwVOy4JCIAdqgTEdYojQIzrsoWUjrRf4dGZjOdEhPbKYul0jAmYJnMIrLHgyn2PyxGbJFE4riDZDVsSU/CqYqcfoqqMytfYkoTuiDtpewZxWa6gYuCR5+CbUH/nc8yzr6gmLZaq8PvJjGovcaYjr2ktoLODMnFVwEMPwb8Eukj4TYqdfBa1FshnymKpGNEn1AMvLMl3yojRFzs6s6kF8tkDPG6u6FAJfHYQGyD2F3LhkoCAmD/FC2Odo9CA9hOqauxfgVa7bnpIyhWDPHCsR1R2p1p+V2B+yEuFga6iTLEb9ycgDmtM6ozQ+YT8REViuoqB+6R/x8P2jfZnkWLFYOCZ5yBcgl8cb7hyVADbEN8qu/bgVu88cITQnf8FOmL2M+Vd2HoAAAAASUVORK5CYII=">
+                        </a>
+                        <p class="mt-2">
+                            <a href="{{ errors.html.errors.file }}" class="text-black">{{ "{:,}".format(errors.info.missing) }} Missing Actions &amp; {{ "{:,}".format(errors.info.errors) }} Errors</a>
+                        </p>
+                    </div>
+                </div>
+                <div class="card-footer text-end">
+                    <a href="{{ errors.csv.missing.file }}"><span class="badge badge-pill bg-black">{{ errors.csv.missing.file }}</span></a>
+                    <a href="{{ errors.csv.errors.file }}"><span class="badge badge-pill bg-black">{{ errors.csv.errors.file }}</span></a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        <div class="col-3"></div>
+        <div class="col"></div>
+    </div>
 </div>
 
 <footer class="footer mt-auto py-3 bg-secondary">
@@ -122,6 +149,10 @@
                     <li class="list-group-item bg-body-tertiary">
                         <img width="16" src="data:image/png;base64,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">
                         <a href="https://www.flaticon.com/free-icons/server" title="server icons" class="ms-1 text-secondary">Server icons created by Pixel perfect - Flaticon</a>
+                    </li>
+                    <li class="list-group-item bg-body-tertiary">
+                        <img width="16" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAB2AAAAdgB+lymcgAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAARESURBVHic7ZtbiE9BHMc/u8u67Ea77AOLlKJc1wOL5MGDSy4ll0eKhMQDEeVJuWyJ8iDCi5Rs1Hogad0TktwSuSwPElYuy8r9eJjddfx35j9zZuZcxLd+/evfme/v+/udc2bmNzMH/kQnYBlwBngJBCnaR+AWsBXoQwIYCTxOKLio9glYHl/oIvgPGQhUZ+viCL4T2b3zufYDGOs7AUszEFgUq/edgDMZCCqKfQcqfAVfCAz3RZYQioDBvsgKgXJfZAmipy+iQqDAF1mCKMwc0d+KDobXvQGuImZnJigFqvlLXi9dr3sBKLPgLQMuGvDb2FwLPUronI1w4B5pwJ9qAkz6gCcO/A0ObROBSQImOfBPdmibGHSPWyPikSuNwFkKzGtpm+lXwGQU6AnU+nKYNfzz84D/CUhbQNr45xNgOhU+DJwEmmPUUgQMA1YSbcRxhm7I2ZykGGA08E2jKdGpcC+fzgxxSaMp0alwGkhsjcKkD1gJrI9bSAjVwKic/+4i1i7vIUrzy76cFSAeKR1qEZ2g6XqADYoQ65Mr+N0J1gEbgRsx+o1lru5q74FZcQYdRtrB5to7xDpCYkg74LD9JIUSOu2gw7ZXo3UoMAMYB3R2jLsNaQfdaq9Rr/dPAO5Irl+NhyFTJ6wRmA2UWPL3BrYY+FmgaD8FsR2marfLUlcbdMJmuzpoQW0eH+eQ38kemK0qOWnUkXdzIQ9hkYL/C+q9vn0G+gLgOdDdVpiOvMqWOAeq10BVbI1HjAqmfch2W2E64ou47/BUIz+B0gB0lVzfAbhpoC1s37GYP5hOhd8CV7CbClciSlxZ3TEdOC75fy1QY+HrGjAG8eQYI0qWfdpRhZ6+uJ1XWhol+LQS0Az0V+ipc+R+R8Q1jDQSsEqhZaon/gNZTsBtoKNERwnwVNP2EGI43QQ05bnuJzAxiwn4gZjHy1Cjabsp53rd2uE9xBHATCVgj0LDEOCrpq3svdatHW7IUgJUxU4BcNagvQz5ptcB4ojtgKwkYL7C/0LD9jYJCBBLeakn4ALyYqcceBVzAgJgTpoJyFfs7I/A45KAvMVSlILDxnwVOy4JCIAdqgTEdYojQIzrsoWUjrRf4dGZjOdEhPbKYul0jAmYJnMIrLHgyn2PyxGbJFE4riDZDVsSU/CqYqcfoqqMytfYkoTuiDtpewZxWa6gYuCR5+CbUH/nc8yzr6gmLZaq8PvJjGovcaYjr2ktoLODMnFVwEMPwb8Eukj4TYqdfBa1FshnymKpGNEn1AMvLMl3yojRFzs6s6kF8tkDPG6u6FAJfHYQGyD2F3LhkoCAmD/FC2Odo9CA9hOqauxfgVa7bnpIyhWDPHCsR1R2p1p+V2B+yEuFga6iTLEb9ycgDmtM6ozQ+YT8REViuoqB+6R/x8P2jfZnkWLFYOCZ5yBcgl8cb7hyVADbEN8qu/bgVu88cITQnf8FOmL2M+Vd2HoAAAAASUVORK5CYII=">
+                        <a href="https://www.flaticon.com/free-icons/error" title="error icons" class="ms-1 text-secondary">Error icons created by Pixel perfect - Flaticon</a>
                     </li>
                 </ul>
             </div>

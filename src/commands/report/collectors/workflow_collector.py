@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from src.commands.report.helpers.workflow_results import WorkflowResults
 from src.commands.report.collector_base import CollectorBase
 from src.libs.components.workflow import WorkflowComponent
@@ -24,7 +25,8 @@ class WorkflowCollector(CollectorBase):
     def run(self) -> bool:
         data = {
             'org': self.org.name,
-            'results': WorkflowResults()
+            'results': WorkflowResults(),
+            'generated_at': datetime.now().strftime("%Y-%m-%d %H:%M")
         }
 
         self.log.info('Searching for workflows')

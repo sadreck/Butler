@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from src.commands.report.helpers.third_party_results import ThirdPartyResults
 from src.commands.report.collector_base import CollectorBase
 from src.libs.components.workflow import WorkflowComponent
@@ -27,7 +28,8 @@ class ThirdPartyCollector(CollectorBase):
             'results': ThirdPartyResults(
                 self.config.get('trusted-orgs', []),
                 self.config.get('deprecated-actions', [])
-            )
+            ),
+            'generated_at': datetime.now().strftime("%Y-%m-%d %H:%M")
         }
 
         self.log.info('Searching for third party actions')

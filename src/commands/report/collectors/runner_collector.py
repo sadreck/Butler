@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from src.commands.report.helpers.runner_results import RunnerResults
 from src.commands.report.collector_base import CollectorBase
 from src.libs.components.workflow import WorkflowComponent
@@ -32,7 +33,8 @@ class RunnerCollector(CollectorBase):
             'results': RunnerResults(
                 self.config.get('supported_runners', []),
                 self.config.get('unsupported_runners', [])
-            )
+            ),
+            'generated_at': datetime.now().strftime("%Y-%m-%d %H:%M")
         }
 
         self.log.info('Searching for runners')

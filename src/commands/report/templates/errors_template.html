@@ -47,7 +47,12 @@
                             {% for child_name, child_result in parent_result.workflows.items() %}
                             <div class="row ps-3 pb-2">
                                 <div class="col">
-                                    <div>{{ child_result.instance }}</div>
+                                    <div>
+                                        {% if child_result.external %}
+                                        <span class="badge bg-danger me-1">external</span>
+                                        {% endif %}
+                                        <a href="https://github.com/{{ child_result.instance.repo.org.name }}/{{ child_result.instance.repo.name }}">{{ child_result.instance }}</a>
+                                    </div>
                                     {% for location in child_result.locations %}
                                     <span class="badge bg-secondary">
                                         called from job {{ location.job_shortname }}, step {{ location.step }}
