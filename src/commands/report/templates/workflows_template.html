@@ -6,243 +6,96 @@
      </div>
 
     <div class="row mt-2">
-        <div class="col-4" id="container-repos">
-            <h3><span class="visible-results">{{ results.count('repos') | format_number }}</span> Repositories</h3>
-            <div class="input-group mb-1">
-                <input type="text" class="form-control search" placeholder="search">
-            </div>
-            <div class="row filters">
-                <div class="col">
-                    <!-- Sources -->
-                    {{ badge_filter(
-                        'filter-sources',
-                        'text-bg-primary',
-                        '(' ~ (results.count('sources') | format_number) ~ ')',
-                        '<i class="fa-solid fa-code"></i>',
-                        True,
-                        'Sources')
-                    }}
-
-                    <!-- Forked -->
-                    {{ badge_filter(
-                        'filter-forked',
-                        'text-bg-primary',
-                        '(' ~ (results.count('forked') | format_number) ~ ')',
-                        '<i class="fa-solid fa-code-fork"></i>',
-                        True,
-                        'Forked')
-                    }}
-
-                    <!-- Archived -->
-                    {{ badge_filter(
-                        'filter-archived',
-                        'text-bg-warning',
-                        '(' ~ (results.count('archived') | format_number) ~ ')',
-                        '<i class="fa-solid fa-box-archive"></i>',
-                        True,
-                        'Archived')
-                    }}
-
-                    <!-- Public -->
-                    {{ badge_filter(
-                        'filter-public',
-                        'text-bg-primary',
-                        '(' ~ (results.count('public') | format_number) ~ ')',
-                        '<i class="fa-solid fa-lock-open"></i>',
-                        True,
-                        'Public')
-                    }}
-
-                    <!-- Private -->
-                    {{ badge_filter(
-                        'filter-private',
-                        'text-bg-primary',
-                        '(' ~ (results.count('private') | format_number) ~ ')',
-                        '<i class="fa-solid fa-lock"></i>',
-                        True,
-                        'Private')
-                    }}
-                </div>
-            </div>
-
-            <div class="row mt-3">
-                <div class="col">
-                    <div class="sidebar">
-                        <ul class="list-group list-group-flush">
-                            {% for repo in results.repos %}
-                            <li
-                                class="list-group-item d-flex align-items-center overflow-auto ps-0 repo"
-                                data-filter-archived="{{ 1 if repo.instance.archive else 0 }}"
-                                data-filter-forked="{{ 1 if repo.instance.fork else 0 }}"
-                                data-filter-source="{{ 1 if repo.instance.source else 0 }}"
-                                data-filter-public="{{ 1 if repo.instance.visibility == 1 else 0 }}"
-                                data-filter-private="{{ 1 if repo.instance.visibility == 2 else 0 }}"
-                                data-name="{{ repo.instance.name }}"
-                            >
-                                <div class="ms-2 me-auto">
-                                    {% if repo.instance.visibility == 1 %}
-                                    <i class="fa-solid fa-lock-open text-secondary" title="Public"></i>
-                                    {% elif repo.instance.visibility == 2 %}
-                                    <i class="fa-solid fa-lock" title="Private"></i>
-                                    {% endif %}
-
-                                    {% if repo.instance.archive %}
-                                    <i class="fa-solid fa-box-archive text-warning" title="Archived"></i>
-                                    {% elif repo.instance.fork %}
-                                    <i class="fa-solid fa-code-fork text-secondary" title="Fork"></i>
-                                    {% endif %}
-
-                                    <a href="#" class="name">{{ repo.instance.name }}</a>
-                                </div>
-                                <span class="badge text-bg-secondary" title="Workflows &amp; Actions">{{ repo.count }}</span>
-                            </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col" id="container-workflows">
+        <div class="col" id="filters">
             <h3><span class="visible-results">{{ results.count('workflows_and_actions') | format_number }}</span> Workflows &amp; Actions</h3>
             <div class="input-group mb-1">
                 <input type="text" class="form-control search" placeholder="search">
             </div>
-            <div class="row filters">
+            <div class="row">
+                <div class="col-2">
+                    <select class="form-control" id="visibility" multiple>
+                        <option value="public" data-icon="fa-solid fa-lock-open">public</option>
+                        <option value="private" data-icon="fa-solid fa-lock">private</option>
+                    </select>
+                </div>
+                <div class="col-3">
+                    <select class="form-control" id="type" multiple>
+                        <option value="source">source</option>
+                        <option value="archived">archived</option>
+                        <option value="fork">fork</option>
+                    </select>
+                </div>
+                <div class="col-3">
+                    <select class="form-control" id="component" multiple>
+                        <option value="workflow">workflow</option>
+                        <option value="action">action</option>
+                        <option value="docker">docker</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3" id="components">
+        <div class="col striped-rows">
+            {% for workflow in results.workflows %}
+            <div
+                    class="row pb-1 pt-1 workflow"
+                    data-name="{{ workflow.instance }}"
+                    data-visibility="{{ workflow.instance.repo.visibility_name }}"
+                    data-component="{{ workflow.instance.type_name }}"
+                    data-type="{{ workflow.instance.repo.source_type }}"
+            >
                 <div class="col">
-                    <!-- Workflows -->
-                    {{ badge_filter(
-                        'filter-workflows',
-                        'text-bg-primary',
-                        'workflows (' ~ (results.count('workflows') | format_number) ~ ')',
-                        '',
-                        True,
-                        'Workflows')
-                    }}
+                    {% if workflow.instance.repo.visibility == 1 %}
+                    <i class="fa-solid fa-lock-open text-secondary" title="Public"></i>
+                    {% elif  workflow.instance.repo.visibility == 2 %}
+                    <i class="fa-solid fa-lock" title="Private"></i>
+                    {% endif %}
 
-                    <!-- Actions -->
-                    {{ badge_filter(
-                        'filter-actions',
-                        'text-bg-primary',
-                        'actions (' ~ (results.count('actions') | format_number) ~ ')',
-                        '<i class="fa-brands fa-github"></i>',
-                        True,
-                        'Actions')
-                    }}
+                    {% if  workflow.instance.repo.archive %}
+                    <i class="fa-solid fa-box-archive text-warning" title="Archived"></i>
+                    {% elif  workflow.instance.repo.fork %}
+                    <i class="fa-solid fa-code-fork text-secondary" title="Fork"></i>
+                    {% endif %}
 
-                    <!-- Docker -->
-                    {{ badge_filter(
-                        'filter-docker',
-                        'text-bg-primary',
-                        'docker (' ~ (results.count('docker') | format_number) ~ ')',
-                        '<i class="fa-brands fa-docker"></i>',
-                        True,
-                        'Docker')
-                    }}
+                    {% if workflow.instance.type_name == 'workflow' %}
+                    <!-- Workflow -->
+                    {% elif workflow.instance.type_name == 'action' %}
+                    <i class="fa-brands fa-github" title="GitHub Action"></i>
+                    {% elif workflow.instance.type_name == 'docker' %}
+                    <i class="fa-brands fa-docker text-primary" title="Docker"></i>
+                    {% endif %}
 
-                    <!-- Archived -->
-                    {{ badge_filter(
-                        'filter-archived-workflows',
-                        'text-bg-warning',
-                        'archived (' ~ (results.count('archived_workflows') | format_number) ~ ')',
-                        '<i class="fa-solid fa-box-archive"></i>',
-                        True,
-                        'Archived')
-                    }}
-
-                    <!-- Forked -->
-                    {{ badge_filter(
-                        'filter-forked-workflows',
-                        'text-bg-secondary',
-                        'forked (' ~ (results.count('forked_workflows') | format_number) ~ ')',
-                        '<i class="fa-solid fa-code-fork"></i>',
-                        True,
-                        'Forked')
-                    }}
+                    <a href="{{ workflow.instance.url(True) }}" class="name">{{ workflow.instance }}</a>
                 </div>
                 <div class="col-2 text-end">
-                    <a href="#" class="badge text-bg-info selected-filter d-none text-decoration-none"><span class="filter-value"></span> <i class="fa-solid fa-xmark"></i></a>
+                    <span class="badge bg-secondary">jobs ({{ workflow.job_count }})</span>
+                    <span class="badge bg-secondary">triggers ({{ workflow.triggers | length }})</span>
                 </div>
             </div>
-            <div class="row mt-3">
-                <div class="col">
-                    {% for workflow in results.workflows %}
-                    <div
-                            class="row workflow pt-2 pb-2 border-bottom"
-                            data-type="{{ workflow.instance.type_name }}"
-                            data-archived="{{ 1 if workflow.instance.repo.archive else 0 }}"
-                            data-forked="{{ 1 if workflow.instance.repo.fork else 0 }}"
-                            data-name="{{ workflow.instance }}"
-                            data-repo="{{ workflow.instance.repo.name }}"
-                    >
-                        <div class="col">
-                            <div class="row">
-                                <div class="col">
-                                    {% if workflow.instance.repo.visibility == 1 %}
-                                    <i class="fa-solid fa-lock-open text-secondary" title="Public"></i>
-                                    {% elif  workflow.instance.repo.visibility == 2 %}
-                                    <i class="fa-solid fa-lock" title="Private"></i>
-                                    {% endif %}
-
-                                    {% if  workflow.instance.repo.archive %}
-                                    <i class="fa-solid fa-box-archive text-warning" title="Archived"></i>
-                                    {% elif  workflow.instance.repo.fork %}
-                                    <i class="fa-solid fa-code-fork text-secondary" title="Fork"></i>
-                                    {% endif %}
-                                    <a href="{{ workflow.instance.url(True) }}" class="name">{{ workflow.instance }}</a>
-                                </div>
-                                <div class="col-1 text-end">
-                                    {% if workflow.instance.type_name == 'workflow' %}
-                                    <!-- Workflow -->
-                                    {% elif workflow.instance.type_name == 'action' %}
-                                    <i class="fa-brands fa-github" title="GitHub Action"></i>
-                                    {% elif workflow.instance.type_name == 'docker' %}
-                                    <i class="fa-brands fa-docker text-primary" title="Docker"></i>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col">
-                                    <span class="badge bg-secondary">jobs ({{ workflow.job_count }})</span>
-                                    <span class="badge bg-secondary">triggers ({{ workflow.triggers | length }})</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
+            {% endfor %}
         </div>
     </div>
 </div>
 
 <script type="text/javascript">
-    const WorkflowManager = {
-        init: function () {
-            $('.filter').click(function () {
-                WorkflowManager.filter($(this));
-            });
+    const PageManager = {
+        selectVisibility: null,
+        selectType: null,
+        selectComponent: null,
+
+        init: function() {
+            this.selectVisibility = new Choices(document.getElementById('visibility'), { removeItemButton: true, placeholderValue: 'visibility' });
+            this.selectType = new Choices(document.getElementById('type'), { removeItemButton: true, placeholderValue: 'type' });
+            this.selectComponent = new Choices(document.getElementById('component'), { removeItemButton: true, placeholderValue: 'component' });
+
+            this.selectVisibility.passedElement.element.addEventListener('change', function (event) { PageManager.filter() });
+            this.selectType.passedElement.element.addEventListener('change', function (event) { PageManager.filter() });
+            this.selectComponent.passedElement.element.addEventListener('change', function (event) { PageManager.filter() });
 
             $('.search').keyup(function () {
-                WorkflowManager.filter($(this));
-            });
-
-            $('#container-repos .repo .name').click(function () {
-                WorkflowManager.filter_by_repo($(this));
-                return false;
-            });
-
-            $('#container-workflows .selected-filter').click(function() {
-                $(this).addClass('d-none').find('.filter-value').text('');
-                WorkflowManager.filter(null);
-                return false;
-            });
-
-            this.clear();
-        },
-
-        clear: function() {
-            $('.filter').each(function() {
-                $(this).prop('checked', true);
+                PageManager.filter();
             });
 
             $('.search').each(function() {
@@ -250,148 +103,42 @@
             });
         },
 
-        filter: function(element) {
-            this.__repo_filters();
-            this.__workflow_filters();
-            this.__update_result_counts();
-        },
+        filter: function() {
+            // Start from a visible state.
+            $('#components .workflow').removeClass('d-none');
 
-        __workflow_filters: function() {
-            // Get state of current filters.
-            let filters = {};
-            $('#container-workflows .filter').each(function() {
-                filters[$(this).data('filter')] = $(this).is(':checked');
-            });
+            let visibilityFilter = this.selectVisibility.getValue(true);
+            let typeFilter = this.selectType.getValue(true);
+            let componentFilter = this.selectComponent.getValue(true);
 
-            $('#container-workflows .workflow').each(function() {
-                // Start from a visible state.
-                $(this).removeClass('d-none');
-
+            $('#components .workflow').each(function () {
+                let visibility = $(this).data('visibility');
                 let type = $(this).data('type');
-                if (type == 'workflow' && !filters['filter-workflows']) {
-                    $(this).addClass('d-none');
-                } else if (type == 'action' && !filters['filter-actions']) {
-                    $(this).addClass('d-none');
-                } else if (type == 'docker' && !filters['filter-docker']) {
-                    $(this).addClass('d-none');
-                }
+                let component = $(this).data('component');
 
-                let is_archived = $(this).data('archived') == 1;
-                let is_forked = $(this).data('forked') == 1;
-
-                if (is_archived && !filters['filter-archived-workflows']) {
+                if (visibilityFilter.length > 0 && !visibilityFilter.includes(visibility)) {
                     $(this).addClass('d-none');
-                } else if (is_forked && !filters['filter-forked-workflows']) {
+                } else if (typeFilter.length > 0 && !typeFilter.includes(type)) {
                     $(this).addClass('d-none');
-                }
-
-                let no_components = !filters['filter-workflows'] &&
-                    !filters['filter-actions'] &&
-                    !filters['filter-docker'];
-
-                if (no_components && is_archived && filters['filter-archived-workflows']) {
-                    $(this).removeClass('d-none');
-                } else if (no_components && is_forked && filters['filter-forked-workflows']) {
-                    $(this).removeClass('d-none');
+                } else if (componentFilter.length > 0 && !componentFilter.includes(component)) {
+                    $(this).addClass('d-none');
                 }
             });
 
-            let searchFor = $('#container-workflows .search').val().toLowerCase();
+            let searchFor = $('#filters .search').val().toLowerCase();
             if (searchFor.length > 0) {
-                $('#container-workflows .workflow').each(function() {
-                    if (!$(this).data('name').toLowerCase().includes(searchFor)) {
+                $('#components .workflow').each(function () {
+                    if (!$(this).data('name').toLowerCase().includes(searchFor) && !$(this).hasClass('d-none')) {
                         $(this).addClass('d-none');
                     }
                 });
             }
-        },
 
-        __repo_filters: function() {
-            // Get state of current filters.
-            let filters = {};
-            $('#container-repos .filter').each(function() {
-                filters[$(this).data('filter')] = $(this).is(':checked');
-            });
-
-            $('#container-repos .repo').each(function() {
-                // Start from a visible state.
-                $(this).removeClass('d-none');
-
-                let is_source = $(this).data('filter-source') == 1;
-                let is_archived = $(this).data('filter-archived') == 1;
-                let is_forked = $(this).data('filter-forked') == 1;
-                let is_public = $(this).data('filter-public') == 1;
-                let is_private = $(this).data('filter-private') == 1;
-
-                // Source / Archived / Forked.
-                let only_source = filters['filter-sources'] &&
-                    !filters['filter-archived'] &&
-                    !filters['filter-forked'];
-                let only_archived = filters['filter-archived'] &&
-                    !filters['filter-sources'] &&
-                    !filters['filter-forked'];
-                let only_forked = filters['filter-forked'] &&
-                    !filters['filter-sources'] &&
-                    !filters['filter-archived'];
-
-                if (is_source && !filters['filter-sources']) {
-                    $(this).addClass('d-none');
-                } else if (is_archived && !filters['filter-archived']) {
-                    $(this).addClass('d-none');
-                } else if (is_forked && !filters['filter-forked']) {
-                    $(this).addClass('d-none');
-                }
-
-                if (only_source && is_source) {
-                    $(this).removeClass('d-none');
-                } else if (only_archived && is_archived) {
-                    $(this).removeClass('d-none');
-                } else if (only_forked && is_forked) {
-                    $(this).removeClass('d-none');
-                }
-
-                // Public / Private.
-                if (is_public && !filters['filter-public']) {
-                    $(this).addClass('d-none');
-                } else if (is_private && !filters['filter-private']) {
-                    $(this).addClass('d-none');
-                }
-            });
-
-            let searchFor = $('#container-repos .search').val().toLowerCase();
-            if (searchFor.length > 0) {
-                $('#container-repos .repo').each(function() {
-                    if (!$(this).data('name').toLowerCase().includes(searchFor)) {
-                        $(this).addClass('d-none');
-                    }
-                });
-            }
-        },
-
-        filter_by_repo: function(element) {
-            $('#container-workflows .workflow').addClass('d-none');
-
-            let repo_name = $(element).text().trim().toLowerCase();
-
-            $('#container-workflows .selected-filter').removeClass('d-none').find('.filter-value').text(repo_name);
-
-            $('#container-workflows .workflow').each(function() {
-                let name = $(this).data('repo');
-                if (name.toLowerCase() === repo_name.toLowerCase()) {
-                    $(this).removeClass('d-none');
-                }
-            });
-
-            this.__update_result_counts();
-        },
-
-        __update_result_counts: function() {
-            $('#container-repos .visible-results').text($('#container-repos .repo:visible').length.toLocaleString());
-            $('#container-workflows .visible-results').text($('#container-workflows .workflow:visible').length.toLocaleString());
+            $('#filters .visible-results').text($('#components .workflow:visible').length.toLocaleString());
         }
     };
 
     $(document).ready(function() {
-        WorkflowManager.init();
+        PageManager.init();
     });
 </script>

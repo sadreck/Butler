@@ -6,6 +6,7 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.8/dist/lumen/bootstrap.min.css" integrity="sha384-VvtmOf0H1c5UOkg0sTVnp2+DaE7+6PO78xrugFKUni8B3tEbZ6V56DNytr8Zs2ZI" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js@11.1.0/public/assets/styles/choices.min.css" integrity="sha384-n0GACcBzAGKp29zpmkTj4eje26AGm3wqHG9TROENrVHXySIkFf8nwmY5IgVr5qen" crossorigin="anonymous">
 
     <style>
         .sidebar {
@@ -23,10 +24,29 @@
             text-decoration: underline;
             text-decoration-color: black;
         }
+
+        /* Hide placeholder when an item is selected */
+        .choices__list--multiple:not(:empty) + .choices__input::placeholder {
+            opacity: 0;
+        }
+
+        /* Stop select box from expanding vertically */
+        .choices__inner {
+            max-height: 44px !important;
+        }
+
+        .striped-rows .row:nth-child(odd) {
+            background-color: var(--bs-table-striped-bg, rgba(var(--bs-emphasis-color-rgb), .05));
+        }
+
+        .striped-rows .row:nth-child(even) {
+            background-color: transparent;
+        }
     </style>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/choices.js@11.1.0/public/assets/scripts/choices.min.js" integrity="sha384-WXCib67DFM/o9ln5XWnf/xepwCGB7NzCdkB7J8Iy8tSgnOR5s3iVHB7LobqBEWCv" crossorigin="anonymous"></script>
 </head>
 
 <body class="d-flex flex-column h-100">

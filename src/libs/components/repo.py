@@ -103,6 +103,18 @@ class RepoComponent(BaseComponent):
         self._visibility = value
 
     @property
+    def visibility_name(self) -> str:
+        return RepoVisibility(self.visibility).name.lower()
+
+    @property
+    def source_type(self) -> str:
+        if self.archive:
+            return 'archived'
+        elif self.fork:
+            return 'fork'
+        return 'source'
+
+    @property
     def poll_status(self) -> PollStatus:
         return self._poll_status or PollStatus.NONE
 
