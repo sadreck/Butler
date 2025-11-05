@@ -46,7 +46,7 @@ class ThirdPartyResults:
                 action.repo.ref,
                 action.repo.resolved_ref,
                 action.repo.resolved_ref_type,
-                self._is_deprecated_ref(name, action.repo.resolved_ref),
+                self._is_deprecated_commit(name, action.repo.resolved_ref),
                 title
             )
         else:
@@ -58,6 +58,13 @@ class ThirdPartyResults:
 
     def _is_deprecated_ref(self, name: str, ref: str) -> bool:
         return f"{name}@{ref}".lower() in self.deprecated_actions
+
+    def _is_deprecated_commit(self, name: str, ref: str) -> bool:
+        for action in self.deprecated_actions:
+            action_name, version = action.split('@', 1)
+            if name.lower() == action_name and ref.startswith(version):
+                return True
+        return False
 
     def count(self, what: str) -> int:
         count = 0

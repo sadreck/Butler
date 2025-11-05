@@ -14,8 +14,8 @@
             <div class="row">
                 <div class="col-2">
                     <select class="form-control" id="visibility" multiple>
-                        <option value="public" data-icon="fa-solid fa-lock-open">public</option>
-                        <option value="private" data-icon="fa-solid fa-lock">private</option>
+                        <option value="public">public</option>
+                        <option value="private">private</option>
                     </select>
                 </div>
                 <div class="col-3">
@@ -87,7 +87,7 @@
 
         init: function() {
             this.selectVisibility = new Choices(document.getElementById('visibility'), { removeItemButton: true, placeholderValue: 'visibility' });
-            this.selectType = new Choices(document.getElementById('type'), { removeItemButton: true, placeholderValue: 'type' });
+            this.selectType = new Choices(document.getElementById('type'), { removeItemButton: true, placeholderValue: 'repo type' });
             this.selectComponent = new Choices(document.getElementById('component'), { removeItemButton: true, placeholderValue: 'component' });
 
             this.selectVisibility.passedElement.element.addEventListener('change', function (event) { PageManager.filter() });

@@ -35,12 +35,62 @@
             max-height: 44px !important;
         }
 
-        .striped-rows .row:nth-child(odd) {
+        .striped-rows .strip:nth-child(odd) {
             background-color: var(--bs-table-striped-bg, rgba(var(--bs-emphasis-color-rgb), .05));
         }
 
-        .striped-rows .row:nth-child(even) {
+        .striped-rows .strip:nth-child(even) {
             background-color: transparent;
+        }
+
+        .striped-rows2 .strip2:nth-child(odd) {
+            background-color: var(--bs-table-striped-bg, rgba(var(--bs-emphasis-color-rgb), .05));
+        }
+
+        .striped-rows2 .strip2:nth-child(even) {
+            background-color: transparent;
+        }
+
+        .striped-rows3 .strip3:nth-child(odd) {
+            background-color: var(--bs-table-striped-bg, rgba(var(--bs-emphasis-color-rgb), .05));
+        }
+
+        .striped-rows3 .strip3:nth-child(even) {
+            background-color: transparent;
+        }
+
+        .trusted-org {
+            color: rgb(var(--bs-success-rgb)) !important;
+        }
+
+        .untrusted-org {
+            color: rgb(var(--bs-warning-rgb)) !important;
+        }
+
+        .stars {
+            color: black;
+            /*background-color: rgb(var(--bs-secondary-rgb)) !important*/
+            background-color: #fad76e !important
+        }
+
+        .text-bg-branch {
+            background-color: #502800;
+            color: white;
+        }
+
+        .text-bg-tag {
+            background-color: #3434d7;
+            color: white;
+        }
+
+        .text-bg-deprecated {
+            background-color: rgb(var(--bs-warning-rgb)) !important;
+            color: white;
+        }
+
+        .text-bg-commit {
+            background-color: #3edeed;
+            color: black;
         }
     </style>
 
