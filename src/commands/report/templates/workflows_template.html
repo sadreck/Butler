@@ -12,66 +12,70 @@
                 <input type="text" class="form-control search" placeholder="search">
             </div>
             <div class="row choices-max-height">
-                <div class="col-2">
+                <div class="col-4">
                     <select class="form-control" id="visibility" multiple>
-                        <option value="public">public</option>
-                        <option value="private">private</option>
+                        <option value="public" data-count="{{ results.count('public') }}">public</option>
+                        <option value="private" data-count="{{ results.count('private') }}">private</option>
                     </select>
                 </div>
-                <div class="col-3">
+                <div class="col-4">
                     <select class="form-control" id="type" multiple>
-                        <option value="source">source</option>
-                        <option value="archived">archived</option>
-                        <option value="fork">fork</option>
+                        <option value="source" data-count="{{ results.count('sources') }}">source</option>
+                        <option value="archived" data-count="{{ results.count('archived') }}">archived</option>
+                        <option value="fork" data-count="{{ results.count('forked') }}">fork</option>
                     </select>
                 </div>
-                <div class="col-3">
+                <div class="col-4">
                     <select class="form-control" id="component" multiple>
-                        <option value="workflow">workflow</option>
-                        <option value="action">action</option>
-                        <option value="docker">docker</option>
+                        <option value="workflow" data-count="{{ results.count('workflows') }}">workflow</option>
+                        <option value="action" data-count="{{ results.count('actions') }}">action</option>
+                        <option value="docker" data-count="{{ results.count('docker') }}">docker</option>
                     </select>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row mt-3" id="components">
+    <div class="row mt-3 mb-5" id="components">
         <div class="col striped-rows">
             {% for workflow in results.workflows %}
             <div
-                    class="row pb-1 pt-1 workflow"
+                    class="row pb-1 pt-1 workflow strip"
                     data-name="{{ workflow.instance }}"
                     data-visibility="{{ workflow.instance.repo.visibility_name }}"
                     data-component="{{ workflow.instance.type_name }}"
                     data-type="{{ workflow.instance.repo.source_type }}"
             >
                 <div class="col">
-                    {% if workflow.instance.repo.visibility == 1 %}
-                    <i class="fa-solid fa-lock-open text-secondary" title="Public"></i>
-                    {% elif  workflow.instance.repo.visibility == 2 %}
-                    <i class="fa-solid fa-lock" title="Private"></i>
-                    {% endif %}
+                    <div class="row">
+                        <div class="col">
+                            {% if workflow.instance.repo.visibility == 1 %}
+                            <i class="fa-solid fa-lock-open text-secondary" title="Public"></i>
+                            {% elif  workflow.instance.repo.visibility == 2 %}
+                            <i class="fa-solid fa-lock" title="Private"></i>
+                            {% endif %}
 
-                    {% if  workflow.instance.repo.archive %}
-                    <i class="fa-solid fa-box-archive text-warning" title="Archived"></i>
-                    {% elif  workflow.instance.repo.fork %}
-                    <i class="fa-solid fa-code-fork text-secondary" title="Fork"></i>
-                    {% endif %}
+                            {% if  workflow.instance.repo.archive %}
+                            <i class="fa-solid fa-box-archive text-warning" title="Archived"></i>
+                            {% elif  workflow.instance.repo.fork %}
+                            <i class="fa-solid fa-code-fork text-secondary" title="Fork"></i>
+                            {% endif %}
 
-                    {% if workflow.instance.type_name == 'workflow' %}
-                    <!-- Workflow -->
-                    {% elif workflow.instance.type_name == 'action' %}
-                    <i class="fa-brands fa-github" title="GitHub Action"></i>
-                    {% elif workflow.instance.type_name == 'docker' %}
-                    <i class="fa-brands fa-docker text-primary" title="Docker"></i>
-                    {% endif %}
+                            {% if workflow.instance.type_name == 'workflow' %}
+                            <!-- Workflow -->
+                            {% elif workflow.instance.type_name == 'action' %}
+                            <i class="fa-brands fa-github" title="GitHub Action"></i>
+                            {% elif workflow.instance.type_name == 'docker' %}
+                            <i class="fa-brands fa-docker text-primary" title="Docker"></i>
+                            {% endif %}
 
-                    <a href="{{ workflow.instance.url(True) }}" class="name">{{ workflow.instance }}</a>
-                </div>
-                <div class="col-2 text-end">
-                    <span class="badge bg-secondary">jobs ({{ workflow.job_count }})</span>
-                    <span class="badge bg-secondary">triggers ({{ workflow.triggers | length }})</span>
+                            <a href="{{ workflow.instance.url(True) }}" class="name">{{ workflow.instance }}</a>
+                        </div>
+                        <div class="col-2 text-end">
+                            <span class="badge text-bg-jobs">jobs ({{ workflow.job_count }})</span>
+                            <span class="badge text-bg-triggers">triggers ({{ workflow.triggers | length }})</span>
+                        </div>
+                    </div>
                 </div>
             </div>
             {% endfor %}
@@ -86,9 +90,9 @@
         selectComponent: null,
 
         init: function() {
-            this.selectVisibility = new Choices(document.getElementById('visibility'), { removeItemButton: true, searchResultLimit: -1, placeholderValue: 'visibility' });
-            this.selectType = new Choices(document.getElementById('type'), { removeItemButton: true, searchResultLimit: -1, placeholderValue: 'repo type' });
-            this.selectComponent = new Choices(document.getElementById('component'), { removeItemButton: true, searchResultLimit: -1, placeholderValue: 'component' });
+            this.selectVisibility = ChoicesTemplateManager.init_with_count(document.getElementById('visibility'), 'visibility');
+            this.selectType = ChoicesTemplateManager.init_with_count(document.getElementById('type'), 'repo type');
+            this.selectComponent = ChoicesTemplateManager.init_with_count(document.getElementById('component'), 'component');
 
             this.selectVisibility.passedElement.element.addEventListener('change', function (event) { PageManager.filter() });
             this.selectType.passedElement.element.addEventListener('change', function (event) { PageManager.filter() });

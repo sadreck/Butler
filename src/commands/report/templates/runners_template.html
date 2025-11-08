@@ -82,51 +82,8 @@
         selectState: null,
 
         init: function() {
-            this.selectSelfHosted = new Choices(
-                document.getElementById('self-hosted'),
-                {
-                    removeItemButton: true,
-                    searchResultLimit: -1,
-                    placeholderValue: "{{ results.count('self-hosted') | format_number }} self-hosted",
-                    allowHTML: true,
-                    shouldSort: false,
-                    callbackOnCreateTemplates: function (strToEl, escapeForTemplate) {
-                        let classNames = this.config.classNames;
-                        let itemSelectText = this.config.itemSelectText;
-                        return {
-                            item: function({ classNames }, data) {
-                                return ChoicesTemplateManager.item(strToEl, escapeForTemplate, classNames, data, '');
-                            },
-                            choice: function ({ classNames }, data) {
-                                return ChoicesTemplateManager.choice(strToEl, escapeForTemplate, classNames, itemSelectText, data, `<span class="badge text-bg-primary me-2" style="width: 40px;">${$(data.element).data('count')}</span>`);
-                            }
-                        }
-                    }
-                }
-            );
-
-            this.selectGitHubHosted = new Choices(
-                document.getElementById('github-hosted'),
-                {
-                    removeItemButton: true,
-                    searchResultLimit: -1,
-                    placeholderValue: "{{ results.count('github-hosted') | format_number }} github-hosted",
-                    allowHTML: true,
-                    shouldSort: false,
-                    callbackOnCreateTemplates: function (strToEl, escapeForTemplate) {
-                        let classNames = this.config.classNames;
-                        let itemSelectText = this.config.itemSelectText;
-                        return {
-                            item: function({ classNames }, data) {
-                                return ChoicesTemplateManager.item(strToEl, escapeForTemplate, classNames, data, '');
-                            },
-                            choice: function ({ classNames }, data) {
-                                return ChoicesTemplateManager.choice(strToEl, escapeForTemplate, classNames, itemSelectText, data, `<span class="badge text-bg-primary me-2" style="width: 40px;">${$(data.element).data('count')}</span>`);
-                            }
-                        }
-                    }
-                }
-            );
+            this.selectSelfHosted = ChoicesTemplateManager.init_with_count(document.getElementById('self-hosted'), "{{ results.count('self-hosted') | format_number }} self-hosted");
+            this.selectGitHubHosted = ChoicesTemplateManager.init_with_count(document.getElementById('github-hosted'), "{{ results.count('github-hosted') | format_number }} github-hosted");
             this.selectState = new Choices(document.getElementById('state'), { removeItemButton: true, searchResultLimit: -1, placeholderValue: "state" });
 
             this.selectSelfHosted.passedElement.element.addEventListener('change', function (event) { PageManager.filter(); });

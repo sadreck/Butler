@@ -87,51 +87,8 @@
         selectSecret: null,
 
         init: function() {
-            this.selectVariable = new Choices(
-                document.getElementById('variables'),
-                {
-                    removeItemButton: true,
-                    searchResultLimit: -1,
-                    placeholderValue: "{{ results.count('variables') | format_number }} variables",
-                    allowHTML: true,
-                    shouldSort: false,
-                    callbackOnCreateTemplates: function (strToEl, escapeForTemplate) {
-                        let classNames = this.config.classNames;
-                        let itemSelectText = this.config.itemSelectText;
-                        return {
-                            item: function({ classNames }, data) {
-                                return ChoicesTemplateManager.item(strToEl, escapeForTemplate, classNames, data, '');
-                            },
-                            choice: function ({ classNames }, data) {
-                                return ChoicesTemplateManager.choice(strToEl, escapeForTemplate, classNames, itemSelectText, data, `<span class="badge text-bg-primary me-2" style="width: 40px;">${$(data.element).data('count')}</span>`);
-                            }
-                        }
-                    }
-                }
-            );
-
-            this.selectSecret = new Choices(
-                document.getElementById('secrets'),
-                {
-                    removeItemButton: true,
-                    searchResultLimit: -1,
-                    placeholderValue: "{{ results.count('secrets') | format_number }} secrets",
-                    allowHTML: true,
-                    shouldSort: false,
-                    callbackOnCreateTemplates: function (strToEl, escapeForTemplate) {
-                        let classNames = this.config.classNames;
-                        let itemSelectText = this.config.itemSelectText;
-                        return {
-                            item: function({ classNames }, data) {
-                                return ChoicesTemplateManager.item(strToEl, escapeForTemplate, classNames, data, '');
-                            },
-                            choice: function ({ classNames }, data) {
-                                return ChoicesTemplateManager.choice(strToEl, escapeForTemplate, classNames, itemSelectText, data, `<span class="badge text-bg-primary me-2" style="width: 40px;">${$(data.element).data('count')}</span>`);
-                            }
-                        }
-                    }
-                }
-            );
+            this.selectVariable = ChoicesTemplateManager.init_with_count(document.getElementById('variables'), "{{ results.count('variables') | format_number }} variables");
+            this.selectSecret = ChoicesTemplateManager.init_with_count(document.getElementById('secrets'), "{{ results.count('secrets') | format_number }} secrets");
 
             this.selectVariable.passedElement.element.addEventListener('change', function (event) { PageManager.filter() });
             this.selectSecret.passedElement.element.addEventListener('change', function (event) { PageManager.filter() });
