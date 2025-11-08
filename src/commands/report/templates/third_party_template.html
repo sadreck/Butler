@@ -68,7 +68,18 @@
                             <i class="fa-solid fa-building-circle-exclamation untrusted-org" title="Untrusted Organisation"></i>
                             {% endif %}
 
-                            <a href="{{ action.action.url() }}" class="name me-1" target="_blank" data-details="action-details-{{ loop.index }}" data-refs="action-refs-{{ loop.index }}">{{ action.name }}</a>
+                            <span id="expand-collapse-{{ loop.index }}">
+                                <i class="fa-solid fa-circle-chevron-right fa-xs expand-icon"></i>
+                                <i class="fa-solid fa-circle-chevron-down fa-xs collapse-icon d-none"></i>
+                            </span>
+                            <a
+                                    href="{{ action.action.url() }}"
+                                    class="name me-1"
+                                    target="_blank"
+                                    data-details="action-details-{{ loop.index }}"
+                                    data-refs="action-refs-{{ loop.index }}"
+                                    data-expand-collapse="expand-collapse-{{ loop.index }}"
+                            >{{ action.name }}</a>
 
                             {% if action.action.repo.archive %}
                             <span class="badge text-bg-warning archived p-1"><i class="fa-solid fa-box-archive"></i></span>
@@ -144,7 +155,17 @@
                                 <div class="col">
                                     <div class="row">
                                         <div class="col">
-                                            <a href="{{ info.url }}" target="_blank" class="ref-name font-monospace small" data-details="action-usages-{{ info.unique }}">{{ ref }}</a>
+                                            <span id="expand-collapse-{{ info.unique }}">
+                                                <i class="fa-solid fa-circle-chevron-right fa-xs expand-icon"></i>
+                                                <i class="fa-solid fa-circle-chevron-down fa-xs collapse-icon d-none"></i>
+                                            </span>
+                                            <a
+                                                    href="{{ info.url }}"
+                                                    target="_blank"
+                                                    class="ref-name font-monospace small"
+                                                    data-details="action-usages-{{ info.unique }}"
+                                                    data-expand-collapse="expand-collapse-{{ info.unique }}"
+                                            >{{ ref }}</a>
                                             {% if info.label|lower == 'commit' %}
                                             <span class="badge text-bg-{{ info.resolved_type }} ms-1">{{ info.resolved_ref }}</span>
                                             {% endif %}
@@ -201,10 +222,15 @@
             $('.action .name').click(function () {
                 let box = $('#' + $(this).data('details'));
                 let refs = $('#' + $(this).data('refs'));
+                let expand_collapse = $('#' + $(this).data('expand-collapse'));
                 if ($(box).hasClass('d-none')) {
+                    $(expand_collapse).find('.expand-icon').addClass('d-none');
+                    $(expand_collapse).find('.collapse-icon').removeClass('d-none');
                     $(refs).addClass('d-none');
                     $(box).removeClass('d-none');
                 } else {
+                    $(expand_collapse).find('.expand-icon').removeClass('d-none');
+                    $(expand_collapse).find('.collapse-icon').addClass('d-none');
                     $(box).addClass('d-none');
                     $(refs).removeClass('d-none');
                 }
@@ -213,9 +239,14 @@
 
             $('.action .ref-name').click(function () {
                 let box = $('#' + $(this).data('details'));
+                let expand_collapse = $('#' + $(this).data('expand-collapse'));
                 if ($(box).hasClass('d-none')) {
+                    $(expand_collapse).find('.expand-icon').addClass('d-none');
+                    $(expand_collapse).find('.collapse-icon').removeClass('d-none');
                     $(box).removeClass('d-none');
                 } else {
+                    $(expand_collapse).find('.expand-icon').removeClass('d-none');
+                    $(expand_collapse).find('.collapse-icon').addClass('d-none');
                     $(box).addClass('d-none');
                 }
                 return false;
