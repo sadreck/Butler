@@ -6,12 +6,24 @@ class VariableResults:
     _secrets: dict = None
     _variables: dict = None
 
-    @property
-    def secrets(self) -> dict:
+    def secrets(self, sorted_by_count: bool = False) -> dict:
+        if sorted_by_count:
+            return dict(
+                sorted(
+                    self._secrets.items(),
+                    key=lambda item: (-item[1]["count"], item[0])
+                )
+            )
         return dict(sorted(self._secrets.items()))
 
-    @property
-    def variables(self) -> dict:
+    def variables(self, sorted_by_count: bool = False) -> dict:
+        if sorted_by_count:
+            return dict(
+                sorted(
+                    self._variables.items(),
+                    key=lambda item: (-item[1]["count"], item[0])
+                )
+            )
         return dict(sorted(self._variables.items()))
 
     @property

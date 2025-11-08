@@ -6,28 +6,135 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.8/dist/lumen/bootstrap.min.css" integrity="sha384-VvtmOf0H1c5UOkg0sTVnp2+DaE7+6PO78xrugFKUni8B3tEbZ6V56DNytr8Zs2ZI" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js@11.1.0/public/assets/styles/choices.min.css" integrity="sha384-n0GACcBzAGKp29zpmkTj4eje26AGm3wqHG9TROENrVHXySIkFf8nwmY5IgVr5qen" crossorigin="anonymous">
 
     <style>
-        .sidebar {
-            height: 60vh;
-            overflow-y: scroll;
+        .link-black {
+            color: black;
+            text-decoration: none;
+        }
+
+        .link-black:hover {
+            color: black;
+            text-decoration: underline;
+            text-decoration-color: black;
+        }
+
+        /* Hide placeholder when an item is selected */
+        .choices__list--multiple:not(:empty) + .choices__input::placeholder {
+            opacity: 0;
+        }
+
+        /* Stop select box from expanding vertically */
+        .choices-max-height .choices__inner {
+            max-height: 44px !important;
+        }
+
+        .striped-rows .strip:nth-child(odd) {
+            background-color: var(--bs-table-striped-bg, rgba(var(--bs-emphasis-color-rgb), .05));
+        }
+
+        .striped-rows .strip:nth-child(even) {
+            background-color: transparent;
+        }
+
+        .striped-rows2 .strip2:nth-child(odd) {
+            background-color: var(--bs-table-striped-bg, rgba(var(--bs-emphasis-color-rgb), .05));
+        }
+
+        .striped-rows2 .strip2:nth-child(even) {
+            background-color: transparent;
+        }
+
+        .striped-rows3 .strip3:nth-child(odd) {
+            background-color: var(--bs-table-striped-bg, rgba(var(--bs-emphasis-color-rgb), .05));
+        }
+
+        .striped-rows3 .strip3:nth-child(even) {
+            background-color: transparent;
+        }
+
+        .trusted-org {
+            color: rgb(var(--bs-success-rgb)) !important;
+        }
+
+        .untrusted-org {
+            color: rgb(var(--bs-warning-rgb)) !important;
+        }
+
+        .stars {
+            color: black;
+            /*background-color: rgb(var(--bs-secondary-rgb)) !important*/
+            background-color: #fad76e !important
+        }
+
+        .text-bg-branch {
+            background-color: #502800;
+            color: white;
+        }
+
+        .text-bg-tag {
+            background-color: #3434d7;
+            color: white;
+        }
+
+        .text-bg-deprecated {
+            background-color: rgb(var(--bs-warning-rgb)) !important;
+            color: white;
+        }
+
+        .text-bg-commit {
+            background-color: #3edeed;
+            color: black;
+        }
+
+        .text-bg-secret {
+            /*background-color: rgb(var(--bs-danger-rgb)) !important;*/
+            background-color: #ac3933;
+            color: white;
+        }
+
+        .text-bg-variable {
+            /*background-color: rgb(var(--bs-primary-rgb)) !important;*/
+            background-color: #3748d7;
+            color: white;
+        }
+
+        .text-bg-self-hosted {
+            background-color: #586ad7;
+            color: white;
+        }
+
+        .text-bg-github-hosted {
+            background-color: #06713b;
+            color: white;
+        }
+
+        .text-bg-jobs {
+            background-color: #06713b;
+            color: white;
+        }
+
+        .text-bg-triggers {
+            background-color: #586ad7;
+            color: white;
         }
     </style>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/choices.js@11.1.0/public/assets/scripts/choices.min.js" integrity="sha384-WXCib67DFM/o9ln5XWnf/xepwCGB7NzCdkB7J8Iy8tSgnOR5s3iVHB7LobqBEWCv" crossorigin="anonymous"></script>
 </head>
 
 <body class="d-flex flex-column h-100">
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-black">
-    <div class="container">
-        <a class="navbar-brand" href="https://github.com/sadreck/Butler">GitHub Workflows Butler - {{ template_nav_name }}</a>
-        <div class="d-flex text-white">
-            Generated at: {{ generated_at }}
+<div class="container-fluid bg-black">
+    <div class="container mt-2 mb-2">
+        <div class="row">
+            <div class="col"><a class="text-white text-decoration-none fs-4" href="https://github.com/sadreck/Butler">GitHub Workflow Oversight</a></div>
         </div>
     </div>
-</nav>
+</div>
 
 {% from "components/badge-filter.html" import badge_filter %}
 
@@ -46,6 +153,10 @@
 {% elif template_to_load == "index" %}
     {% include "index.html" %}
 {% endif %}
+
+<script type="text/javascript">
+    {% include "scripts.js" %}
+</script>
 
 </body>
 </html>

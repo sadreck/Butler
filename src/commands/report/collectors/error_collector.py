@@ -51,7 +51,7 @@ class ErrorCollector(CollectorBase):
         self.log.info(f"Processing {len(error_actions)} calls to actions with errors")
         for result in error_actions:
             error_dict = self.extract_result_dict(result, "error_")
-            error_workflow = WorkflowComponent.from_dict(error_dict, False)
+            error_workflow = WorkflowComponent.from_dict(error_dict, True)
             workflow = WorkflowComponent.from_dict(result, True)
 
             instance = data['results'].add_error_workflow(workflow, error_workflow)
@@ -104,6 +104,8 @@ class ErrorCollector(CollectorBase):
                 w.path			AS error_workflow_path,
                 w.type			AS error_workflow_type,
                 w.status		AS error_workflow_status,
+                w.contents      AS error_workflow_contents,
+                w.data          AS error_workflow_data,
                 
                 o2.id			AS org_id,
                 o2.name			AS org_name,

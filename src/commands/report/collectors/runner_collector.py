@@ -54,21 +54,19 @@ class RunnerCollector(CollectorBase):
         return True
 
     def _export(self, data: dict) -> None:
-        if 'html' in self.export_formats:
-            html_file = self.outputs['html']['runners']['path']
-            self.log.info(f"Saving HTML output to {html_file}")
-            self.render('runners', 'Runners', data, html_file)
+        html_file = self.outputs['html']['runners']['path']
+        self.log.info(f"Saving HTML output to {html_file}")
+        self.render('runners', 'Runners', data, html_file)
 
-        if 'csv' in self.export_formats:
-            self.write_to_csv(
-                self.outputs['csv']['runners']['path'],
-                data['results'].csv_for_runners(self.org.name)
-            )
+        self.write_to_csv(
+            self.outputs['csv']['runners']['path'],
+            data['results'].csv_for_runners(self.org.name)
+        )
 
-            self.write_to_csv(
-                self.outputs['csv']['runners-workflows']['path'],
-                data['results'].csv_for_workflows()
-            )
+        self.write_to_csv(
+            self.outputs['csv']['runners-workflows']['path'],
+            data['results'].csv_for_workflows()
+        )
 
     def _get_runners(self, org_id: int) -> list:
         sql = """

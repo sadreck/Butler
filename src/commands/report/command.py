@@ -10,7 +10,6 @@ from src.libs.utils import Utils
 
 class CommandReport(Command):
     _validate_token: bool = False
-    _supported_formats: list = ['csv', 'html']
 
     @staticmethod
     def load_command_line(subparsers: any) -> None:
@@ -19,7 +18,6 @@ class CommandReport(Command):
         subparser.add_argument("--database", default="database.db", type=str, help="Path to SQLite database to create or connect to")
         subparser.add_argument("--repo", required=True, default='', type=str, help="Repo to generate report from")
         subparser.add_argument("--output", required=True, default='', type=str, help="Location to store output files")
-        subparser.add_argument("--format", default='csv,html', type=str, help=f"Comma separated output supported formats: {CommandReport._supported_formats}")
         subparser.add_argument("--config", default=None, type=str, help="Configuration file (defaults to default_config.yaml)")
 
         Command.define_shared_arguments(subparser)
@@ -31,7 +29,6 @@ class CommandReport(Command):
             'output': '' if arguments.output is None or len(arguments.output.strip()) == 0 else os.path.realpath(arguments.output.strip()),
             'repo': '' if arguments.repo is None or len(arguments.repo.strip()) == 0 else arguments.repo.strip(),
             'config': '' if arguments.config is None else os.path.realpath(arguments.config.strip()),
-            'format': [] if arguments.format is None else [f.lower() for f in Utils.strip_and_clean_list(arguments.format.split(","))],
         }
 
     def validate_command_arguments(self, arguments: dict) -> None:
@@ -55,13 +52,6 @@ class CommandReport(Command):
         # Overwrite the path with its contents
         arguments['config'] = Utils.load_yaml(Utils.read_file(arguments['config']))
 
-        if len(arguments['format']) == 0:
-            raise InvalidCommandLine(f"--format cannot be empty")
-
-        invalid_formats = list(set(arguments['format']).difference(set(self._supported_formats)))
-        if len(invalid_formats) > 0:
-            raise InvalidCommandLine(f"--format is not supported: {invalid_formats}")
-
     def execute(self, arguments: dict) -> bool:
         database = Database(arguments['database'], arguments['db_debug'], arguments['db_debug_auto_commit'])
 
@@ -69,6 +59,5 @@ class CommandReport(Command):
         service.output_path = arguments['output']
         service.repo = arguments['repo']
         service.config = arguments['config']
-        service.export_formats = arguments['format']
 
         return service.run()

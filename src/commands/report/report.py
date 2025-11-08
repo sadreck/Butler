@@ -14,7 +14,6 @@ class ServiceReport(Service):
     output_path: str = None
     repo: str = None
     config: dict = None
-    export_formats: list = None
 
     def run(self) -> bool:
         # First create the output folder if it does not exist.
@@ -37,11 +36,11 @@ class ServiceReport(Service):
 
         outputs = {}
         for collector in collectors:
-            instance = collector(self.log, self.database, self.config, org, self.output_path, self.export_formats)
+            instance = collector(self.log, self.database, self.config, org, self.output_path)
             instance.run()
             outputs[instance.shortname] = instance.outputs
 
-        index_generator = IndexGenerator(self.log, self.database, self.config, org, self.output_path, self.export_formats)
+        index_generator = IndexGenerator(self.log, self.database, self.config, org, self.output_path)
         index_generator.generated_outputs = outputs
         index_generator.run()
 

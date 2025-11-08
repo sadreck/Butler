@@ -50,16 +50,14 @@ class ThirdPartyCollector(CollectorBase):
         return True
 
     def _export(self, data: dict) -> None:
-        if 'html' in self.export_formats:
-            html_file = self.outputs['html']['actions']['path']
-            self.log.info(f"Saving HTML output to {html_file}")
-            self.render('third_party', 'Third Party Actions', data, html_file)
+        html_file = self.outputs['html']['actions']['path']
+        self.log.info(f"Saving HTML output to {html_file}")
+        self.render('third_party', 'Third Party Actions', data, html_file)
 
-        if 'csv' in self.export_formats:
-            self.write_to_csv(
-                self.outputs['csv']['actions']['path'],
-                data['results'].for_csv()
-            )
+        self.write_to_csv(
+            self.outputs['csv']['actions']['path'],
+            data['results'].for_csv()
+        )
 
     def _get_third_party_actions(self, org_id: int) -> list:
         sql = f"""

@@ -66,21 +66,19 @@ class VariableCollector(CollectorBase):
         return True
 
     def _export(self, data: dict) -> None:
-        if 'html' in self.export_formats:
-            html_file = self.outputs['html']['variables']['path']
-            self.log.info(f"Saving HTML output to {html_file}")
-            self.render('variables', 'Variables', data, html_file)
+        html_file = self.outputs['html']['variables']['path']
+        self.log.info(f"Saving HTML output to {html_file}")
+        self.render('variables', 'Variables', data, html_file)
 
-        if 'csv' in self.export_formats:
-            self.write_to_csv(
-                self.outputs['csv']['variables']['path'],
-                data['results'].csv_for_variables(self.org.name)
-            )
+        self.write_to_csv(
+            self.outputs['csv']['variables']['path'],
+            data['results'].csv_for_variables(self.org.name)
+        )
 
-            self.write_to_csv(
-                self.outputs['csv']['variables-workflows']['path'],
-                data['results'].csv_for_workflows()
-            )
+        self.write_to_csv(
+            self.outputs['csv']['variables-workflows']['path'],
+            data['results'].csv_for_workflows()
+        )
 
     def _get_workflow_variables(self, org_id: int) -> list:
         sql = """

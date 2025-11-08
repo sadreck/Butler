@@ -46,7 +46,7 @@ class ThirdPartyResults:
                 action.repo.ref,
                 action.repo.resolved_ref,
                 action.repo.resolved_ref_type,
-                self._is_deprecated_ref(name, action.repo.resolved_ref),
+                self._is_deprecated_commit(name, action.repo.resolved_ref),
                 title
             )
         else:
@@ -58,6 +58,13 @@ class ThirdPartyResults:
 
     def _is_deprecated_ref(self, name: str, ref: str) -> bool:
         return f"{name}@{ref}".lower() in self.deprecated_actions
+
+    def _is_deprecated_commit(self, name: str, ref: str) -> bool:
+        for action in self.deprecated_actions:
+            action_name, version = action.split('@', 1)
+            if name.lower() == action_name and ref.startswith(version):
+                return True
+        return False
 
     def count(self, what: str) -> int:
         count = 0
@@ -89,6 +96,10 @@ class ThirdPartyResults:
                 for name, action in self._actions.items():
                     if action.action.repo.fork:
                         count += 1
+            case 'sources':
+                for name, action in self._actions.items():
+                    if action.action.repo.fork is False and action.action.repo.archive is False:
+                        count += 1
             case 'deprecated':
                 for name, action in self._actions.items():
                     for commit_name, commit in action.commits.items():
@@ -101,6 +112,19 @@ class ThirdPartyResults:
 
                     for tag_name, tag in action.tags.items():
                         if tag['deprecated']:
+                            count += 1
+            case 'supported':
+                for name, action in self._actions.items():
+                    for commit_name, commit in action.commits.items():
+                        if not commit['deprecated']:
+                            count += 1
+
+                    for branch_name, branch in action.branches.items():
+                        if not branch['deprecated']:
+                            count += 1
+
+                    for tag_name, tag in action.tags.items():
+                        if not tag['deprecated']:
                             count += 1
 
         return count
