@@ -25,16 +25,16 @@
             </ul>
             <div class="tab-content" id="pills-tabContent">
                 <!-- Missing -->
-                <div class="tab-pane fade show active p-2" id="missing-tab-pane" role="tabpanel" aria-labelledby="missing-tab" tabindex="0">
+                <div class="tab-pane fade show active p-2 striped-rows" id="missing-tab-pane" role="tabpanel" aria-labelledby="missing-tab" tabindex="0">
                     <div class="row mt-2">
                         <div class="col">
                             <h2><span class="visible-results">{{ results.count('missing') | format_number }}</span> Missing Actions</h2>
                         </div>
                     </div>
                     {% for parent_name, parent_result in results.missing.items() %}
-                    <div class="row workflow pt-2 pb-2 border-bottom">
+                    <div class="row strip pb-1 pt-1">
                         <div class="col">
-                            <div class="row pb-1">
+                            <div class="row">
                                 <div class="col">
                                     {% if  parent_result.instance.repo.archive %}
                                     <i class="fa-solid fa-box-archive text-warning" title="Archived"></i>
@@ -45,7 +45,7 @@
                                 </div>
                             </div>
                             {% for child_name, child_result in parent_result.workflows.items() %}
-                            <div class="row ps-3 pb-2">
+                            <div class="row ms-2">
                                 <div class="col">
                                     <div>
                                         {% if child_result.external %}
@@ -53,14 +53,6 @@
                                         {% endif %}
                                         <a href="https://github.com/{{ child_result.instance.repo.org.name }}/{{ child_result.instance.repo.name }}">{{ child_result.instance }}</a>
                                     </div>
-                                    {% for location in child_result.locations %}
-                                    <span class="badge bg-secondary">
-                                        called from job {{ location.job_shortname }}, step {{ location.step }}
-                                        {% if location.step_name | length > 0 %}
-                                        ({{ location.step_name }})
-                                        {% endif %}
-                                    </span>
-                                    {% endfor %}
                                 </div>
                             </div>
                             {% endfor %}
@@ -77,9 +69,9 @@
                         </div>
                     </div>
                     {% for parent_name, parent_result in results.errors.items() %}
-                    <div class="row workflow pt-2 pb-2 border-bottom">
+                    <div class="row strip pb-1 pt-1">
                         <div class="col">
-                            <div class="row pb-1">
+                            <div class="row">
                                 <div class="col">
                                     {% if  parent_result.instance.repo.archive %}
                                     <i class="fa-solid fa-box-archive text-warning" title="Archived"></i>
@@ -90,17 +82,12 @@
                                 </div>
                             </div>
                             {% for child_name, child_result in parent_result.workflows.items() %}
-                            <div class="row ps-3 pb-2">
+                            <div class="row ms-2">
                                 <div class="col">
-                                    <div>{{ child_result.instance }}</div>
-                                    {% for location in child_result.locations %}
-                                    <span class="badge bg-secondary">
-                                        called from job {{ location.job_shortname }}, step {{ location.step }}
-                                        {% if location.step_name | length > 0 %}
-                                        ({{ location.step_name }})
-                                        {% endif %}
-                                    </span>
-                                    {% endfor %}
+                                    <div>
+                                        <a href="{{ child_result.instance.url(True) }}">{{ child_result.instance }}</a>
+                                        <pre class="bg-secondary p-2">{{ child_result.instance.data }}</pre>
+                                    </div>
                                 </div>
                             </div>
                             {% endfor %}
