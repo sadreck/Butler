@@ -96,6 +96,10 @@ class ThirdPartyResults:
                 for name, action in self._actions.items():
                     if action.action.repo.fork:
                         count += 1
+            case 'sources':
+                for name, action in self._actions.items():
+                    if action.action.repo.fork is False and action.action.repo.archive is False:
+                        count += 1
             case 'deprecated':
                 for name, action in self._actions.items():
                     for commit_name, commit in action.commits.items():
@@ -108,6 +112,19 @@ class ThirdPartyResults:
 
                     for tag_name, tag in action.tags.items():
                         if tag['deprecated']:
+                            count += 1
+            case 'supported':
+                for name, action in self._actions.items():
+                    for commit_name, commit in action.commits.items():
+                        if not commit['deprecated']:
+                            count += 1
+
+                    for branch_name, branch in action.branches.items():
+                        if not branch['deprecated']:
+                            count += 1
+
+                    for tag_name, tag in action.tags.items():
+                        if not tag['deprecated']:
                             count += 1
 
         return count
