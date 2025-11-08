@@ -28,7 +28,6 @@ class RunnerResults:
             case _:
                 return 0
 
-    # @property
     def runners(self, type: str = None) -> list:
         if type == 'self-hosted':
             return [r for _, r in sorted(self._runners.items()) if r['self_hosted']]

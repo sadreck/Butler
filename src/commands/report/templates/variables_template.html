@@ -7,27 +7,23 @@
 
     <div class="row mt-2">
         <div class="col" id="filters">
-            <h3><span class="visible-results">{{ results.count('all') | format_number }}</span> Variables &amp; Secrets</h3>
+            <h3><span class="visible-results">{{ results.count('workflows') | format_number }}</span> Usages of Variables &amp; Secrets</h3>
             <div class="input-group mb-1">
                 <input type="text" class="form-control search" placeholder="search">
             </div>
             <div class="row">
                 <div class="col-6">
                     <select class="form-control" id="variables" multiple>
-                        {% for name, item in results.all.items() %}
-                        {% if item.type == 'variable' %}
-                        <option value="{{ name }}">{{ name }}</option>
-                        {% endif %}
+                        {% for name, item in results.variables(True).items() %}
+                        <option value="{{ name }}" data-count="{{ item.count }}" data-customProperties='{"count":{{ item.count }}}'>{{ name }}</option>
                         {% endfor %}
                     </select>
                 </div>
 
                 <div class="col-6">
                     <select class="form-control" id="secrets" multiple>
-                        {% for name, item in results.all.items() %}
-                        {% if item.type == 'secret' %}
-                        <option value="{{ name }}">{{ name }}</option>
-                        {% endif %}
+                        {% for name, item in results.secrets(True).items() %}
+                        <option value="{{ name }}" data-count="{{ item.count }}">{{ name }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -91,8 +87,51 @@
         selectSecret: null,
 
         init: function() {
-            this.selectVariable = new Choices(document.getElementById('variables'), { removeItemButton: true, searchResultLimit: -1, placeholderValue: "{{ results.count('variables') | format_number }} variables" });
-            this.selectSecret = new Choices(document.getElementById('secrets'), { removeItemButton: true, searchResultLimit: -1, placeholderValue: "{{ results.count('secrets') | format_number }} secrets" });
+            this.selectVariable = new Choices(
+                document.getElementById('variables'),
+                {
+                    removeItemButton: true,
+                    searchResultLimit: -1,
+                    placeholderValue: "{{ results.count('variables') | format_number }} variables",
+                    allowHTML: true,
+                    shouldSort: false,
+                    callbackOnCreateTemplates: function (strToEl, escapeForTemplate) {
+                        let classNames = this.config.classNames;
+                        let itemSelectText = this.config.itemSelectText;
+                        return {
+                            item: function({ classNames }, data) {
+                                return ChoicesTemplateManager.item(strToEl, escapeForTemplate, classNames, data, '');
+                            },
+                            choice: function ({ classNames }, data) {
+                                return ChoicesTemplateManager.choice(strToEl, escapeForTemplate, classNames, itemSelectText, data, `<span class="badge text-bg-primary me-2">${$(data.element).data('count')}</span>`);
+                            }
+                        }
+                    }
+                }
+            );
+
+            this.selectSecret = new Choices(
+                document.getElementById('secrets'),
+                {
+                    removeItemButton: true,
+                    searchResultLimit: -1,
+                    placeholderValue: "{{ results.count('secrets') | format_number }} secrets",
+                    allowHTML: true,
+                    shouldSort: false,
+                    callbackOnCreateTemplates: function (strToEl, escapeForTemplate) {
+                        let classNames = this.config.classNames;
+                        let itemSelectText = this.config.itemSelectText;
+                        return {
+                            item: function({ classNames }, data) {
+                                return ChoicesTemplateManager.item(strToEl, escapeForTemplate, classNames, data, '');
+                            },
+                            choice: function ({ classNames }, data) {
+                                return ChoicesTemplateManager.choice(strToEl, escapeForTemplate, classNames, itemSelectText, data, `<span class="badge text-bg-primary me-2">${$(data.element).data('count')}</span>`);
+                            }
+                        }
+                    }
+                }
+            );
 
             this.selectVariable.passedElement.element.addEventListener('change', function (event) { PageManager.filter() });
             this.selectSecret.passedElement.element.addEventListener('change', function (event) { PageManager.filter() });
