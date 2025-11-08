@@ -21,15 +21,19 @@ class RunnerResults:
                 return len(self._workflows)
             case 'self-hosted':
                 return sum(1 for item in self._runners.values() if item.get("self_hosted") is True)
-            case 'github':
+            case 'github-hosted':
                 return sum(1 for item in self._runners.values() if item.get("self_hosted") is False)
             case 'unsupported':
                 return sum(1 for item in self._runners.values() if item.get("supported") is False)
             case _:
                 return 0
 
-    @property
-    def runners(self) -> list:
+    # @property
+    def runners(self, type: str = None) -> list:
+        if type == 'self-hosted':
+            return [r for _, r in sorted(self._runners.items()) if r['self_hosted']]
+        elif type == 'github-hosted':
+            return [r for _, r in sorted(self._runners.items()) if not r['self_hosted']]
         return list(dict(sorted(self._runners.items())).values())
 
     @property
@@ -75,7 +79,7 @@ class RunnerResults:
     def csv_for_runners(self, org: str) -> list:
         header = ['org', 'runner', 'total', 'self_hosted', 'supported']
         rows = [header]
-        for runner in self.runners:
+        for runner in self.runners():
             rows.append([
                 org,
                 runner['name'],
