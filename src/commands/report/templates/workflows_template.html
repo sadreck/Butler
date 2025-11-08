@@ -11,7 +11,7 @@
             <div class="input-group mb-1">
                 <input type="text" class="form-control search" placeholder="search">
             </div>
-            <div class="row">
+            <div class="row choices-max-height">
                 <div class="col-2">
                     <select class="form-control" id="visibility" multiple>
                         <option value="public">public</option>
@@ -86,9 +86,9 @@
         selectComponent: null,
 
         init: function() {
-            this.selectVisibility = new Choices(document.getElementById('visibility'), { removeItemButton: true, placeholderValue: 'visibility' });
-            this.selectType = new Choices(document.getElementById('type'), { removeItemButton: true, placeholderValue: 'repo type' });
-            this.selectComponent = new Choices(document.getElementById('component'), { removeItemButton: true, placeholderValue: 'component' });
+            this.selectVisibility = new Choices(document.getElementById('visibility'), { removeItemButton: true, searchResultLimit: -1, placeholderValue: 'visibility' });
+            this.selectType = new Choices(document.getElementById('type'), { removeItemButton: true, searchResultLimit: -1, placeholderValue: 'repo type' });
+            this.selectComponent = new Choices(document.getElementById('component'), { removeItemButton: true, searchResultLimit: -1, placeholderValue: 'component' });
 
             this.selectVisibility.passedElement.element.addEventListener('change', function (event) { PageManager.filter() });
             this.selectType.passedElement.element.addEventListener('change', function (event) { PageManager.filter() });

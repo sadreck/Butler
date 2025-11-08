@@ -6,121 +6,99 @@
      </div>
 
     <div class="row mt-2">
-        <div class="col-4" id="container-variables">
+        <div class="col" id="filters">
             <h3><span class="visible-results">{{ results.count('all') | format_number }}</span> Variables &amp; Secrets</h3>
             <div class="input-group mb-1">
                 <input type="text" class="form-control search" placeholder="search">
             </div>
-            <div class="row filters">
-                <div class="col">
-                    <!-- Variables -->
-                    {{ badge_filter(
-                        'filter-variables',
-                        'text-bg-primary',
-                        'variables (' ~ (results.count('variables') | format_number) ~ ')',
-                        '<i class="fa-solid fa-square-root-variable"></i>',
-                        True)
-                    }}
+            <div class="row">
+                <div class="col-6">
+                    <select class="form-control" id="variables" multiple>
+                        {% for name, item in results.all.items() %}
+                        {% if item.type == 'variable' %}
+                        <option value="{{ name }}">{{ name }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
 
-                    <!-- Secrets -->
-                    {{ badge_filter(
-                        'filter-secrets',
-                        'text-bg-primary',
-                        'secrets (' ~ (results.count('secrets') | format_number) ~ ')',
-                        '<i class="fa-solid fa-key"></i>',
-                        True)
-                    }}
+                <div class="col-6">
+                    <select class="form-control" id="secrets" multiple>
+                        {% for name, item in results.all.items() %}
+                        {% if item.type == 'secret' %}
+                        <option value="{{ name }}">{{ name }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
                 </div>
             </div>
-            <div class="row mt-3">
-                <div class="col">
-                    <div class="sidebar">
-                        <ul class="list-group list-group-flush">
-                            {% for name, item in results.all.items() %}
-                            <li class="list-group-item d-flex align-items-center overflow-auto ps-0 vars-and-secrets" data-type="{{ item.type }}">
-                                <div class="ms-2 me-auto">
-                                    {% if item.type == 'variable' %}
-                                    <span title="Variable"><i class="fa-solid fa-square-root-variable"></i></span>
-                                    {% else %}
-                                    <span title="Secret"><i class="fa-solid fa-key text-danger"></i></span>
-                                    {% endif %}
-                                    <a href="#" class="name">{{ name }}</a>
-                                </div>
-                                <span class="badge text-bg-secondary">{{ item.count }}</span>
-                            </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
+            <div class="row mt-1">
+                <div class="col text-end">
+                    <span class="badge text-bg-secret">secret</span>
+                    <span class="badge text-bg-variable">variable</span>
                 </div>
             </div>
         </div>
-        <div class="col" id="container-workflows">
-            <h3><span class="visible-results">{{ results.count('workflows') | format_number }}</span> Workflows</h3>
-            <div class="input-group mb-1">
-                <input type="text" class="form-control search" placeholder="search">
-            </div>
-            <div class="row">
-                <div class="col text-end">
-                    <a href="#" class="badge text-bg-info selected-filter d-none text-decoration-none"><span class="filter-value"></span> <i class="fa-solid fa-xmark"></i></a>
-                </div>
-            </div>
-            <div class="row">
+    </div>
+
+    <div class="row mt-3 mb-5" id="workflows">
+        <div class="col striped-rows">
+            {% for workflow in results.workflows %}
+            <div class="row pb-1 pt-1 strip workflow" data-name="{{ workflow.workflow }}">
                 <div class="col">
-                    <ul class="list-group list-group-flush">
-                        {% for result in results.workflows %}
-                        <li class="list-group-item ps-0 workflow">
-                            <div class="row">
-                                <div class="col">
-                                    <a href="{{ result.workflow.url(True) }}" class="name">{{ result.workflow }}</a>
-                                </div>
+                    <div class="row">
+                        <div class="col">
+                            {% if workflow.workflow.repo.archive %}
+                            <span class="badge text-bg-warning archived p-1"><i class="fa-solid fa-box-archive"></i></span>
+                            {% endif %}
+
+                            {% if workflow.workflow.repo.fork %}
+                            <span class="badge text-bg-secondary forked p-1"><i class="fa-solid fa-code-fork"></i></span>
+                            {% endif %}
+
+                            <a href="{{ workflow.workflow.url(True) }}">{{ workflow.workflow }}</a>
+                        </div>
+                    </div>
+                    <div class="row pb-1">
+                        <div class="col ms-4">
+                            {% if workflow.secrets | length > 0 %}
+                            <div>
+                                {% for secret in workflow.secrets %}
+                                <span title="Secret" class="badge text-bg-secret variable-or-secret" data-type="secret" data-value="{{ secret }}">{{ secret }}</span>
+                                {% endfor %}
                             </div>
-                            <div class="row mt-1">
-                                <div class="col variables-and-secrets">
-                                    {% for secret in result.secrets %}
-                                    <span title="Secret" class="badge text-bg-danger p-1 name" data-type="secret" data-name="{{ secret }}"><i class="fa-solid fa-key me-1"></i>{{ secret }}</span>
-                                    {% endfor %}
-                                    {% for variable in result.variables %}
-                                    <span title="Variable" class="badge text-bg-primary p-1 name" data-type="variable" data-name="{{ variable }}"><i class="fa-solid fa-square-root-variable me-1"></i>{{ variable }}</span>
-                                    {% endfor %}
-                                </div>
+                            {% endif %}
+
+                            {% if workflow.variables | length > 0 %}
+                            <div>
+                                {% for variable in workflow.variables %}
+                                <span title="Variable" class="badge text-bg-variable variable-or-secret" data-type="variable" data-value="{{ variable }}">{{ variable }}</span>
+                                {% endfor %}
                             </div>
-                        </li>
-                        {% endfor %}
-                    </ul>
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
             </div>
+            {% endfor %}
         </div>
     </div>
 </div>
 
 <script type="text/javascript">
-    const VariableManager = {
+    const PageManager = {
+        selectVariable: null,
+        selectSecret: null,
+
         init: function() {
-            $('.filter').click(function() {
-                VariableManager.filter($(this));
-            });
+            this.selectVariable = new Choices(document.getElementById('variables'), { removeItemButton: true, searchResultLimit: -1, placeholderValue: "{{ results.count('variables') | format_number }} variables" });
+            this.selectSecret = new Choices(document.getElementById('secrets'), { removeItemButton: true, searchResultLimit: -1, placeholderValue: "{{ results.count('secrets') | format_number }} secrets" });
 
-            $('.search').keyup(function() {
-                VariableManager.filter($(this));
-            });
+            this.selectVariable.passedElement.element.addEventListener('change', function (event) { PageManager.filter() });
+            this.selectSecret.passedElement.element.addEventListener('change', function (event) { PageManager.filter() });
 
-            $('#container-variables .vars-and-secrets .name').click(function() {
-                VariableManager.filter_by_var_or_secret($(this));
-                return false;
-            });
-
-            $('#container-workflows .selected-filter').click(function() {
-                $(this).addClass('d-none').find('.filter-value').text('');
-                VariableManager.filter(null);
-                return false;
-            });
-
-            this.clear();
-        },
-
-        clear: function() {
-            $('.filter').each(function() {
-                $(this).prop('checked', true);
+            $('.search').keyup(function () {
+                PageManager.filter();
             });
 
             $('.search').each(function() {
@@ -128,78 +106,52 @@
             });
         },
 
-        filter: function(element) {
-            this.__variable_secret_filters();
-            this.__workflow_filters();
-            this.__update_result_counts();
-        },
+        filter: function() {
+            let variableFilter = this.selectVariable.getValue(true);
+            let secretFilter = this.selectSecret.getValue(true);
 
-        filter_by_var_or_secret: function(element) {
-            $('#container-workflows .workflow').addClass('d-none');
+            $('#workflows .workflow').removeClass('d-none');
+            if (variableFilter.length === 0 && secretFilter.length === 0) {
+                $('#workflows .workflow .variable-or-secret').removeClass('d-none');
+            } else {
+                // Easier to do this from a hidden state.
+                $('#workflows .workflow .variable-or-secret').addClass('d-none');
 
-            let var_name = $(element).text().trim().toUpperCase();
+                $('#workflows .workflow').each(function () {
+                    let visible = 0;
+                    $(this).find('.variable-or-secret').each(function () {
+                        let type = $(this).data('type');
+                        let value = $(this).data('value');
 
-            $('#container-workflows .selected-filter').removeClass('d-none').find('.filter-value').text(var_name);
+                        if (type === 'variable' && variableFilter.includes(value)) {
+                            visible++;
+                            $(this).removeClass('d-none');
+                        } else if (type === 'secret' && secretFilter.includes(value)) {
+                            visible++;
+                            $(this).removeClass('d-none');
+                        }
+                    });
 
-            $('#container-workflows .workflow .variables-and-secrets .name').each(function() {
-                let name = $(this).text().trim().toUpperCase();
-                if (name === var_name) {
-                    $(this).closest('.workflow').removeClass('d-none');
-                }
-            });
-
-            this.__update_result_counts();
-        },
-
-        __variable_secret_filters: function() {
-            let filters = {};
-            $('#container-variables .filter').each(function() {
-                filters[$(this).data('filter')] = $(this).is(':checked');
-            });
-
-            $('#container-variables .vars-and-secrets').each(function() {
-                // Start from a visible state.
-                $(this).removeClass('d-none');
-
-                if ($(this).data('type') == 'variable' && !filters['filter-variables']) {
-                    $(this).addClass('d-none');
-                } else if ($(this).data('type') == 'secret' && !filters['filter-secrets']) {
-                    $(this).addClass('d-none');
-                }
-            });
-
-            let searchFor = $('#container-variables .search').val().toLowerCase();
-            if (searchFor.length > 0) {
-                $('#container-variables .vars-and-secrets').each(function() {
-                    let name = $(this).find('.name').text().trim().toLowerCase();
-                    if (!name.includes(searchFor)) {
+                    if (visible === 0) {
                         $(this).addClass('d-none');
                     }
                 });
             }
-        },
 
-        __workflow_filters: function() {
-            $('#container-workflows .workflow').removeClass('d-none');
-
-            let searchFor = $('#container-workflows .search').val().toLowerCase();
+            let searchFor = $('#filters .search').val().toLowerCase();
             if (searchFor.length > 0) {
-                $('#container-workflows .workflow').each(function() {
-                    let name = $(this).find('.name').text().trim().toLowerCase();
-                    if (!name.includes(searchFor)) {
+                $('#workflows .workflow').each(function () {
+                    if (!$(this).data('name').toLowerCase().includes(searchFor) && !$(this).hasClass('d-none')) {
                         $(this).addClass('d-none');
                     }
                 });
             }
-        },
 
-        __update_result_counts: function() {
-            $('#container-variables .visible-results').text($('#container-variables .vars-and-secrets:visible').length.toLocaleString());
-            $('#container-workflows .visible-results').text($('#container-workflows .workflow:visible').length.toLocaleString());
+            $('#filters .visible-results').text($('#workflows .workflow:visible').length.toLocaleString());
         }
     };
 
-    $(document).ready(function() {
-        VariableManager.init();
+    $(document).ready(function () {
+        PageManager.init();
     });
 </script>

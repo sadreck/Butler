@@ -11,7 +11,7 @@
             <div class="input-group mb-1">
                 <input type="text" class="form-control search" placeholder="search">
             </div>
-            <div class="row">
+            <div class="row choices-max-height">
                 <div class="col-3">
                     <select class="form-control" id="org" multiple>
                         <option value="trusted">trusted</option>
@@ -44,6 +44,7 @@
                     <span class="badge text-bg-tag">tag</span>
                     <span class="badge text-bg-branch">branch</span>
                     <span class="badge text-bg-commit">commit</span>
+                    <span class="badge text-bg-deprecated">deprecated</span>
                 </div>
             </div>
         </div>
@@ -187,10 +188,10 @@
         selectState: null,
 
         init: function() {
-            this.selectOrg = new Choices(document.getElementById('org'), { removeItemButton: true, placeholderValue: 'org trust' });
-            this.selectType = new Choices(document.getElementById('type'), { removeItemButton: true, placeholderValue: 'repo type' });
-            this.selectRef = new Choices(document.getElementById('ref'), { removeItemButton: true, placeholderValue: 'ref type' });
-            this.selectState = new Choices(document.getElementById('state'), { removeItemButton: true, placeholderValue: 'state' });
+            this.selectOrg = new Choices(document.getElementById('org'), { removeItemButton: true, searchResultLimit: -1, placeholderValue: 'org trust' });
+            this.selectType = new Choices(document.getElementById('type'), { removeItemButton: true, searchResultLimit: -1, placeholderValue: 'repo type' });
+            this.selectRef = new Choices(document.getElementById('ref'), { removeItemButton: true, searchResultLimit: -1, placeholderValue: 'ref type' });
+            this.selectState = new Choices(document.getElementById('state'), { removeItemButton: true, searchResultLimit: -1, placeholderValue: 'state' });
 
             this.selectOrg.passedElement.element.addEventListener('change', function (event) { PageManager.filter() });
             this.selectType.passedElement.element.addEventListener('change', function (event) { PageManager.filter() });
