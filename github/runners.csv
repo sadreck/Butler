@@ -1,5 +1,5 @@
 org,runner,total,self_hosted,supported
-github,macos-13,2,0,0
+github,macos-13,1,0,0
 github,macos-14,7,0,1
 github,macos-15,2,0,1
 github,macos-15-xlarge,1,0,1
@@ -7,12 +7,13 @@ github,macos-latest,52,0,1
 github,self-hosted,4,1,1
 github,ubuntu-20.04,92,0,1
 github,ubuntu-22.04,54,0,1
-github,ubuntu-24.04,9,0,1
+github,ubuntu-24.04,10,0,1
 github,ubuntu-24.04-ppc64le,1,1,1
 github,ubuntu-24.04-s390x,1,1,1
-github,ubuntu-latest,979,0,1
+github,ubuntu-latest,977,0,1
 github,ubuntu-latest-xl,12,1,1
-github,windows-11-arm,1,0,1
+github,ubuntu-slim,9,1,1
+github,windows-11-arm,2,0,1
 github,windows-2022,5,0,1
 github,windows-2025,3,0,1
 github,windows-latest,45,0,1

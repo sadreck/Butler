@@ -18,6 +18,7 @@ docker,BUGSNAG_API_KEY,secret
 docker,CODECOV_TOKEN,secret
 docker,DAGSTER_CLOUD_API_TOKEN,secret
 docker,DAGSTER_CLOUD_URL,secret
+docker,DOCKERBUILDBOT_READ_PAT,secret
 docker,DOCKERBUILDBOT_USERNAME,variable
 docker,DOCKERBUILDBOT_WRITE_PAT,secret
 docker,DOCKERDESKTOP_APP_ID,variable
@@ -25,6 +26,8 @@ docker,DOCKERDESKTOP_APP_PRIVATEKEY,secret
 docker,DOCKERDESKTOP_REPO,secret
 docker,DOCKERHUB_CLIBIN_TOKEN,secret
 docker,DOCKERHUB_CLIBIN_USERNAME,secret
+docker,DOCKERHUB_STAGE_TOKEN,secret
+docker,DOCKERHUB_STAGE_USERNAME,variable
 docker,DOCKERHUB_TOKEN,secret
 docker,DOCKERHUB_USERNAME,secret
 docker,DOCKERPUBLICBOT_DELETE_PAT,secret
@@ -56,9 +59,12 @@ docker,HUB_PLATFORM_APP_ID,secret
 docker,HUB_PLATFORM_APP_PRIVATE_KEY,secret
 docker,JIM_PAT,secret
 docker,JIM_USERNAME,secret
+docker,MCP_REGISTRY_BOT_APP_ID,variable
+docker,MCP_REGISTRY_BOT_PRIVATE_KEY,secret
 docker,NODE_AUTH_TOKEN,secret
 docker,NPM_PUBLISH_TOKEN,secret
 docker,NPM_TOKEN,secret
+docker,OPENAI_API_KEY,secret
 docker,ORGANIZATION_ID,secret
 docker,ORG_ACCESS_TOKEN,secret
 docker,PAGERDUTY_KEY,secret
@@ -67,6 +73,7 @@ docker,PULUMI_PROD_PASSPHRASE,secret
 docker,PULUMI_STAGING_PASSPHRASE,secret
 docker,PYPI_API_TOKEN,secret
 docker,REACT_APP_MUI_LICENSE_KEY,secret
+docker,REGISTRY-AUTHS,secret
 docker,RH_PASS,secret
 docker,RH_USER,secret
 docker,SLACK_WEBHOOK,secret

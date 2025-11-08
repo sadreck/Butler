@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en" class="h-100">
+<html>
+<head>
+    <title>GitHub Workflows Butler - Errors</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.8/dist/lumen/bootstrap.min.css" integrity="sha384-VvtmOf0H1c5UOkg0sTVnp2+DaE7+6PO78xrugFKUni8B3tEbZ6V56DNytr8Zs2ZI" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js@11.1.0/public/assets/styles/choices.min.css" integrity="sha384-n0GACcBzAGKp29zpmkTj4eje26AGm3wqHG9TROENrVHXySIkFf8nwmY5IgVr5qen" crossorigin="anonymous">
+
+    <style>
+        .link-black {
+            color: black;
+            text-decoration: none;
+        }
+
+        .link-black:hover {
+            color: black;
+            text-decoration: underline;
+            text-decoration-color: black;
+        }
+
+        /* Hide placeholder when an item is selected */
+        .choices__list--multiple:not(:empty) + .choices__input::placeholder {
+            opacity: 0;
+        }
+
+        /* Stop select box from expanding vertically */
+        .choices-max-height .choices__inner {
+            max-height: 44px !important;
+        }
+
+        .striped-rows .strip:nth-child(odd) {
+            background-color: var(--bs-table-striped-bg, rgba(var(--bs-emphasis-color-rgb), .05));
+        }
+
+        .striped-rows .strip:nth-child(even) {
+            background-color: transparent;
+        }
+
+        .striped-rows2 .strip2:nth-child(odd) {
+            background-color: var(--bs-table-striped-bg, rgba(var(--bs-emphasis-color-rgb), .05));
+        }
+
+        .striped-rows2 .strip2:nth-child(even) {
+            background-color: transparent;
+        }
+
+        .striped-rows3 .strip3:nth-child(odd) {
+            background-color: var(--bs-table-striped-bg, rgba(var(--bs-emphasis-color-rgb), .05));
+        }
+
+        .striped-rows3 .strip3:nth-child(even) {
+            background-color: transparent;
+        }
+
+        .trusted-org {
+            color: rgb(var(--bs-success-rgb)) !important;
+        }
+
+        .untrusted-org {
+            color: rgb(var(--bs-warning-rgb)) !important;
+        }
+
+        .stars {
+            color: black;
+            /*background-color: rgb(var(--bs-secondary-rgb)) !important*/
+            background-color: #fad76e !important
+        }
+
+        .text-bg-branch {
+            background-color: #502800;
+            color: white;
+        }
+
+        .text-bg-tag {
+            background-color: #3434d7;
+            color: white;
+        }
+
+        .text-bg-deprecated {
+            background-color: rgb(var(--bs-warning-rgb)) !important;
+            color: white;
+        }
+
+        .text-bg-commit {
+            background-color: #3edeed;
+            color: black;
+        }
+
+        .text-bg-secret {
+            /*background-color: rgb(var(--bs-danger-rgb)) !important;*/
+            background-color: #ac3933;
+            color: white;
+        }
+
+        .text-bg-variable {
+            /*background-color: rgb(var(--bs-primary-rgb)) !important;*/
+            background-color: #3748d7;
+            color: white;
+        }
+
+        .text-bg-self-hosted {
+            background-color: #586ad7;
+            color: white;
+        }
+
+        .text-bg-github-hosted {
+            background-color: #06713b;
+            color: white;
+        }
+
+        .text-bg-jobs {
+            background-color: #06713b;
+            color: white;
+        }
+
+        .text-bg-triggers {
+            background-color: #586ad7;
+            color: white;
+        }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/choices.js@11.1.0/public/assets/scripts/choices.min.js" integrity="sha384-WXCib67DFM/o9ln5XWnf/xepwCGB7NzCdkB7J8Iy8tSgnOR5s3iVHB7LobqBEWCv" crossorigin="anonymous"></script>
+</head>
+
+<body class="d-flex flex-column h-100">
+
+<div class="container-fluid bg-black">
+    <div class="container mt-2 mb-2">
+        <div class="row">
+            <div class="col"><a class="text-white text-decoration-none fs-4" href="https://github.com/sadreck/Butler">GitHub Workflow Oversight</a></div>
+        </div>
+    </div>
+</div>
+
+
+
+
+    <div class="container mt-2 mb-5">
+    <div class="row">
+        <div class="col text-center">
+            <h1 class="org display-2 fw-bold p-3">docker</h1>
+        </div>
+     </div>
+
+    <div class="alert alert-warning">
+        <h5 class="alert-heading">False Positives</h5>
+        <p class="mb-0">
+            Parsing GitHub Workflows isn't an exact science and while every effort was made to ensure there
+            are no false positives in this report, due to parsing complexities some may still be present.
+        </p>
+    </div>
+
+    <div class="row mt-2">
+        <div class="col">
+            <ul class="nav nav-tabs" id="tabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="missing-tab" data-bs-toggle="tab" data-bs-target="#missing-tab-pane" type="button" role="tab" aria-controls="missing-tab-pane" aria-selected="true">Missing Actions<span class="badge text-bg-danger ms-1" title="Count">2</span></button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="error-tab" data-bs-toggle="tab" data-bs-target="#error-tab-pane" type="button" role="tab" aria-controls="error-tab-pane" aria-selected="true">Parsing Errors<span class="badge text-bg-danger ms-1" title="Count">0</span></button>
+                </li>
+            </ul>
+            <div class="tab-content" id="pills-tabContent">
+                <!-- Missing -->
+                <div class="tab-pane fade show active p-2 striped-rows" id="missing-tab-pane" role="tabpanel" aria-labelledby="missing-tab" tabindex="0">
+                    <div class="row mt-2">
+                        <div class="col">
+                            <h2><span class="visible-results">2</span> Missing Actions</h2>
+                        </div>
+                    </div>
+                    
+                    <div class="row strip pb-1 pt-1">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    
+                                    <i class="fa-solid fa-box-archive text-warning" title="Archived"></i>
+                                    
+                                    <a href="https://github.com/docker/go-tuf-mirror/blob/6cb12d389865b1c179abfe5156a0703f29a3063c/.github/workflows/release.yml">docker/go-tuf-mirror/.github/workflows/release.yml</a>
+                                </div>
+                            </div>
+                            
+                            <div class="row ms-2">
+                                <div class="col">
+                                    <div>
+                                        
+                                        <a href="https://github.com/docker/image-signer-verifier">docker/image-signer-verifier/actions/sign@7e791e4c287d1976e457e6e1d1fa9d6f045ffdcc</a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="row strip pb-1 pt-1">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    
+                                    <a href="https://github.com/docker/hub-mcp/blob/2ff4b20e40bba93c8002ff8aa4fb10f66c95943a/.github/workflows/release.yml">docker/hub-mcp/.github/workflows/release.yml</a>
+                                </div>
+                            </div>
+                            
+                            <div class="row ms-2">
+                                <div class="col">
+                                    <div>
+                                        
+                                        <a href="https://github.com/docker/actions">docker/actions/setup-go@33488d0ac7cf5f3616b656b8f2bf28b45467976c</a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row ms-2">
+                                <div class="col">
+                                    <div>
+                                        
+                                        <a href="https://github.com/docker/actions">docker/actions/bump-version@132452b833c5fae71bc674fe54384c9242173f96</a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    
+                </div>
+
+                <!-- Errors -->
+                <div class="tab-pane fade p-2" id="error-tab-pane" role="tabpanel" aria-labelledby="error-tab" tabindex="0">
+                    <div class="row mt-2">
+                        <div class="col">
+                            <h2><span class="visible-results">0</span> Errors</h2>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    const ExportManager = {
+    export_data: function(data, format, filename) {
+        if (format === 'clipboard') {
+            navigator.clipboard.writeText(data).then(() => { /* Nothing */ });
+        } else if (format === 'download') {
+            const blob = new Blob([data], { type: "text/csv" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    }
+}
+
+const ChoicesTemplateManager = {
+    item: function (strToEl, escapeForTemplate, classNames, data, html) {
+        let output = ChoicesTemplateManager.__generateItem(
+            [
+                String(classNames.item),
+                String(data.highlighted ? classNames.highlightedState : classNames.itemSelectable)
+            ].join(' '),
+            String(data.id),
+            String(escapeForTemplate(true, data.value)),
+            String(escapeForTemplate(true, data.label)),
+            html
+        );
+        return strToEl(output);
+    },
+
+    choice: function (strToEl, escapeForTemplate, classNames, itemSelectText, data, html) {
+        let output = ChoicesTemplateManager.__generateChoice(
+            [
+                String(classNames.item),
+                String(classNames.itemChoice),
+                String(data.disabled ? classNames.itemDisabled : classNames.itemSelectable)
+            ].join(' '),
+            String(itemSelectText),
+            String(data.id),
+            String(escapeForTemplate(true, data.value)),
+            String(escapeForTemplate(true, data.label)),
+            html
+        )
+        return strToEl(output);
+    },
+
+    __generateItem: function (classes, id, value, label, html) {
+        return `<div
+                    class="${classes}"
+                    data-item
+                    role="option"
+                    data-id="${id}"
+                    data-value="${value}"
+                    data-deletable
+                >
+                ${html}
+                ${label}
+                <button type="button" class="choices__button" aria-label="Remove item: ${label}" data-button="">Remove item</button>
+                </div>`;
+    },
+
+    __generateChoice: function (classes, text, id, value, label, html) {
+        return `<div
+                    class="${classes}"
+                    data-select-text="${text}"
+                    data-choice
+                    data-choice-selectable
+                    data-id="${id}"
+                    data-value="${value}"
+                >
+                ${html}
+                ${label}
+                </div>`
+    },
+
+    init_with_count: function (element, placeholder) {
+        return new Choices(
+                element,
+                {
+                    removeItemButton: true,
+                    searchResultLimit: -1,
+                    placeholderValue: placeholder,
+                    allowHTML: true,
+                    shouldSort: false,
+                    callbackOnCreateTemplates: function (strToEl, escapeForTemplate) {
+                        let classNames = this.config.classNames;
+                        let itemSelectText = this.config.itemSelectText;
+                        return {
+                            item: function({ classNames }, data) {
+                                return ChoicesTemplateManager.item(strToEl, escapeForTemplate, classNames, data, '');
+                            },
+                            choice: function ({ classNames }, data) {
+                                return ChoicesTemplateManager.choice(strToEl, escapeForTemplate, classNames, itemSelectText, data, `<span class="badge text-bg-primary me-2" style="width: 40px;">${$(data.element).data('count')}</span>`);
+                            }
+                        }
+                    }
+                }
+            );
+    }
+};
+</script>
+
+</body>
+</html>
