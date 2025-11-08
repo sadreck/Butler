@@ -52,16 +52,14 @@ class WorkflowCollector(CollectorBase):
         return True
 
     def _export(self, data: dict) -> None:
-        if 'html' in self.export_formats:
-            html_file = self.outputs['html']['workflows']['path']
-            self.log.info(f"Saving HTML output to {html_file}")
-            self.render('workflows', 'Workflows', data, html_file)
+        html_file = self.outputs['html']['workflows']['path']
+        self.log.info(f"Saving HTML output to {html_file}")
+        self.render('workflows', 'Workflows', data, html_file)
 
-        if 'csv' in self.export_formats:
-            self.write_to_csv(
-                self.outputs['csv']['workflows']['path'],
-                data['results'].for_csv()
-            )
+        self.write_to_csv(
+            self.outputs['csv']['workflows']['path'],
+            data['results'].for_csv()
+        )
 
     def _get_workflows(self, org_id: int) -> list:
         sql = f"""

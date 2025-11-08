@@ -14,7 +14,6 @@ class CollectorBase:
     org: OrgComponent = None
     config: dict = None
     output_path: str = None
-    export_formats: list = None
     outputs: dict = None
     _shortname: str = None
 
@@ -24,13 +23,12 @@ class CollectorBase:
             raise NotImplementedError(f"_shortname not defined in collector")
         return self._shortname
 
-    def __init__(self, log: logger, database: Database, config: dict, org: OrgComponent, output_path: str, export_formats: list):
+    def __init__(self, log: logger, database: Database, config: dict, org: OrgComponent, output_path: str):
         self.log = log
         self.database = database
         self.config = config
         self.org = org
         self.output_path = output_path
-        self.export_formats = export_formats
 
         self.outputs = {
             'html': {},
