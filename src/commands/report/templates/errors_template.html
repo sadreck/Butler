@@ -68,6 +68,32 @@
                             <h2><span class="visible-results">{{ results.count('errors') | format_number }}</span> Errors</h2>
                         </div>
                     </div>
+                    {% for parent_name, parent_result in results.errors.items() %}
+                    <div class="row strip pb-1 pt-1">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    {% if  parent_result.instance.repo.archive %}
+                                    <i class="fa-solid fa-box-archive text-warning" title="Archived"></i>
+                                    {% elif  parent_result.instance.repo.fork %}
+                                    <i class="fa-solid fa-code-fork text-secondary" title="Fork"></i>
+                                    {% endif %}
+                                    <a href="{{ parent_result.instance.url(True) }}">{{ parent_name }}</a>
+                                </div>
+                            </div>
+                            {% for child_name, child_result in parent_result.workflows.items() %}
+                            <div class="row ms-2">
+                                <div class="col">
+                                    <div>
+                                        <a href="{{ child_result.instance.url(True) }}">{{ child_result.instance }}</a>
+                                        <pre class="bg-secondary p-2">{{ child_result.instance.data }}</pre>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
