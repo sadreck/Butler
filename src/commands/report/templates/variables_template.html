@@ -103,7 +103,7 @@
                                 return ChoicesTemplateManager.item(strToEl, escapeForTemplate, classNames, data, '');
                             },
                             choice: function ({ classNames }, data) {
-                                return ChoicesTemplateManager.choice(strToEl, escapeForTemplate, classNames, itemSelectText, data, `<span class="badge text-bg-primary me-2">${$(data.element).data('count')}</span>`);
+                                return ChoicesTemplateManager.choice(strToEl, escapeForTemplate, classNames, itemSelectText, data, `<span class="badge text-bg-primary me-2" style="width: 40px;">${$(data.element).data('count')}</span>`);
                             }
                         }
                     }
@@ -126,7 +126,7 @@
                                 return ChoicesTemplateManager.item(strToEl, escapeForTemplate, classNames, data, '');
                             },
                             choice: function ({ classNames }, data) {
-                                return ChoicesTemplateManager.choice(strToEl, escapeForTemplate, classNames, itemSelectText, data, `<span class="badge text-bg-primary me-2">${$(data.element).data('count')}</span>`);
+                                return ChoicesTemplateManager.choice(strToEl, escapeForTemplate, classNames, itemSelectText, data, `<span class="badge text-bg-primary me-2" style="width: 40px;">${$(data.element).data('count')}</span>`);
                             }
                         }
                     }

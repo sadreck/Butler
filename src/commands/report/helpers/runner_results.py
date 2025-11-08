@@ -28,12 +28,22 @@ class RunnerResults:
             case _:
                 return 0
 
-    def runners(self, type: str = None) -> list:
+    def runners(self, type: str = None, sorted_by_count: bool = False) -> list:
+        runners = self._runners
         if type == 'self-hosted':
-            return [r for _, r in sorted(self._runners.items()) if r['self_hosted']]
+            runners = {k: v for k, v in self._runners.items() if v.get('self_hosted') is True}
         elif type == 'github-hosted':
-            return [r for _, r in sorted(self._runners.items()) if not r['self_hosted']]
-        return list(dict(sorted(self._runners.items())).values())
+            runners = {k: v for k, v in self._runners.items() if v.get('self_hosted') is False}
+
+        runners = dict(sorted(runners.items()))
+        if sorted_by_count:
+            runners = dict(
+                sorted(
+                    runners.items(),
+                    key=lambda item: (-item[1]["count"], item[0])
+                )
+            )
+        return list(runners.values())
 
     @property
     def workflows(self) -> list:

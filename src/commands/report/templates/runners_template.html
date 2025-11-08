@@ -7,22 +7,22 @@
 
     <div class="row mt-2">
         <div class="col" id="filters">
-            <h3><span class="visible-results">{{ results.count('runners') | format_number }}</span> Runners</h3>
+            <h3><span class="visible-results">{{ results.count('workflows') | format_number }}</span> Runner Usages</h3>
             <div class="input-group mb-1">
                 <input type="text" class="form-control search" placeholder="search">
             </div>
             <div class="row">
                 <div class="col-4">
                     <select class="form-control" id="self-hosted" multiple>
-                        {% for runner in results.runners('self-hosted') %}
-                        <option value="{{ runner.name }}">{{ runner.name }}</option>
+                        {% for runner in results.runners('self-hosted', True) %}
+                        <option value="{{ runner.name }}" data-count="{{ runner.count }}">{{ runner.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <div class="col-4">
                     <select class="form-control" id="github-hosted" multiple>
-                        {% for runner in results.runners('github-hosted') %}
-                        <option value="{{ runner.name }}">{{ runner.name }}</option>
+                        {% for runner in results.runners('github-hosted', True) %}
+                        <option value="{{ runner.name }}" data-count="{{ runner.count }}">{{ runner.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -82,8 +82,51 @@
         selectState: null,
 
         init: function() {
-            this.selectSelfHosted = new Choices(document.getElementById('self-hosted'), { removeItemButton: true, searchResultLimit: -1, placeholderValue: "{{ results.count('self-hosted') | format_number }} self-hosted" });
-            this.selectGitHubHosted = new Choices(document.getElementById('github-hosted'), { removeItemButton: true, searchResultLimit: -1, placeholderValue: "{{ results.count('github-hosted') | format_number }} github-hosted" });
+            this.selectSelfHosted = new Choices(
+                document.getElementById('self-hosted'),
+                {
+                    removeItemButton: true,
+                    searchResultLimit: -1,
+                    placeholderValue: "{{ results.count('self-hosted') | format_number }} self-hosted",
+                    allowHTML: true,
+                    shouldSort: false,
+                    callbackOnCreateTemplates: function (strToEl, escapeForTemplate) {
+                        let classNames = this.config.classNames;
+                        let itemSelectText = this.config.itemSelectText;
+                        return {
+                            item: function({ classNames }, data) {
+                                return ChoicesTemplateManager.item(strToEl, escapeForTemplate, classNames, data, '');
+                            },
+                            choice: function ({ classNames }, data) {
+                                return ChoicesTemplateManager.choice(strToEl, escapeForTemplate, classNames, itemSelectText, data, `<span class="badge text-bg-primary me-2" style="width: 40px;">${$(data.element).data('count')}</span>`);
+                            }
+                        }
+                    }
+                }
+            );
+
+            this.selectGitHubHosted = new Choices(
+                document.getElementById('github-hosted'),
+                {
+                    removeItemButton: true,
+                    searchResultLimit: -1,
+                    placeholderValue: "{{ results.count('github-hosted') | format_number }} github-hosted",
+                    allowHTML: true,
+                    shouldSort: false,
+                    callbackOnCreateTemplates: function (strToEl, escapeForTemplate) {
+                        let classNames = this.config.classNames;
+                        let itemSelectText = this.config.itemSelectText;
+                        return {
+                            item: function({ classNames }, data) {
+                                return ChoicesTemplateManager.item(strToEl, escapeForTemplate, classNames, data, '');
+                            },
+                            choice: function ({ classNames }, data) {
+                                return ChoicesTemplateManager.choice(strToEl, escapeForTemplate, classNames, itemSelectText, data, `<span class="badge text-bg-primary me-2" style="width: 40px;">${$(data.element).data('count')}</span>`);
+                            }
+                        }
+                    }
+                }
+            );
             this.selectState = new Choices(document.getElementById('state'), { removeItemButton: true, searchResultLimit: -1, placeholderValue: "state" });
 
             this.selectSelfHosted.passedElement.element.addEventListener('change', function (event) { PageManager.filter(); });
