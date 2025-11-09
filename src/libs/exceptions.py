@@ -21,3 +21,6 @@ class UnknownWorkflowType(Exception):
 
 class DatabaseVersionMismatch(DatabaseException):
     pass
+
+class InvalidCustomQueryFile(Exception):
+    pass

@@ -19,6 +19,7 @@ class CommandReport(Command):
         subparser.add_argument("--repo", required=True, default='', type=str, help="Repo to generate report from")
         subparser.add_argument("--output", required=True, default='', type=str, help="Location to store output files")
         subparser.add_argument("--config", default=None, type=str, help="Configuration file (defaults to default_config.yaml)")
+        subparser.add_argument("--custom-query", action="append", type=str, help="Path to custom query yaml file")
 
         Command.define_shared_arguments(subparser)
 
@@ -29,6 +30,7 @@ class CommandReport(Command):
             'output': '' if arguments.output is None or len(arguments.output.strip()) == 0 else os.path.realpath(arguments.output.strip()),
             'repo': '' if arguments.repo is None or len(arguments.repo.strip()) == 0 else arguments.repo.strip(),
             'config': '' if arguments.config is None else os.path.realpath(arguments.config.strip()),
+            'custom_queries': [] if arguments.custom_query is None else Utils.strip_and_clean_list(arguments.custom_query),
         }
 
     def validate_command_arguments(self, arguments: dict) -> None:
@@ -52,6 +54,10 @@ class CommandReport(Command):
         # Overwrite the path with its contents
         arguments['config'] = Utils.load_yaml(Utils.read_file(arguments['config']))
 
+        for file in arguments['custom_queries']:
+            if not os.path.isfile(file):
+                raise InvalidCommandLine(f"--custom-query file does not exist: {file}")
+
     def execute(self, arguments: dict) -> bool:
         database = Database(arguments['database'], arguments['db_debug'], arguments['db_debug_auto_commit'])
 
@@ -59,5 +65,6 @@ class CommandReport(Command):
         service.output_path = arguments['output']
         service.repo = arguments['repo']
         service.config = arguments['config']
+        service.custom_queries = arguments['custom_queries']
 
         return service.run()

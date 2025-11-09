@@ -97,6 +97,38 @@
         <div class="col-3"></div>
     </div>
     {% endif %}
+
+    {% if custom_queries %}
+    <div class="row mt-5 mb-4">
+        <div class="col-3"></div>
+        <div class="col">
+            <div class="row mb-4">
+                <div class="col text-center">
+                    <h2>Custom Queries</h2>
+                </div>
+            </div>
+            {% for shortname, info in custom_queries.csv.items() %}
+            <div class="row mt-3">
+                <div class="col border-start border-3 border-black">
+                    <h3>
+                        <a href="{{ info.file }}" class="link-black link-offset-3-hover">
+                            {{ "{:,}".format(info.count) }} {{ info.title }}
+                        </a>
+                    </h3>
+
+                    <div class="row">
+                        <div class="col"></div>
+                        <div class="col text-end">
+                            <a href="{{ info.file }}"><span class="badge badge-pill bg-black">{{ info.file }}</span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="col-3"></div>
+    </div>
+    {% endif %}
 </div>
 
 <footer class="footer mt-auto py-2 bg-secondary">
