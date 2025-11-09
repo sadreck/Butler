@@ -21,6 +21,7 @@ class IndexGenerator(CollectorBase):
             'variables': self.generated_outputs.get('variables', None),
             'runners': self.generated_outputs.get('runners', None),
             'errors': self.generated_outputs.get('errors', None),
+            'custom_queries': self.generated_outputs.get('custom_queries', None),
         }
 
         self.render('index', self.org.name, data, self.outputs['html'])

@@ -1,4 +1,6 @@
 import os
+
+from src.commands.report.collectors.custom_collector import CustomCollector
 from src.commands.report.collectors.index_generator import IndexGenerator
 from src.commands.report.collectors.runner_collector import RunnerCollector
 from src.commands.report.collectors.third_party_collector import ThirdPartyCollector
@@ -14,6 +16,7 @@ class ServiceReport(Service):
     output_path: str = None
     repo: str = None
     config: dict = None
+    custom_queries: list = None
 
     def run(self) -> bool:
         # First create the output folder if it does not exist.
@@ -38,6 +41,11 @@ class ServiceReport(Service):
         for collector in collectors:
             instance = collector(self.log, self.database, self.config, org, self.output_path)
             instance.run()
+            outputs[instance.shortname] = instance.outputs
+
+        if len(self.custom_queries) > 0:
+            instance = CustomCollector(self.log, self.database, self.config, org, self.output_path)
+            instance.run(self.custom_queries)
             outputs[instance.shortname] = instance.outputs
 
         index_generator = IndexGenerator(self.log, self.database, self.config, org, self.output_path)
