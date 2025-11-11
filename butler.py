@@ -7,7 +7,7 @@ from src.libs.exceptions import InvalidCommandLine
 from src.commands.download.command import CommandDownload
 
 
-__VERSION__ = '0.10.1 Beta'
+__VERSION__ = '0.10.2 Beta'
 commands = {
     'download': CommandDownload,
     'database': CommandDatabase,
