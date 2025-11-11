@@ -40,6 +40,9 @@ class ErrorCollector(CollectorBase):
         self.log.info("Searching for actions with errors")
         error_actions = self._get_error_actions(self.org.id)
 
+        self.log.info("Searching for top level actions with errors")
+        top_level_error_actions = self._get_error_top_level_actions(self.org.id)
+
         self.log.info(f"Processing {len(missing_actions)} calls to missing actions")
         for result in missing_actions:
             missing_dict = self.extract_result_dict(result, "missing_")
@@ -55,6 +58,13 @@ class ErrorCollector(CollectorBase):
             workflow = WorkflowComponent.from_dict(result, True)
 
             instance = data['results'].add_error_workflow(workflow, error_workflow)
+
+        self.log.info(f"Processing {len(top_level_error_actions)} top level actions with errors")
+        for result in top_level_error_actions:
+            error_dict = self.extract_result_dict(result, "error_")
+            error_workflow = WorkflowComponent.from_dict(error_dict, True)
+
+            instance = data['results'].add_error_workflow(error_workflow, None)
 
         self._export(data)
         self.outputs['info'] = {
@@ -79,6 +89,44 @@ class ErrorCollector(CollectorBase):
                 self.outputs['csv']['errors']['path'],
                 data['results'].csv_for_errors()
             )
+
+    def _get_error_top_level_actions(self, org_id: int) -> list:
+        sql = """
+            SELECT
+                o.id			AS error_org_id,
+                o.name			AS error_org_name,
+                r.id			AS error_repo_id,
+                r.visibility	AS error_repo_visibility,
+                r.name			AS error_repo_name,
+                r.ref			AS error_repo_ref,
+                r.ref_type		AS error_repo_ref_type,
+                r.resolved_ref	AS error_repo_resolved_ref,
+                r.resolved_ref_type	AS error_repo_resolved_ref_type,
+                r.ref_commit	AS error_repo_ref_commit,
+                r.status		AS error_repo_status,
+                r.poll_status	AS error_repo_poll_status,
+                r.redirect_id	AS error_repo_redirect_id,
+                r.stars         AS error_repo_stars,
+                r.fork          AS error_repo_fork,
+                r.archive		AS error_repo_archive,
+                w.id			AS error_workflow_id,
+                w.redirect_id	AS error_workflow_redirect_id,
+                w.path			AS error_workflow_path,
+                w.type			AS error_workflow_type,
+                w.status		AS error_workflow_status,
+                w.contents      AS error_workflow_contents,
+                w.data          AS error_workflow_data
+            FROM workflows      w
+            JOIN repositories   r ON r.id = w.repo_id
+            JOIN organisations  o ON o.id = r.org_id
+            WHERE
+                w.status = :error
+                AND o.name != '_'
+                AND o.name NOT LIKE '%/%'
+                AND NOT (o.name = 'github' AND r.name = 'codeql-action')
+                AND o.id = :org_id
+        """
+        return self.database.select(sql, {'error': WorkflowStatus.ERROR, 'org_id': org_id})
 
     def _get_error_actions(self, org_id: int) -> list:
         sql = """
