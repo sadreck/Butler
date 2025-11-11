@@ -44,7 +44,7 @@ class ErrorResults:
 
         return self.missing[action_name]
 
-    def add_error_workflow(self, workflow: WorkflowComponent, error_workflow: WorkflowComponent) -> dict:
+    def add_error_workflow(self, workflow: WorkflowComponent, error_workflow: WorkflowComponent | None) -> dict:
         action_name = workflow.action_name()
         if action_name not in self.errors:
             self.errors[action_name] = {
@@ -53,6 +53,9 @@ class ErrorResults:
                 'count': 0
             }
         self.errors[action_name]['count'] += 1
+
+        if error_workflow is None:
+            return self.errors[action_name]
 
         instance = WorkflowInstance(workflow.data, workflow.repo)
         locations = []

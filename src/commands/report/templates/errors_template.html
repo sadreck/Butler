@@ -81,16 +81,26 @@
                                     <a href="{{ parent_result.instance.url(True) }}">{{ parent_name }}</a>
                                 </div>
                             </div>
-                            {% for child_name, child_result in parent_result.workflows.items() %}
+                            {% if parent_result.workflows | length > 0 %}
+                                {% for child_name, child_result in parent_result.workflows.items() %}
+                                <div class="row ms-2">
+                                    <div class="col">
+                                        <div>
+                                            <a href="{{ child_result.instance.url(True) }}">{{ child_result.instance }}</a>
+                                            <pre class="bg-secondary p-2">{{ child_result.instance.data }}</pre>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            {% else %}
                             <div class="row ms-2">
                                 <div class="col">
                                     <div>
-                                        <a href="{{ child_result.instance.url(True) }}">{{ child_result.instance }}</a>
-                                        <pre class="bg-secondary p-2">{{ child_result.instance.data }}</pre>
+                                        <pre class="bg-secondary p-2">{{ parent_result.instance.data }}</pre>
                                     </div>
                                 </div>
                             </div>
-                            {% endfor %}
+                            {% endif %}
                         </div>
                     </div>
                     {% endfor %}
