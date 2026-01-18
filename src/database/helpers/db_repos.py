@@ -33,6 +33,7 @@ class DBRepo(DBBase):
             record = RepositoryModel(
                 org_id=repo.org.id,
                 name=repo.name,
+                default_branch=repo.default_branch,
                 ref=repo.ref,
                 ref_type=repo.ref_type,
                 ref_commit=repo.ref_commit,
@@ -72,6 +73,7 @@ class DBRepo(DBBase):
         ).values(
             org_id=repo.org.id,
             name=repo.name,
+            default_branch=repo.default_branch,
             ref=repo.ref,
             ref_type=repo.ref_type,
             ref_commit=repo.ref_commit,

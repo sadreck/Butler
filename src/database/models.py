@@ -20,6 +20,7 @@ class RepositoryModel(Base):
     org_id = Column(Integer, default=0, index=True)
     redirect_id = Column(Integer, default=0, index=True)
     name = Column(String, default='', index=True)
+    default_branch = Column(String, default='', index=True)
     ref = Column(String, default='', index=True)
     ref_type = Column(Integer, default=0, index=True)
     ref_commit = Column(String, default='')
