@@ -66,6 +66,7 @@ class WorkflowCollector(CollectorBase):
                 r.id			        AS repo_id,
                 r.visibility	        AS repo_visibility,
                 r.name			        AS repo_name,
+                r.default_branch        AS repo_default_branch,
                 r.ref			        AS repo_ref,
                 r.ref_type		        AS repo_ref_type,
                 r.ref_commit	        AS repo_ref_commit,
