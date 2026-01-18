@@ -40,6 +40,7 @@ def test_download_vscode(logger, mock_requests_get):
     assert vscode.stars == 177902
     assert vscode.fork == False
     assert vscode.archive == False
+    assert vscode.default_branch == 'main'
 
     assert checkout.id > 0
     assert checkout.ref_type == GitHubRefType.TAG
@@ -52,6 +53,7 @@ def test_download_vscode(logger, mock_requests_get):
     assert checkout.stars == 7166
     assert checkout.fork == False
     assert checkout.archive == False
+    assert vscode.default_branch == 'main'
 
     vscode_workflow = database.workflows().find(vscode.id, '.github/workflows/copilot-setup-steps.yml')
     checkout_workflow = database.workflows().find(checkout.id, 'action.yml')
@@ -91,6 +93,7 @@ def test_download_missing_org(logger, mock_requests_get):
     vscode = database.repos().find(microsoft.id, 'vscode', None)
     assert vscode.id > 0
     assert vscode.status == RepoStatus.MISSING
+    assert vscode.default_branch == ''
 
 @pytest.mark.parametrize('mock_requests_get', ['missing_repo'], indirect=True)
 def test_download_missing_repo(logger, mock_requests_get):
@@ -111,6 +114,7 @@ def test_download_missing_repo(logger, mock_requests_get):
     vscode = database.repos().find(microsoft.id, 'vscode-does-not-exist', None)
     assert vscode.id > 0
     assert vscode.status == RepoStatus.MISSING
+    assert vscode.default_branch == ''
 
 @pytest.mark.parametrize('mock_requests_get', ['missing_workflow'], indirect=True)
 def test_download_missing_workflow(logger, mock_requests_get):
@@ -133,6 +137,7 @@ def test_download_missing_workflow(logger, mock_requests_get):
     assert vscode.id > 0
 
     assert vscode.status == RepoStatus.NO_WORKFLOWS
+    assert vscode.default_branch == 'main'
 
 @pytest.mark.parametrize('mock_requests_get', ['renamed_branch'], indirect=True)
 def test_download_renamed_branch(logger, mock_requests_get):
@@ -155,6 +160,7 @@ def test_download_renamed_branch(logger, mock_requests_get):
     assert actions.ref_old_name == 'master'
     assert actions.ref_type == GitHubRefType.BRANCH
     assert actions.status == RepoStatus.OK
+    assert actions.default_branch == 'v2-branch'
 
     pr_fetch = database.workflows().find(actions.id, 'pr-fetch/action.yml')
     pr_push = database.workflows().find(actions.id, 'pr-push/action.yml')

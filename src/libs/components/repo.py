@@ -9,6 +9,7 @@ class RepoComponent(BaseComponent):
     _org: OrgComponent = None
     _redirect_id: int = None
     _name: str = None
+    _default_branch: str = None
     _ref: str = None
     _ref_type: GitHubRefType = None
     _ref_commit: str = None
@@ -45,6 +46,14 @@ class RepoComponent(BaseComponent):
     @redirect_id.setter
     def redirect_id(self, value: int):
         self._redirect_id = value
+
+    @property
+    def default_branch(self) -> str:
+        return self._default_branch or ''
+
+    @default_branch.setter
+    def default_branch(self, value: str):
+        self._default_branch = value
 
     @property
     def ref(self) -> str:
@@ -189,6 +198,7 @@ class RepoComponent(BaseComponent):
             'repo_id',
             'repo_visibility',
             'repo_name',
+            'repo_default_branch',
             'repo_ref',
             'repo_ref_type',
             'repo_ref_commit',
@@ -210,6 +220,7 @@ class RepoComponent(BaseComponent):
         instance.org.id = data['org_id']
         instance.id = data['repo_id']
         instance.visibility = data['repo_visibility']
+        instance.default_branch = data['repo_default_branch']
         instance.ref_type = data['repo_ref_type']
         instance.ref_commit = data['repo_ref_commit']
         instance.resolved_ref = data['repo_resolved_ref']

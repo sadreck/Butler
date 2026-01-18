@@ -77,6 +77,7 @@ class GitHubClient:
         repo = RepoComponent(data['full_name'])
         repo.visibility = RepoVisibility.PRIVATE if data['private'] else RepoVisibility.PUBLIC
         repo.ref = data['default_branch']
+        repo.default_branch = data['default_branch']
         repo.ref_type = GitHubRefType.BRANCH
         repo.stars = data['stargazers_count']
         repo.fork = data['fork']
@@ -218,6 +219,7 @@ class GitHubClient:
             data = self.get_repo(repo, False)
             if len(repo.ref) == 0:
                 repo.ref = data.get('default_branch', '')
+            repo.default_branch = data.get('default_branch', '')
             repo.visibility = RepoVisibility.PRIVATE if data['private'] else RepoVisibility.PUBLIC
             repo.status = RepoStatus.OK
             repo.stars = data['stargazers_count']

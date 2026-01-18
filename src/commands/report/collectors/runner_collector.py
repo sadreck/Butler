@@ -76,6 +76,7 @@ class RunnerCollector(CollectorBase):
                 r.id			AS repo_id,
                 r.visibility	AS repo_visibility,
                 r.name			AS repo_name,
+                r.default_branch        AS repo_default_branch,
                 r.ref			AS repo_ref,
                 r.ref_type		AS repo_ref_type,
                 r.resolved_ref	AS repo_resolved_ref,
