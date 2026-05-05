@@ -106,6 +106,12 @@ class DownloadHelper:
 
         instance = WorkflowInstance(data, workflow.repo)
         for job in instance.jobs:
+            if job.uses:
+                with self.lock:
+                    child_org, child_repo, child_workflow = self._create_child_workflow_from_workflow(job.uses, instance)
+                    # Create a relationship between the 2 workflows
+                    self.database.workflows().link_workflows(workflow, child_workflow)
+
             for step in job.steps:
                 uses = step.uses
                 if not uses:
@@ -114,14 +120,14 @@ class DownloadHelper:
                     continue
 
                 with self.lock:
-                    child_org, child_repo, child_workflow = self._create_child_workflow(uses)
+                    child_org, child_repo, child_workflow = self._create_child_workflow_from_action(uses)
 
                     # Create a relationship between the 2 workflows
                     self.database.workflows().link_workflows(workflow, child_workflow)
 
         return data
 
-    def _create_child_workflow(self, uses: str) -> (OrgComponent, RepoComponent, WorkflowComponent):
+    def _create_child_workflow_from_action(self, uses: str) -> (OrgComponent, RepoComponent, WorkflowComponent):
         org = OrgComponent(uses)
         org_db = self.database.orgs().create(org)
         org.id = org_db.id
@@ -139,4 +145,25 @@ class DownloadHelper:
         workflow_db = self.database.workflows().create(workflow)
         workflow.id = workflow_db.id
 
+        return org, repo, workflow
+
+    def _create_child_workflow_from_workflow(self, uses: str, workflow_instance: WorkflowInstance) -> (OrgComponent, RepoComponent, WorkflowComponent):
+        if uses.startswith('.'):
+            # It's a reference to a local reusable workflow.
+            org = workflow_instance.repo.org
+            repo = workflow_instance.repo
+            ref = workflow_instance.repo.ref
+            if uses.startswith('./'):
+                uses = uses[2:].strip()
+            full_workflow = f"{org.name}/{repo.name}/{uses}@{ref}"
+
+            workflow = WorkflowComponent(full_workflow)
+            workflow.repo.id = repo.id
+            workflow.repo.org.id = repo.org.id
+            if uses.lower().startswith('docker://'):
+                workflow.type = WorkflowType.DOCKER
+            workflow_db = self.database.workflows().create(workflow)
+            workflow.id = workflow_db.id
+        else:
+            org, repo, workflow = self._create_child_workflow_from_action(uses)
         return org, repo, workflow
