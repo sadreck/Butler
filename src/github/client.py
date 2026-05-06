@@ -252,9 +252,11 @@ class GitHubClient:
             tag = self._get_git_tag(repo, repo.ref)
             if tag:
                 self.log.debug(f"Found tag {tag} for {repo.ref} in {repo}")
+                # We leave the ref as is but update the resolved ref.
                 repo.ref_commit = repo.ref
-                repo.ref = str(tag) if tag is not None else ''
-                repo.ref_type = GitHubRefType.TAG
+                repo.ref_type = GitHubRefType.COMMIT
+                repo.resolved_ref = str(tag)
+                repo.resolved_ref_type = GitHubRefType.TAG
                 repo.status = RepoStatus.OK
                 return True
         except GitHubException as e:
