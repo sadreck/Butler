@@ -88,7 +88,7 @@ class DownloadHelper:
 
     def _download(self, workflow: WorkflowComponent) -> str | None:
         if Utils.is_yaml_extension(workflow.path):
-            return self.github_client.download(workflow)
+            return self.github_client.download_workflow(workflow)
 
         if workflow.type != WorkflowType.ACTION:
             raise UnknownWorkflowType(f"Workflow path does not have yaml extension and is not marked as an action")

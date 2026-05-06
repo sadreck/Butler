@@ -274,6 +274,15 @@ class GitHubClient:
         except HttpNotFound:
             raise ErrorDownloadingFile(f"Could not download file for {workflow}")
 
+    def download_workflow(self, workflow: WorkflowComponent) -> str | None:
+        contents = None
+        try:
+            return self.download(workflow)
+        except ErrorDownloadingFile:
+            # Nothing.
+            pass
+        return contents
+
     def download_action(self, workflow: WorkflowComponent) -> str | None:
         contents = None
         for action_file in ['action.yml', 'action.yaml', 'Dockerfile']:
