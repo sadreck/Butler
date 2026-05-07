@@ -35,7 +35,7 @@ def test_fulfillment_signed(client, mock_requests_get):
     # However, when it's signed it's assigned a different hash.
     component = RepoComponent('aws-actions/configure-aws-credentials@5579c002bb4778aa43395ef1df492868a9a1c83f')
     client.fulfill_component(component)
-    assert component.ref_type == GitHubRefType.TAG
+    assert component.ref_type == GitHubRefType.COMMIT
     assert component.ref_commit == '5579c002bb4778aa43395ef1df492868a9a1c83f'
     assert component.status == RepoStatus.OK
     assert component.visibility == RepoVisibility.PUBLIC
