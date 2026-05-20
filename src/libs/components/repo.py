@@ -232,3 +232,6 @@ class RepoComponent(BaseComponent):
         instance.fork = data['repo_fork']
         instance.archive = data['repo_archive']
         return instance
+
+    def url(self) -> str:
+        return f"https://github.com/{self.org.name}/{self.name}"

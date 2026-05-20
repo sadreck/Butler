@@ -152,6 +152,11 @@ class WorkflowResults:
             return 'submodule'
         return ''
 
+    def _friendly_workflow_path(self, path: str, type: WorkflowType) -> str:
+        if type == WorkflowType.WORKFLOW:
+            return path.replace('.github/workflows/', '')
+        return path
+
     def count(self, what: str) -> int:
         match what.lower():
             case 'repos':
