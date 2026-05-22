@@ -12,6 +12,7 @@
                     <th>Archived</th>
                     <th>Fork</th>
                     <th>Jobs</th>
+                    <th>Reusable</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -57,6 +58,13 @@
                     <td class="text-end">
                         <div class="badge text-bg-secondary d-block">{{ workflow.job_count }}</div>
                     </td>
+                    <td class="text-center">
+                        {% if workflow.reusable %}
+                        <div class="badge text-bg-primary d-block">yes</div>
+                        {% else %}
+                        <div class="badge text-bg-secondary d-block">no</div>
+                        {% endif %}
+                    </td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -87,7 +95,7 @@
                     columnControl: ['order', ['searchList']]
                 },
                 {
-                    targets: [3, 4, 5, 6],
+                    targets: [3, 4, 5, 6, 8],
                     columnControl: [
                         'order',
                         [

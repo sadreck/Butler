@@ -36,7 +36,7 @@ class WorkflowCollector(CollectorBase):
         for result in workflow_results:
             workflow = WorkflowComponent.from_dict(result, False)
 
-            instance = data['results'].get_or_create(workflow, result['job_count'], result['triggers'])
+            instance = data['results'].get_or_create(workflow, result['job_count'], result['reusable'])
             if instance['instance'].status == WorkflowStatus.MISSING:
                 # Get additional info.
                 self.log.debug(f"Getting additional information for {instance['instance']}")
@@ -84,7 +84,7 @@ class WorkflowCollector(CollectorBase):
                 w.type			        AS workflow_type,
                 w.status		        AS workflow_status,
                 COALESCE(js.total, 0)   AS job_count,
-                COALESCE(event_triggers.triggers, '')   AS triggers
+                (CASE WHEN reusable_workflows.workflow_id IS NULL THEN 0 ELSE 1 END) AS reusable
             FROM workflows w
             JOIN repositories r ON r.id = w.repo_id
             JOIN organisations o ON o.id = r.org_id
@@ -97,15 +97,12 @@ class WorkflowCollector(CollectorBase):
             ) js ON js.workflow_id = w.id
             LEFT JOIN (
                 SELECT
-                    wd.workflow_id,
-                    GROUP_CONCAT(value, ',') AS triggers
+                    wd.workflow_id
                 FROM workflow_data wd
                 WHERE
                     wd.property = 'on'
-                    AND LENGTH(wd.value) > 0
-                GROUP BY wd.workflow_id
-                ORDER BY wd.value
-            ) event_triggers ON event_triggers.workflow_id = w.id
+                    AND wd.value = 'workflow_call'
+            ) reusable_workflows ON reusable_workflows.workflow_id = w.id
             WHERE
                 o.id = :org_id
         """

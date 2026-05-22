@@ -30,14 +30,12 @@ class WorkflowResults:
         self._missing = {}
         self._triggers = {}
 
-    def get_or_create(self, workflow: WorkflowComponent, job_count: int, triggers: str) -> dict:
-        triggers = triggers.split(',')
-
+    def get_or_create(self, workflow: WorkflowComponent, job_count: int, reusable: int) -> dict:
         if str(workflow) not in self._workflows:
             self._workflows[str(workflow)] = {
                 'instance': workflow,
                 'job_count': job_count,
-                'triggers': triggers,
+                'reusable': reusable,
             }
 
         if str(workflow.repo) not in self._repos:
@@ -46,14 +44,6 @@ class WorkflowResults:
                 'count': 0
             }
         self._repos[str(workflow.repo)]['count'] += 1
-
-        for trigger in triggers:
-            if len(trigger) == 0:
-                continue
-
-            if trigger not in self._triggers:
-                self._triggers[trigger] = 0
-            self._triggers[trigger] += 1
 
         return self._workflows[str(workflow)]
 
@@ -127,7 +117,7 @@ class WorkflowResults:
                 workflow['job_count'],                                              # 14
                 self._friendly_status(workflow['instance'].status),                 # 15
                 "\n".join(self._get_parents_for_missing(workflow_name)),            # 16
-                ",".join(workflow['triggers']),                                     # 17
+                workflow['reusable'],                                               # 17
             ]
 
             rows.append(row)

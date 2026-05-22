@@ -1,3 +1,4 @@
+from src.libs.constants import WorkflowType
 from src.libs.components.workflow import WorkflowComponent
 
 
@@ -40,6 +41,26 @@ class VariableResults:
         self._variables = {}
         self._workflows = {}
 
+    def _friendly_workflow_path(self, path: str, type: WorkflowType) -> str:
+        if type == WorkflowType.WORKFLOW:
+            return path.replace('.github/workflows/', '')
+        return path
+
+    def group(self) -> None:
+        for name, workflow in self._workflows.items():
+            for var, count in workflow['secrets'].items():
+                self._workflows[name]['secrets_and_variables'].append({
+                    'type': 'secret',
+                    'name': var,
+                    'count': count
+                })
+            for var, count in workflow['variables'].items():
+                self._workflows[name]['secrets_and_variables'].append({
+                    'type': 'variable',
+                    'name': var,
+                    'count': count
+                })
+
     def count(self, what: str) -> int:
         match what.lower():
             case 'secrets':
@@ -53,12 +74,14 @@ class VariableResults:
             case _:
                 return 0
 
-    def get_or_create(self, workflow: WorkflowComponent, variable_name: str) -> str:
+    def get_or_create(self, workflow: WorkflowComponent, variable_name: str, reusable: int) -> str:
         if not str(workflow) in self._workflows:
             self._workflows[str(workflow)] = {
+                'reusable': reusable,
                 'workflow': workflow,
                 'variables': {},
-                'secrets': {}
+                'secrets': {},
+                'secrets_and_variables': []
             }
 
         variable_name = variable_name.lower()

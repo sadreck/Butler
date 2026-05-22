@@ -46,17 +46,19 @@ class VariableCollector(CollectorBase):
         self.log.info(f"Processing {len(workflows_results)} workflow results")
         for result in workflows_results:
             workflow = WorkflowComponent.from_dict(result)
-            instance = data['results'].get_or_create(workflow, result['variable_name'])
+            instance = data['results'].get_or_create(workflow, result['variable_name'], result['reusable'])
 
         self.log.info(f"Processing {len(jobs_results)} job results")
         for result in jobs_results:
             workflow = WorkflowComponent.from_dict(result)
-            instance = data['results'].get_or_create(workflow, result['variable_name'])
+            instance = data['results'].get_or_create(workflow, result['variable_name'], result['reusable'])
 
         self.log.info(f"Processing {len(steps_results)} step results")
         for result in steps_results:
             workflow = WorkflowComponent.from_dict(result)
-            instance = data['results'].get_or_create(workflow, result['variable_name'])
+            instance = data['results'].get_or_create(workflow, result['variable_name'], result['reusable'])
+
+        data['results'].group()
 
         self._export(data)
         self.outputs['info'] = {
@@ -107,12 +109,21 @@ class VariableCollector(CollectorBase):
                 w.status		AS workflow_status,
                 w.data			AS workflow_data,
                 w.contents      AS workflow_contents,
-                v.name			AS variable_name
+                v.name			AS variable_name,
+                (CASE WHEN reusable_workflows.workflow_id IS NULL THEN 0 ELSE 1 END) AS reusable
             FROM organisations o
             JOIN repositories r ON r.org_id = o.id
             JOIN workflows w ON w.repo_id = r.id
             JOIN workflow_data wd ON wd.workflow_id = w.id
             JOIN variables v ON v.workflow_data_id = wd.id
+            LEFT JOIN (
+                SELECT
+                    wd.workflow_id
+                FROM workflow_data wd
+                WHERE
+                    wd.property = 'on'
+                    AND wd.value = 'workflow_call'
+            ) reusable_workflows ON reusable_workflows.workflow_id = w.id
             WHERE
                 o.id = :org_id
                 AND (LOWER(v.name) LIKE 'secrets.%' OR LOWER(v.name) LIKE 'vars.%')
@@ -151,13 +162,22 @@ class VariableCollector(CollectorBase):
                 w.contents      AS workflow_contents,
                 j.name          AS job_name,
                 j.shortname     AS job_shortname,
-                v.name			AS variable_name
+                v.name			AS variable_name,
+                (CASE WHEN reusable_workflows.workflow_id IS NULL THEN 0 ELSE 1 END) AS reusable
             FROM organisations o
             JOIN repositories r ON r.org_id = o.id
             JOIN workflows w ON w.repo_id = r.id
             JOIN jobs j ON j.workflow_id = w.id
             JOIN job_data jd ON jd.job_id = j.id
             JOIN variables v ON v.job_data_id = jd.id
+            LEFT JOIN (
+                SELECT
+                    wd.workflow_id
+                FROM workflow_data wd
+                WHERE
+                    wd.property = 'on'
+                    AND wd.value = 'workflow_call'
+            ) reusable_workflows ON reusable_workflows.workflow_id = w.id
             WHERE
                 o.id = :org_id
                 AND (LOWER(v.name) LIKE 'secrets.%' OR LOWER(v.name) LIKE 'vars.%')
@@ -197,7 +217,8 @@ class VariableCollector(CollectorBase):
                 j.name          AS job_name,
                 j.shortname     AS job_shortname,
                 s.step_number	AS step_number,
-                v.name			AS variable_name
+                v.name			AS variable_name,
+                (CASE WHEN reusable_workflows.workflow_id IS NULL THEN 0 ELSE 1 END) AS reusable
             FROM organisations o
             JOIN repositories r ON r.org_id = o.id
             JOIN workflows w ON w.repo_id = r.id
@@ -205,6 +226,14 @@ class VariableCollector(CollectorBase):
             JOIN steps s ON s.job_id = j.id
             JOIN step_data sd ON sd.step_id = s.id
             JOIN variables v ON v.step_data_id = sd.id
+            LEFT JOIN (
+                SELECT
+                    wd.workflow_id
+                FROM workflow_data wd
+                WHERE
+                    wd.property = 'on'
+                    AND wd.value = 'workflow_call'
+            ) reusable_workflows ON reusable_workflows.workflow_id = w.id
             WHERE
                 o.id = :org_id
                 AND (LOWER(v.name) LIKE 'secrets.%' OR LOWER(v.name) LIKE 'vars.%')
