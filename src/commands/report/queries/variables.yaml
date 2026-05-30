@@ -66,7 +66,7 @@ columns:
     type: 'link'
     link: 'repo_url'
     filters:
-      column_control: "['order', [{ extend: 'searchList' }]]"
+      column_control_alias: 'list'
   workflow_path:
     label: 'Workflow'
     type: 'link'
@@ -76,51 +76,42 @@ columns:
   workflow_type:
     label: 'Type'
     filters:
-      column_control: "['order', [{ extend: 'searchList', search: false }]]"
+      column_control_alias: 'list-no-search'
   variable_name:
     label: 'Variable'
   variable_type:
     label: 'Source'
     filters:
-      column_control: "['order', [{ extend: 'searchList', search: false }]]"
+      column_control_alias: 'list-no-search'
   variable_location:
     label: 'Location'
     filters:
-      column_control: "['order', [{ extend: 'searchList', search: false }]]"
+      column_control_alias: 'list-no-search'
   visibility:
     label: 'Visibility'
     filters:
-      column_control: "['order', [{ extend: 'searchList', search: false }]]"
+      column_control_alias: 'list-no-search'
   archived:
     label: 'Archived'
     align: 'text-center'
     type: 'icon'
     format:
-      icon_true: 'fa-solid fa-circle-check'
-      icon_false: 'fa-solid fa-circle-xmark'
       style_true: 'text-warning'
-      style_false: ''
     filters:
-      column_control: "['order', [{ extend: 'searchList', search: false }]]"
+      column_control_alias: 'list-no-search'
   forked:
     label: 'Forked'
     align: 'text-center'
     type: 'icon'
     format:
-      icon_true: 'fa-solid fa-circle-check'
-      icon_false: 'fa-solid fa-circle-xmark'
       style_true: 'text-warning'
-      style_false: ''
     filters:
-      column_control: "['order', [{ extend: 'searchList', search: false }]]"
+      column_control_alias: 'list-no-search'
   reusable_workflow:
     label: 'Reusable'
     align: 'text-center'
     type: 'icon'
     format:
-      icon_true: 'fa-solid fa-circle-check'
-      icon_false: 'fa-solid fa-circle-xmark'
       style_true: 'text-primary'
-      style_false: ''
     filters:
-      column_control: "['order', [{ extend: 'searchList', search: false }]]"
+      column_control_alias: 'list-no-search'

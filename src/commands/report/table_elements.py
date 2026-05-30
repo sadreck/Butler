@@ -10,6 +10,10 @@ class TableColumnOptions:
     _style_true: str = None
     _style_false: str = None
     _column_control: str = None
+    _column_control_alias: str = None
+
+    def __init__(self, name: str):
+        self._name = name
 
     @property
     def name(self) -> str:
@@ -93,11 +97,25 @@ class TableColumnOptions:
 
     @property
     def column_control(self) -> str:
-        return self._column_control
+        match self.column_control_alias:
+            case 'list-no-search':
+                return "['order', [{ extend: 'searchList', search: false }]]"
+            case 'list':
+                return "['order', [{ extend: 'searchList' }]]"
+            case _:
+                return self._column_control
 
     @column_control.setter
     def column_control(self, value: str):
         self._column_control = value
+
+    @property
+    def column_control_alias(self) -> str:
+        return self._column_control_alias
+
+    @column_control_alias.setter
+    def column_control_alias(self, value: str):
+        self._column_control_alias = value
 
     def __init__(self, name: str):
         self.name = name
@@ -196,11 +214,12 @@ class Table:
                 column.link = column_options.get('link', None)
                 column.type = column_options.get('type', 'text')
                 column.align = column_options.get('align', '')
-                column.icon_true = column_options.get('format', {}).get('icon_true', '')
-                column.icon_false = column_options.get('format', {}).get('icon_false', '')
+                column.icon_true = column_options.get('format', {}).get('icon_true', 'fa-solid fa-circle-check')
+                column.icon_false = column_options.get('format', {}).get('icon_false', 'fa-solid fa-circle-xmark')
                 column.style_true = column_options.get('format', {}).get('style_true', '')
                 column.style_false = column_options.get('format', {}).get('style_false', '')
                 column.column_control = column_options.get('filters', {}).get('column_control', '[]')
+                column.column_control_alias = column_options.get('filters', {}).get('column_control_alias', '')
             all_columns[name] = column
         return all_columns
 
