@@ -32,6 +32,11 @@ class ServiceReport(Service):
             output = instance.run()
             outputs.append(output)
 
+        for custom_query_file in self.custom_queries:
+            instance = QueryProcessor(self.log, self.database, org, self.output_path, custom_query_file)
+            output = instance.run()
+            outputs.append(output)
+
         index_path = os.path.join(self.output_path, 'index.html')
         index_generator = IndexGenerator(self.log, org)
         index_generator.run(outputs, index_path)

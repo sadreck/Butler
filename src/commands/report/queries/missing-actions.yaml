@@ -5,19 +5,10 @@ sql: |
   SELECT
   	r.name AS repo_name,
   	REPLACE(w.path, '.github/workflows/', '') AS workflow_path,
-  	(CASE
-            WHEN w.type = 1 THEN 'workflow'
-            WHEN w.type = 2 THEN 'action'
-            WHEN w.type = 3 THEN 'docker'
-            ELSE 'unknown'
-        END) AS workflow_type,
-        (CASE
-            WHEN r.visibility = 1 THEN 'public'
-            WHEN r.visibility = 2 THEN 'private'
-            ELSE 'unknown'
-      END) AS visibility,
-      r.archive AS archived,
-      r.fork AS forked,
+  	(CASE WHEN w.type = 1 THEN 'workflow' WHEN w.type = 2 THEN 'action' WHEN w.type = 3 THEN 'docker' ELSE 'unknown' END) AS workflow_type,
+    (CASE WHEN r.visibility = 1 THEN 'public' WHEN r.visibility = 2 THEN 'private' ELSE 'unknown' END) AS visibility,
+    r.archive AS archived,
+    r.fork AS forked,
   	(CASE WHEN reusable_workflows.workflow_id IS NULL THEN 0 ELSE 1 END) AS reusable_workflow,
   	CONCAT('https://github.com/', o.name, '/', r.name, '/blob/', r.ref, '/', w.path) AS workflow_url,
   	CONCAT('https://github.com/', o.name, '/', r.name) AS repo_url,
@@ -31,13 +22,10 @@ sql: |
   JOIN repositories r2 ON r2.id = w2.repo_id
   JOIN organisations o2 ON o2.id = r2.org_id
   LEFT JOIN (
-      	SELECT
-      		wd.workflow_id
-      	FROM workflow_data wd
-      	WHERE
-      		wd.property = 'on'
-      		AND wd.value = 'workflow_call'
-      ) reusable_workflows ON reusable_workflows.workflow_id = w.id
+    SELECT wd.workflow_id
+    FROM workflow_data wd
+    WHERE wd.property = 'on' AND wd.value = 'workflow_call'
+  ) reusable_workflows ON reusable_workflows.workflow_id = w.id
   WHERE
   	o.id = :org
   	AND w2.status = 5

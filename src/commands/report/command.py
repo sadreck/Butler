@@ -19,7 +19,7 @@ class CommandReport(Command):
         subparser.add_argument("--repo", required=True, default='', type=str, help="Repo to generate report from")
         subparser.add_argument("--output", required=True, default='', type=str, help="Location to store output files")
         subparser.add_argument("--config", default=None, type=str, help="Configuration file (defaults to default_config.yaml)")
-        subparser.add_argument("--custom-query", action="append", type=str, help="Path to custom query yaml file")
+        subparser.add_argument("--custom-query-path", action="append", type=str, help="Path to custom query yaml files")
 
         Command.define_shared_arguments(subparser)
 
@@ -30,7 +30,8 @@ class CommandReport(Command):
             'output': '' if arguments.output is None or len(arguments.output.strip()) == 0 else os.path.realpath(arguments.output.strip()),
             'repo': '' if arguments.repo is None or len(arguments.repo.strip()) == 0 else arguments.repo.strip(),
             'config': '' if arguments.config is None else os.path.realpath(arguments.config.strip()),
-            'custom_queries': [] if arguments.custom_query is None else Utils.strip_and_clean_list(arguments.custom_query),
+            'custom_query_paths': [] if arguments.custom_query_path is None else Utils.strip_and_clean_list(arguments.custom_query_path),
+            'custom_queries': []
         }
 
     def validate_command_arguments(self, arguments: dict) -> None:
@@ -54,9 +55,20 @@ class CommandReport(Command):
         # Overwrite the path with its contents
         arguments['config'] = Utils.load_yaml(Utils.read_file(arguments['config']))
 
-        for file in arguments['custom_queries']:
-            if not os.path.isfile(file):
-                raise InvalidCommandLine(f"--custom-query file does not exist: {file}")
+        for custom_query_path in arguments['custom_query_paths']:
+            self.log.debug(f"Loading custom queries from {custom_query_path}")
+            if os.path.isfile(custom_query_path):
+                arguments['custom_queries'].append(os.path.abspath(custom_query_path))
+            elif os.path.isdir(custom_query_path):
+                files = [os.path.join(custom_query_path, file) for file in os.listdir(custom_query_path)]
+                for file in files:
+                    if Utils.is_yaml_extension(file):
+                        arguments['custom_queries'].append(os.path.abspath(file))
+            else:
+                raise InvalidCommandLine(f"--custom-query-path file does not exist: {custom_query_path}")
+
+        if len(arguments['custom_queries']) > 0:
+            self.log.info(f"Loaded {len(arguments['custom_queries'])} custom queries: {', '.join(arguments['custom_queries'])}")
 
     def execute(self, arguments: dict) -> bool:
         database = Database(arguments['database'], arguments['db_debug'], arguments['db_debug_auto_commit'])

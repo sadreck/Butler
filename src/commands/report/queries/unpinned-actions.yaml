@@ -1,0 +1,117 @@
+version: "1.1"
+name: 'Unpinned Third-Party Actions'
+filename: "unpinned-third-party-actions"
+sql: |
+  SELECT
+  	o2.name AS org_name,
+  	r2.name AS repo_name,
+  	REPLACE(w2.path, '.github/workflows/', '') AS workflow_path,
+  	(CASE WHEN w2.type = 1 THEN 'workflow' WHEN w2.type = 2 THEN 'action' WHEN w2.type = 3 THEN 'docker' ELSE 'unknown' END) AS workflow_type,
+  	(CASE WHEN r2.visibility = 1 THEN 'public' WHEN r2.visibility = 2 THEN 'private' ELSE 'unknown' END) AS visibility,
+  	r2.archive AS archived,
+  	r2.fork AS forked,
+  	CONCAT('https://github.com/', o2.name, '/', r2.name, '/blob/', r2.ref_commit, '/', w2.path) AS workflow_url,
+  	CONCAT('https://github.com/', o2.name, '/', r2.name) AS repo_url,
+
+  	o.name AS action_org_name,
+  	r.name AS action_repo_name,
+  	REPLACE(w.path, '.github/workflows/', '') AS action_workflow_path,
+    CONCAT(o.name, '/', r.name, '@', r.ref) AS action_fullname,
+  	r.archive AS action_archived,
+  	r.fork AS action_forked,
+  	r.stars AS action_stars,
+  	CONCAT('https://github.com/', o.name, '/', r.name, '/blob/', r.ref, '/', w.path) AS action_url,
+  	CONCAT('https://github.com/', o.name, '/', r.name) AS action_repo_url
+  FROM workflows w
+  JOIN repositories r ON r.id = w.repo_id
+  JOIN organisations o ON o.id = r.org_id
+  JOIN workflow_relationships wr ON wr.child_id = w.id
+  JOIN workflows w2 ON w2.id = wr.parent_id
+  JOIN repositories r2 ON r2.id = w2.repo_id
+  JOIN organisations o2 ON o2.id = r2.org_id
+  WHERE
+  	w.type = 2
+  	AND r.ref_type != 3
+  	AND o.id != :org
+  	AND o2.id = :org
+  ORDER BY 1, 2, 3, 4, 5
+columns:
+  org_name: hide
+  workflow_url: hide
+  repo_url: hide
+  action_org_name: hide
+  action_repo_name: hide
+  action_workflow_path: hide
+  action_url: hide
+  action_repo_url: hide
+
+  repo_name:
+    label: 'Repository'
+    type: 'link'
+    link: 'repo_url'
+    filters:
+      column_control: "['order', [{ extend: 'searchList' }]]"
+  workflow_path:
+    label: 'Workflow'
+    type: 'link'
+    link: 'workflow_url'
+    filters:
+      column_control: "[]"
+  workflow_type:
+    label: 'Type'
+    filters:
+      column_control: "['order', [{ extend: 'searchList', search: false }]]"
+  visibility:
+    label: 'Visibility'
+    filters:
+      column_control: "['order', [{ extend: 'searchList', search: false }]]"
+  archived:
+    label: 'Archived'
+    align: 'text-center'
+    type: 'icon'
+    format:
+      icon_true: 'fa-solid fa-circle-check'
+      icon_false: 'fa-solid fa-circle-xmark'
+      style_true: 'text-warning'
+      style_false: ''
+    filters:
+      column_control: "['order', [{ extend: 'searchList', search: false }]]"
+  forked:
+    label: 'Forked'
+    align: 'text-center'
+    type: 'icon'
+    format:
+      icon_true: 'fa-solid fa-circle-check'
+      icon_false: 'fa-solid fa-circle-xmark'
+      style_true: 'text-warning'
+      style_false: ''
+    filters:
+      column_control: "['order', [{ extend: 'searchList', search: false }]]"
+  action_fullname:
+    label: 'Action'
+    type: 'link'
+    link: 'action_url'
+  action_archived:
+    label: 'Archived'
+    align: 'text-center'
+    type: 'icon'
+    format:
+      icon_true: 'fa-solid fa-circle-check'
+      icon_false: 'fa-solid fa-circle-xmark'
+      style_true: 'text-warning'
+      style_false: ''
+    filters:
+      column_control: "['order', [{ extend: 'searchList', search: false }]]"
+  action_forked:
+    label: 'Forked'
+    align: 'text-center'
+    type: 'icon'
+    format:
+      icon_true: 'fa-solid fa-circle-check'
+      icon_false: 'fa-solid fa-circle-xmark'
+      style_true: 'text-warning'
+      style_false: ''
+    filters:
+      column_control: "['order', [{ extend: 'searchList', search: false }]]"
+  action_stars:
+    label: 'Stars'
