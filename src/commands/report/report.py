@@ -1,12 +1,6 @@
 import os
-
-from src.commands.report.collectors.custom_collector import CustomCollector
-from src.commands.report.collectors.index_generator import IndexGenerator
-from src.commands.report.collectors.runner_collector import RunnerCollector
-from src.commands.report.collectors.third_party_collector import ThirdPartyCollector
-from src.commands.report.collectors.variable_collector import VariableCollector
-from src.commands.report.collectors.workflow_collector import WorkflowCollector
-from src.commands.report.collectors.error_collector import ErrorCollector
+from src.commands.report.index_generator import IndexGenerator
+from src.commands.report.query_processor import QueryProcessor
 from src.commands.service import Service
 from src.github.exceptions import OrgNotFound
 from src.libs.components.org import OrgComponent
@@ -29,28 +23,17 @@ class ServiceReport(Service):
             raise OrgNotFound(f"Organisation not found: {self.repo}")
         org = OrgComponent.from_model(db_org)
 
-        collectors = [
-            WorkflowCollector,
-            ThirdPartyCollector,
-            VariableCollector,
-            RunnerCollector,
-            ErrorCollector,
-        ]
+        queries_path = os.path.join(os.path.dirname(__file__), 'queries')
+        query_files = [str(os.path.join(queries_path, file)) for file in os.listdir(queries_path)]
 
-        outputs = {}
-        for collector in collectors:
-            instance = collector(self.log, self.database, self.config, org, self.output_path)
-            instance.run()
-            outputs[instance.shortname] = instance.outputs
+        outputs = []
+        for query_file in query_files:
+            instance = QueryProcessor(self.log, self.database, org, self.output_path, query_file)
+            output = instance.run()
+            outputs.append(output)
 
-        if len(self.custom_queries) > 0:
-            instance = CustomCollector(self.log, self.database, self.config, org, self.output_path)
-            instance.run(self.custom_queries)
-            outputs[instance.shortname] = instance.outputs
-
-        index_generator = IndexGenerator(self.log, self.database, self.config, org, self.output_path)
-        index_generator.generated_outputs = outputs
-        index_generator.run()
-
-        self.log.success(f"Report generated and saved at {index_generator.outputs['html']}")
+        index_path = os.path.join(self.output_path, 'index.html')
+        index_generator = IndexGenerator(self.log, org)
+        index_generator.run(outputs, index_path)
+        self.log.success(f"Report generated and saved at {index_path}")
         return True

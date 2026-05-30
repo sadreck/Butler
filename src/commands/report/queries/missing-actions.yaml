@@ -1,0 +1,110 @@
+version: "1.1"
+name: 'Missing Workflows and Actions'
+filename: "missing-actions"
+sql: |
+  SELECT
+  	r.name AS repo_name,
+  	REPLACE(w.path, '.github/workflows/', '') AS workflow_path,
+  	(CASE
+            WHEN w.type = 1 THEN 'workflow'
+            WHEN w.type = 2 THEN 'action'
+            WHEN w.type = 3 THEN 'docker'
+            ELSE 'unknown'
+        END) AS workflow_type,
+        (CASE
+            WHEN r.visibility = 1 THEN 'public'
+            WHEN r.visibility = 2 THEN 'private'
+            ELSE 'unknown'
+      END) AS visibility,
+      r.archive AS archived,
+      r.fork AS forked,
+  	(CASE WHEN reusable_workflows.workflow_id IS NULL THEN 0 ELSE 1 END) AS reusable_workflow,
+  	CONCAT('https://github.com/', o.name, '/', r.name, '/blob/', r.ref, '/', w.path) AS workflow_url,
+  	CONCAT('https://github.com/', o.name, '/', r.name) AS repo_url,
+  	CONCAT(o2.name, '/', r2.name, '@', r2.ref) AS missing_repo,
+  	CONCAT('https://github.com/', o2.name, '/', r2.name, '/blob/', r2.ref, '/', w2.path) AS missing_url
+  FROM workflows w
+  JOIN repositories r ON r.id = w.repo_id
+  JOIN organisations o ON o.id = r.org_id
+  JOIN workflow_tree wt ON wt.parent_id = w.id
+  JOIN workflows w2 ON w2.id = wt.child_id
+  JOIN repositories r2 ON r2.id = w2.repo_id
+  JOIN organisations o2 ON o2.id = r2.org_id
+  LEFT JOIN (
+      	SELECT
+      		wd.workflow_id
+      	FROM workflow_data wd
+      	WHERE
+      		wd.property = 'on'
+      		AND wd.value = 'workflow_call'
+      ) reusable_workflows ON reusable_workflows.workflow_id = w.id
+  WHERE
+  	o.id = :org
+  	AND w2.status = 5
+  	AND o2.name != '_'
+  	AND o2.name NOT LIKE '%/%'
+  ORDER BY 1, 2, 3
+columns:
+  missing_url: hide
+  workflow_url: hide
+  repo_url: hide
+
+  repo_name:
+    label: 'Repository'
+    type: 'link'
+    link: 'repo_url'
+    filters:
+      column_control: "['order', [{ extend: 'searchList' }]]"
+  workflow_path:
+    label: 'Workflow'
+    type: 'link'
+    link: 'workflow_url'
+    filters:
+      column_control: "[]"
+  workflow_type:
+    label: 'Type'
+    filters:
+      column_control: "['order', [{ extend: 'searchList', search: false }]]"
+  visibility:
+    label: 'Visibility'
+    filters:
+      column_control: "['order', [{ extend: 'searchList', search: false }]]"
+  archived:
+    label: 'Archived'
+    align: 'text-center'
+    type: 'icon'
+    format:
+      icon_true: 'fa-solid fa-circle-check'
+      icon_false: 'fa-solid fa-circle-xmark'
+      style_true: 'text-warning'
+      style_false: ''
+    filters:
+      column_control: "['order', [{ extend: 'searchList', search: false }]]"
+  forked:
+    label: 'Forked'
+    align: 'text-center'
+    type: 'icon'
+    format:
+      icon_true: 'fa-solid fa-circle-check'
+      icon_false: 'fa-solid fa-circle-xmark'
+      style_true: 'text-warning'
+      style_false: ''
+    filters:
+      column_control: "['order', [{ extend: 'searchList', search: false }]]"
+  reusable_workflow:
+    label: 'Reusable'
+    align: 'text-center'
+    type: 'icon'
+    format:
+      icon_true: 'fa-solid fa-circle-check'
+      icon_false: 'fa-solid fa-circle-xmark'
+      style_true: 'text-primary'
+      style_false: ''
+    filters:
+      column_control: "['order', [{ extend: 'searchList', search: false }]]"
+  missing_repo:
+    label: 'Missing Action'
+    type: 'link'
+    link: 'missing_url'
+    filters:
+      column_control: "['order', [{ extend: 'searchList' }]]"
