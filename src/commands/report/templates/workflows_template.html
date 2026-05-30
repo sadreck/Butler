@@ -36,34 +36,22 @@
                     </td>
                     <td>
                         {% if workflow.instance.repo.visibility == 1 %}
-                        <div class="badge text-bg-warning d-block">public</div>
+                        public
                         {% elif  workflow.instance.repo.visibility == 2 %}
-                        <div class="badge text-bg-primary d-block">private</div>
+                        private
                         {% endif %}
                     </td>
-                    <td class="text-center">
-                        {% if workflow.instance.repo.archive %}
-                        <div class="badge text-bg-warning d-block">yes</div>
-                        {% else %}
-                        <div class="badge text-bg-secondary d-block">no</div>
-                        {% endif %}
+                    <td class="text-center" data-search="{% if workflow.instance.repo.archive %}yes{% else %}no{% endif %}">
+                        {{ yes_no_icon(workflow.instance.repo.archive, 'text-warning') }}
                     </td>
-                    <td class="text-center">
-                        {% if workflow.instance.repo.fork %}
-                        <div class="badge text-bg-warning d-block">yes</div>
-                        {% else %}
-                        <div class="badge text-bg-secondary d-block">no</div>
-                        {% endif %}
+                    <td class="text-center" data-search="{% if workflow.instance.repo.fork %}yes{% else %}no{% endif %}">
+                        {{ yes_no_icon(workflow.instance.repo.fork, 'text-warning') }}
                     </td>
                     <td class="text-end">
-                        <div class="badge text-bg-secondary d-block">{{ workflow.job_count }}</div>
+                        {{ workflow.job_count }}
                     </td>
-                    <td class="text-center">
-                        {% if workflow.reusable %}
-                        <div class="badge text-bg-primary d-block">yes</div>
-                        {% else %}
-                        <div class="badge text-bg-secondary d-block">no</div>
-                        {% endif %}
+                    <td class="text-center" data-search="{% if workflow.reusable %}yes{% else %}no{% endif %}">
+                        {{ yes_no_icon(workflow.reusable, 'text-primary') }}
                     </td>
                     </tr>
                 {% endfor %}
@@ -75,39 +63,48 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
+        let columns = {
+            'repo': 0,
+            'workflow': 1,
+            'ref': 2,
+            'type': 3,
+            'visibility': 4,
+            'archived': 5,
+            'fork': 6,
+            'jobs': 7,
+            'reusable': 8,
+        };
+
         let table = new DataTable('#components', {
             paging: false,
             columnControl: ['order', 'search'],
             columnDefs: [
                 {
-                    targets: [0],
+                    targets: [columns['repo']],
                     columnControl: [
                         'order',
-                        [
-                            {
-                                extend: 'searchList',
-                            }
-                        ]
+                        [{ extend: 'searchList' }]
                     ]
                 },
                 {
-                    targets: [2],
+                    targets: [columns['ref']],
                     columnControl: ['order', ['searchList']]
                 },
                 {
-                    targets: [3, 4, 5, 6, 8],
+                    targets: [
+                        columns['type'],
+                        columns['visibility'],
+                        columns['archived'],
+                        columns['fork'],
+                        columns['reusable']
+                    ],
                     columnControl: [
                         'order',
-                        [
-                            {
-                                extend: 'searchList',
-                                search: false
-                            }
-                        ]
+                        [{ extend: 'searchList', search: false }]
                     ]
                 },
                 {
-                    targets: [7],
+                    targets: [columns['jobs']],
                     columnControl: ['order']
                 }
             ],
@@ -118,9 +115,7 @@
             layout: {
                 topStart: [
                     'info',
-                    {
-                        buttons: ['ccSearchClear']
-                    }
+                    { buttons: ['ccSearchClear'] }
                 ],
                 bottomStart: null,
             },
