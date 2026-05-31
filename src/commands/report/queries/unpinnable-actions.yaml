@@ -1,0 +1,203 @@
+version: "1.1"
+name: 'Unpinnable Third-Party Actions'
+filename: "unpinnable-third-party-actions"
+sql: |
+  SELECT
+  	CONCAT(o3.name, '/', r3.name, '@', r3.ref) AS parent_fullname,
+  	REPLACE(w3.path, '.github/workflows/', '') AS parent_path,
+  	o3.name AS parent_org_name,
+  	r3.name AS parent_repo_name,
+  	r3.ref AS parent_ref,
+  	r3.archive AS parent_archived,
+  	r3.fork AS parent_forked,
+  	r3.stars AS parent_stars,
+  	CONCAT('https://github.com/', o3.name, '/', r3.name, '/blob/', r3.ref_commit, '/', w3.path) AS parent_url,
+
+  	CONCAT(o2.name, '/', r2.name, '@', r2.ref) AS unpinnable_action_fullname,
+  	REPLACE(w2.path, '.github/workflows/', '') AS unpinnable_action_path,
+  	o2.name AS unpinnable_action_org_name,
+  	r2.name AS unpinnable_action_repo_name,
+  	r2.ref AS unpinnable_action_ref,
+  	r2.archive AS unpinnable_action_archived,
+  	r2.fork AS unpinnable_action_forked,
+  	r2.stars AS unpinnable_action_stars,
+  	CONCAT('https://github.com/', o2.name, '/', r2.name, '/blob/', r2.ref_commit, '/', w2.path) AS unpinnable_action_url,
+
+  	CONCAT(o.name, '/', r.name, '@', r.ref) AS unpinned_action_fullname,
+  	REPLACE(w.path, '.github/workflows/', '') AS unpinned_action_path,
+  	o.name AS unpinned_action_org_name,
+  	r.name AS unpinned_action_repo_name,
+  	r.ref AS unpinned_action_ref,
+  	r.archive AS unpinned_action_archived,
+  	r.fork AS unpinned_action_forked,
+  	r.stars AS unpinned_action_stars,
+  	CONCAT('https://github.com/', o.name, '/', r.name, '/blob/', r.ref_commit, '/', w.path) AS unpinned_action_url
+
+  FROM workflows w
+  JOIN repositories r ON r.id = w.repo_id
+  JOIN organisations o ON o.id = r.org_id
+
+  JOIN workflow_relationships wr ON wr.child_id = w.id
+
+  JOIN workflows w2 ON w2.id = wr.parent_id
+  JOIN repositories r2 ON r2.id = w2.repo_id
+  JOIN organisations o2 ON o2.id = r2.org_id
+
+  JOIN workflow_tree wt ON wt.child_id = w2.id
+
+  JOIN workflows w3 ON w3.id = wt.parent_id
+  JOIN repositories r3 ON r3.id = w3.repo_id
+  JOIN organisations o3 ON o3.id = r3.org_id
+
+  WHERE
+  	w.type = 2
+  	AND r.ref_type != 3
+  	AND o.id != :org
+  	AND o2.id != :org
+  	AND o3.id = :org
+  ORDER BY 1, 2, 3, 4
+columns:
+  parent_org_name: hide
+  parent_repo_name: hide
+  parent_ref: hide
+  parent_stars: hide
+  parent_url: hide
+  unpinnable_action_org_name: hide
+  unpinnable_action_repo_name: hide
+  unpinnable_action_ref: hide
+  unpinnable_action_url: hide
+  unpinned_action_org_name: hide
+  unpinned_action_repo_name: hide
+  unpinned_action_ref: hide
+  unpinned_action_url: hide
+  unpinnable_action_stars: hide
+  unpinnable_action_forked: hide
+  unpinned_action_forked: hide
+  unpinned_action_stars: hide
+
+  parent_fullname:
+    label: 'Parent Repo'
+    filters:
+      column_control_alias: 'list'
+  parent_path:
+    label: 'Workflow'
+    type: 'link'
+    link: 'parent_url'
+  parent_archived:
+    label: 'Archived'
+    align: 'text-center'
+    type: 'icon'
+    format:
+      style_true: 'text-warning'
+    filters:
+      column_control_alias: 'list-no-search'
+  parent_forked:
+    label: 'Forked'
+    align: 'text-center'
+    type: 'icon'
+    format:
+      style_true: 'text-warning'
+    filters:
+      column_control_alias: 'list-no-search'
+  unpinnable_action_fullname:
+    label: 'Unpinnable Repo'
+    filters:
+      column_control_alias: 'list'
+  unpinnable_action_path:
+    label: 'Unpinnable Action'
+    type: 'link'
+    link: 'unpinnable_action_url'
+  unpinnable_action_archived:
+    label: 'Archived'
+    align: 'text-center'
+    type: 'icon'
+    format:
+      style_true: 'text-warning'
+    filters:
+      column_control_alias: 'list-no-search'
+  unpinned_action_fullname:
+    label: 'Unpinned Repo'
+    filters:
+      column_control_alias: 'list'
+  unpinned_action_path:
+    label: 'Unpinned Action'
+    type: 'link'
+    link: 'unpinned_action_url'
+  unpinned_action_archived:
+    label: 'Archived'
+    align: 'text-center'
+    type: 'icon'
+    format:
+      style_true: 'text-warning'
+    filters:
+      column_control_alias: 'list-no-search'
+
+#  org_name: hide
+#  workflow_url: hide
+#  repo_url: hide
+#  action_org_name: hide
+#  action_repo_name: hide
+#  action_workflow_path: hide
+#  action_url: hide
+#  action_repo_url: hide
+#
+#  repo_name:
+#    label: 'Repository'
+#    type: 'link'
+#    link: 'repo_url'
+#    filters:
+#      column_control_alias: 'list'
+#  workflow_path:
+#    label: 'Workflow'
+#    type: 'link'
+#    link: 'workflow_url'
+#    filters:
+#      column_control: "[]"
+#  workflow_type:
+#    label: 'Type'
+#    filters:
+#      column_control_alias: 'list-no-search'
+#  visibility:
+#    label: 'Visibility'
+#    filters:
+#      column_control_alias: 'list-no-search'
+#  archived:
+#    label: 'Archived'
+#    align: 'text-center'
+#    type: 'icon'
+#    format:
+#      style_true: 'text-warning'
+#    filters:
+#      column_control_alias: 'list-no-search'
+#  forked:
+#    label: 'Forked'
+#    align: 'text-center'
+#    type: 'icon'
+#    format:
+#      style_true: 'text-warning'
+#    filters:
+#      column_control_alias: 'list-no-search'
+#  action_fullname:
+#    label: 'Action'
+#    type: 'link'
+#    link: 'action_url'
+#  action_archived:
+#    label: 'Archived'
+#    align: 'text-center'
+#    type: 'icon'
+#    format:
+#      style_true: 'text-warning'
+#    filters:
+#      column_control_alias: 'list-no-search'
+#  action_forked:
+#    label: 'Forked'
+#    align: 'text-center'
+#    type: 'icon'
+#    format:
+#      style_true: 'text-warning'
+#    filters:
+#      column_control_alias: 'list-no-search'
+#  action_stars:
+#    label: 'Stars'
+#    filters:
+#      column_control: "['order']"
