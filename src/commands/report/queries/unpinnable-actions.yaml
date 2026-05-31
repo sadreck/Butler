@@ -52,7 +52,7 @@ sql: |
   WHERE
   	w.type = 2
   	AND r.ref_type != 3
-  	AND o.id != :org
+  	AND o.id NOT IN(:org, $_TRUSTED_ORGS_$)
   	AND o2.id != :org
   	AND o3.id = :org
   ORDER BY 1, 2, 3, 4

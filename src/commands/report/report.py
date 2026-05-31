@@ -28,12 +28,12 @@ class ServiceReport(Service):
 
         outputs = []
         for query_file in query_files:
-            instance = QueryProcessor(self.log, self.database, org, self.output_path, query_file)
+            instance = QueryProcessor(self.log, self.database, org, self.output_path, self.config, query_file)
             output = instance.run()
             outputs.append(output)
 
         for custom_query_file in self.custom_queries:
-            instance = QueryProcessor(self.log, self.database, org, self.output_path, custom_query_file)
+            instance = QueryProcessor(self.log, self.database, org, self.output_path, self.config, custom_query_file)
             output = instance.run()
             outputs.append(output)
 

@@ -15,12 +15,14 @@ class QueryProcessor(ReportHelper):
     log: logger = None
     org: OrgComponent = None
     output_path: str = None
+    config: dict = None
 
-    def __init__(self, log: logger, database: Database, org: OrgComponent, output_path: str, query_file: str):
+    def __init__(self, log: logger, database: Database, org: OrgComponent, output_path: str, config: dict, query_file: str):
         self.log = log
         self.database = database
         self.org = org
         self.output_path = output_path
+        self.config = config
         self.query = self._load_query_file(query_file)
 
     def _load_query_file(self, file: str) -> dict:
@@ -37,7 +39,7 @@ class QueryProcessor(ReportHelper):
 
     def run(self) -> dict:
         self.log.info(f"Executing SQL Query for {self.query['name']}")
-        raw_results = self.database.select(self.query['sql'], {'org': self.org.id})
+        raw_results = self._execute_query()
 
         self.log.info(f"Processing {len(raw_results)} CSV results")
         results = self._process_results_csv(raw_results)
@@ -56,6 +58,29 @@ class QueryProcessor(ReportHelper):
             'csv': os.path.basename(output_csv),
             'name': self.query['name'],
         }
+
+    def _execute_query(self) -> list:
+        sql, params = self._prepare_query(self.query['sql'])
+        params['org'] = self.org.id
+
+        return self.database.select(sql, params)
+
+    def _prepare_query(self, sql: str) -> tuple[str, dict]:
+        params = {}
+        if '$_TRUSTED_ORGS_$' in sql:
+            org_ids = self._get_trusted_org_ids()
+            trusted_params = {f'trusted_org_{i}': org_id for i, org_id in enumerate(org_ids)}
+            params.update(trusted_params)
+            sql = sql.replace("$_TRUSTED_ORGS_$", ", ".join(f":{k}" for k in trusted_params))
+        return sql, params
+
+    def _get_trusted_org_ids(self) -> list:
+        ids = []
+        for org_name in (self.config.get('trusted-orgs', []) or []):
+            org = self.database.orgs().find(org_name)
+            if org:
+                ids.append(org.id)
+        return ids
 
     def _process_results_csv(self, results: list) -> list:
         if len(results) == 0:
