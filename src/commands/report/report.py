@@ -25,15 +25,11 @@ class ServiceReport(Service):
 
         queries_path = os.path.join(os.path.dirname(__file__), 'queries')
         query_files = [str(os.path.join(queries_path, file)) for file in os.listdir(queries_path)]
+        query_files.sort()
 
         outputs = []
-        for query_file in query_files:
+        for query_file in (query_files + self.custom_queries):
             instance = QueryProcessor(self.log, self.database, org, self.output_path, self.config, query_file)
-            output = instance.run()
-            outputs.append(output)
-
-        for custom_query_file in self.custom_queries:
-            instance = QueryProcessor(self.log, self.database, org, self.output_path, self.config, custom_query_file)
             output = instance.run()
             outputs.append(output)
 

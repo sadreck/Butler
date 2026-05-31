@@ -1,6 +1,8 @@
-version: "1.1"
+version: '1.1'
 name: 'Unpinnable Third-Party Actions'
-filename: "unpinnable-third-party-actions"
+description: 'Usage of unpinnable third-party actions'
+filename: 'unpinnable-third-party-actions'
+group: 'actions'
 sql: |
   SELECT
   	CONCAT(o3.name, '/', r3.name, '@', r3.ref) AS parent_fullname,

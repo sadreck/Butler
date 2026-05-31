@@ -1,3 +1,5 @@
+{% from "components/index-box.html" import index_box %}
+
 <div class="container mt-2 mb-5">
     <div class="row">
         <div class="col text-center">
@@ -5,24 +7,42 @@
         </div>
     </div>
 
-    {% for output in outputs %}
     <div class="row mb-4">
-        <div class="col-3"></div>
-        <div class="col border-start border-3 border-primary">
-            <h5>
-                <a href="{{ output.html }}">
-                    {{ "{:,}".format(output.count) }} {{ output.name }}
-                </a>
-            </h5>
-
-            <div class="row">
-                <div class="col"></div>
-                <div class="col text-end">
-                    <a href="{{ output.csv }}"><span class="badge badge-pill bg-secondary">{{ output.csv }}</span></a>
-                </div>
-            </div>
+        <div class="col-4">
+            <h4 class="mb-3">Workflows</h4>
+            {% for output in outputs if output['group'] == 'workflows' %}
+                {{ index_box(output) }}
+            {% endfor %}
         </div>
-        <div class="col-3"></div>
+
+        <div class="col-4">
+            <h4 class="mb-3">Secrets</h4>
+            {% for output in outputs if output['group'] == 'secrets' %}
+                {{ index_box(output) }}
+            {% endfor %}
+        </div>
+
+        <div class="col-4">
+            <h4 class="mb-3">Actions</h4>
+            {% for output in outputs if output['group'] == 'actions' %}
+                {{ index_box(output) }}
+            {% endfor %}
+        </div>
     </div>
-    {% endfor %}
+
+    <div class="row mb-4">
+        <div class="col-4">
+            <h4 class="mb-3">Runners</h4>
+            {% for output in outputs if output['group'] == 'runners' %}
+                {{ index_box(output) }}
+            {% endfor %}
+        </div>
+
+        <div class="col-4">
+            <h4 class="mb-3">Hygiene</h4>
+            {% for output in outputs if output['group'] == 'hygiene' %}
+                {{ index_box(output) }}
+            {% endfor %}
+        </div>
+    </div>
 </div>

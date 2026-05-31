@@ -1,6 +1,8 @@
-version: "1.1"
-name: "Workflows & Actions"
-filename: "workflows-and-actions"
+version: '1.1'
+name: 'Workflows & Actions'
+description: 'All Workflows & Actions across the organisation'
+filename: 'workflows-and-actions'
+group: 'workflows'
 sql: |
     SELECT
       r.name AS repo_name,
@@ -38,7 +40,6 @@ columns:
         type: 'link'
         link: 'repo_url'
         filters:
-#            column_control: "['order', [{ extend: 'searchList' }]]"
             column_control_alias: 'list'
     workflow_path:
         label: 'Workflow'

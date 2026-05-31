@@ -1,6 +1,8 @@
-version: "1.1"
+version: '1.1'
 name: 'Missing Workflows and Actions'
-filename: "missing-actions"
+description: 'List all calls to workflows & actions that are missing'
+filename: 'missing-actions'
+group: 'hygiene'
 sql: |
   SELECT
   	r.name AS repo_name,

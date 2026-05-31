@@ -1,6 +1,8 @@
-version: "1.1"
-name: "Third-Party Actions"
-filename: "third-party-actions"
+version: '1.1'
+name: 'Third-Party Actions'
+description: 'Usage of third-party actions across the organisation'
+filename: 'third-party-actions'
+group: 'actions'
 sql: |
   SELECT
     o2.name AS third_party_org_name,

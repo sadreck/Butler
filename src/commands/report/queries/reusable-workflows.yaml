@@ -1,6 +1,8 @@
-version: "1.1"
-name: "Reusable Workflows"
-filename: "reusable-workflows"
+version: '1.1'
+name: 'Usages of Reusable Workflows'
+description: 'Usage of reusable workflows across the organisation'
+filename: 'reusable-workflows'
+group: 'workflows'
 sql: |
   SELECT
   	o.name AS org_name,
@@ -34,6 +36,7 @@ sql: |
   	o.id = 1
   	AND wd.property = 'on'
   	AND wd.value = 'workflow_call'
+    AND r.id != r2.id
   ORDER BY 1, 2, 3
 columns:
   org_name: hide

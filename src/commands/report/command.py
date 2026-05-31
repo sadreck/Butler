@@ -68,6 +68,7 @@ class CommandReport(Command):
                 raise InvalidCommandLine(f"--custom-query-path file does not exist: {custom_query_path}")
 
         if len(arguments['custom_queries']) > 0:
+            arguments['custom_queries'].sort()
             self.log.info(f"Loaded {len(arguments['custom_queries'])} custom queries: {', '.join(arguments['custom_queries'])}")
 
     def execute(self, arguments: dict) -> bool:

@@ -1,6 +1,8 @@
-version: "1.1"
-name: "Usage of Workflows in Archived Repos"
-filename: "archived-repo-usage"
+version: '1.1'
+name: 'Usages of Workflows in Archived Repos'
+description: 'Usage of archived workflows and actions from non-archived ones'
+filename: 'archived-workflows-usage'
+group: 'workflows'
 sql: |
   SELECT
   	o.name AS org_name,

@@ -26,7 +26,7 @@ class QueryProcessor(ReportHelper):
         self.query = self._load_query_file(query_file)
 
     def _load_query_file(self, file: str) -> dict:
-        required_properties = ['version', 'name', 'filename', 'sql']
+        required_properties = ['version', 'name', 'filename', 'sql', 'group']
         data = Utils.load_yaml(Utils.read_file(file))
         if not data:
             raise InvalidCustomQueryFile(f"Invalid YAML in custom query file: {file}")
@@ -57,6 +57,8 @@ class QueryProcessor(ReportHelper):
             'html': os.path.basename(output_html),
             'csv': os.path.basename(output_csv),
             'name': self.query['name'],
+            'group': self.query['group'],
+            'description': self.query['description'],
         }
 
     def _execute_query(self) -> list:
@@ -100,7 +102,8 @@ class QueryProcessor(ReportHelper):
         data = {
             'table': table,
             'org': self.org.name,
-            'template_to_load': 'generic'
+            'template_to_load': 'generic',
+            'name': self.query['name'],
         }
 
         html = self.render(data)
