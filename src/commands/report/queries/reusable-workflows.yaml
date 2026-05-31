@@ -1,0 +1,106 @@
+version: '1.1'
+name: 'Usages of Reusable Workflows'
+description: 'Usage of reusable workflows across the organisation'
+filename: 'reusable-workflows'
+group: 'workflows'
+sql: |
+  SELECT
+  	o.name AS org_name,
+  	r.name AS repo_name,
+  	REPLACE(w.path, '.github/workflows/', '') AS workflow_path,
+  	(CASE WHEN r.visibility = 1 THEN 'public' WHEN r.visibility = 2 THEN 'private' ELSE 'unknown' END) AS visibility,
+  	r.archive AS archived,
+  	r.fork AS forked,
+  	CONCAT('https://github.com/', o.name, '/', r.name, '/blob/', r.ref_commit, '/', w.path) AS workflow_url,
+  	CONCAT('https://github.com/', o.name, '/', r.name) AS repo_url,
+
+  	o2.name AS parent_org_name,
+  	r2.name AS parent_repo_name,
+  	REPLACE(w2.path, '.github/workflows/', '') AS parent_workflow_path,
+  	(CASE WHEN r2.visibility = 1 THEN 'public' WHEN r2.visibility = 2 THEN 'private' ELSE 'unknown' END) AS parent_visibility,
+  	r2.archive AS parent_archived,
+  	r2.fork AS parent_forked,
+  	CONCAT('https://github.com/', o2.name, '/', r2.name, '/blob/', r2.ref_commit, '/', w2.path) AS parent_workflow_url,
+  	CONCAT('https://github.com/', o2.name, '/', r2.name) AS parent_repo_url
+  FROM workflow_data wd
+  JOIN workflows w ON w.id = wd.workflow_id
+  JOIN repositories r ON r.id = w.repo_id
+  JOIN organisations o ON o.id = r.org_id
+
+  JOIN workflow_relationships wr ON wr.child_id = w.id
+
+  JOIN workflows w2 ON w2.id = wr.parent_id
+  JOIN repositories r2 ON r2.id = w2.repo_id
+  JOIN organisations o2 ON o2.id = r2.org_id
+  WHERE
+  	o.id = 1
+  	AND wd.property = 'on'
+  	AND wd.value = 'workflow_call'
+    AND r.id != r2.id
+  ORDER BY 1, 2, 3
+columns:
+  org_name: hide
+  workflow_url: hide
+  repo_url: hide
+  parent_org_name: hide
+  parent_workflow_url: hide
+  parent_repo_url: hide
+
+  repo_name:
+    label: 'Repository'
+    type: 'link'
+    link: 'repo_url'
+    filters:
+      column_control_alias: 'list'
+  workflow_path:
+    label: 'Workflow'
+    type: 'link'
+    link: 'workflow_url'
+  visibility:
+    label: 'Visibility'
+    filters:
+      column_control_alias: 'list-no-search'
+  archived:
+    label: 'Archived'
+    align: 'text-center'
+    type: 'icon'
+    format:
+      style_true: 'text-warning'
+    filters:
+      column_control_alias: 'list-no-search'
+  forked:
+    label: 'Forked'
+    align: 'text-center'
+    type: 'icon'
+    format:
+      style_true: 'text-warning'
+    filters:
+      column_control_alias: 'list-no-search'
+  parent_repo_name:
+    label: 'Used in Repo'
+    filters:
+      column_control_alias: 'list'
+  parent_workflow_path:
+    label: 'Used by Workflow'
+    type: 'link'
+    link: 'parent_workflow_url'
+  prent_visibility:
+    label: 'Visibility'
+    filters:
+      column_control_alias: 'list-no-search'
+  prent_archived:
+    label: 'Archived'
+    align: 'text-center'
+    type: 'icon'
+    format:
+      style_true: 'text-warning'
+    filters:
+      column_control_alias: 'list-no-search'
+  prent_forked:
+    label: 'Forked'
+    align: 'text-center'
+    type: 'icon'
+    format:
+      style_true: 'text-warning'
+    filters:
+      column_control_alias: 'list-no-search'

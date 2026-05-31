@@ -1,0 +1,83 @@
+version: '1.1'
+name: 'Runners'
+description: 'List of all runners across all jobs'
+filename: 'runners'
+group: 'runners'
+sql: |
+  SELECT
+  	r.name AS repo_name,
+  	REPLACE(w.path, '.github/workflows/', '') AS workflow_path,
+  	j.shortname AS job_name,
+  	jd.value AS runner,
+  	(CASE WHEN r.visibility = 1 THEN 'public' WHEN r.visibility = 2 THEN 'private' ELSE 'unknown' END) AS visibility,
+    r.archive AS archived,
+    r.fork AS forked,
+  	(CASE WHEN reusable_workflows.workflow_id IS NULL THEN 0 ELSE 1 END) AS reusable_workflow,
+    CONCAT('https://github.com/', o.name, '/', r.name, '/blob/', r.ref, '/', w.path) AS workflow_url,
+    CONCAT('https://github.com/', o.name, '/', r.name) AS repo_url
+  FROM job_data jd
+  JOIN jobs j ON j.id = jd.job_id
+  JOIN workflows w ON w.id = j.workflow_id
+  JOIN repositories r ON r.id = w.repo_id
+  JOIN organisations o ON o.id = r.org_id
+  LEFT JOIN (
+    SELECT wd.workflow_id
+    FROM workflow_data wd
+    WHERE wd.property = 'on' AND wd.value = 'workflow_call'
+  ) reusable_workflows ON reusable_workflows.workflow_id = w.id
+  WHERE
+  	jd.property = 'runner'
+  	AND jd.value != 'labels'
+  	AND LENGTH(jd.value) > 0
+  	AND o.id = :org
+  ORDER BY 1, 2, 3, 4, 5
+columns:
+  workflow_url: hide
+  repo_url: hide
+
+  repo_name:
+    label: 'Repository'
+    type: 'link'
+    link: 'repo_url'
+    filters:
+      column_control_alias: 'list'
+  workflow_path:
+    label: 'Workflow'
+    type: 'link'
+    link: 'workflow_url'
+    filters:
+      column_control: "[]"
+  job_name:
+    label: 'Job'
+  runner:
+    label: 'Runner'
+    filters:
+      column_control_alias: 'list-no-search'
+  visibility:
+    label: 'Visibility'
+    filters:
+      column_control_alias: 'list-no-search'
+  archived:
+    label: 'Archived'
+    align: 'text-center'
+    type: 'icon'
+    format:
+      style_true: 'text-warning'
+    filters:
+      column_control_alias: 'list-no-search'
+  forked:
+    label: 'Forked'
+    align: 'text-center'
+    type: 'icon'
+    format:
+      style_true: 'text-warning'
+    filters:
+      column_control_alias: 'list-no-search'
+  reusable_workflow:
+    label: 'Reusable'
+    align: 'text-center'
+    type: 'icon'
+    format:
+      style_true: 'text-primary'
+    filters:
+      column_control_alias: 'list-no-search'

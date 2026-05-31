@@ -1,143 +1,48 @@
+{% from "components/index-box.html" import index_box %}
+
 <div class="container mt-2 mb-5">
     <div class="row">
         <div class="col text-center">
             <h1 class="org display-2 fw-bold p-3">{{ org }}</h1>
         </div>
-     </div>
-
-    {% if workflows %}
-    <div class="row mb-4">
-        <div class="col-3"></div>
-        <div class="col border-start border-3 border-black">
-            <h3>
-                <a href="{{ workflows.html.workflows.file }}" class="link-black link-offset-3-hover">{{ "{:,}".format(workflows.info.workflows) }} Workflows &amp; {{ "{:,}".format(workflows.info.actions) }} Actions</a>
-            </h3>
-            <div class="row">
-                <div class="col"></div>
-                <div class="col text-end">
-                    <a href="{{ workflows.csv.workflows.file }}"><span class="badge badge-pill bg-black">{{ workflows.csv.workflows.file }}</span></a>
-                </div>
-            </div>
-        </div>
-        <div class="col-3"></div>
     </div>
-    {% endif %}
 
-    {% if third_party %}
     <div class="row mb-4">
-        <div class="col-3"></div>
-        <div class="col border-start border-3 border-black">
-            <h3>
-                <a href="{{ third_party.html.actions.file }}" class="link-black link-offset-3-hover">{{ "{:,}".format(third_party.info.count) }} Third-Party Actions</a>
-            </h3>
-            <div class="row">
-                <div class="col"></div>
-                <div class="col text-end">
-                    <a href="{{ third_party.csv.actions.file }}"><span class="badge badge-pill bg-black">{{ third_party.csv.actions.file }}</span></a>
-                </div>
-            </div>
-        </div>
-        <div class="col-3"></div>
-    </div>
-    {% endif %}
-
-    {% if variables %}
-    <div class="row mb-4">
-        <div class="col-3"></div>
-        <div class="col border-start border-3 border-black">
-            <h3>
-                <a href="{{ variables.html.variables.file }}" class="link-black link-offset-3-hover">{{ "{:,}".format(variables.info.variables) }} Variables &amp; {{ "{:,}".format(variables.info.secrets) }} Secrets</a>
-            </h3>
-            <div class="row">
-                <div class="col"></div>
-                <div class="col text-end">
-                    <a href="{{ variables.csv.variables.file }}"><span class="badge badge-pill bg-black">{{ variables.csv.variables.file }}</span></a>
-                    <a href="{{ variables.csv['variables-workflows'].file }}"><span class="badge badge-pill bg-black">{{ variables.csv['variables-workflows'].file }}</span></a>
-                </div>
-            </div>
-        </div>
-        <div class="col-3"></div>
-    </div>
-    {% endif %}
-
-    {% if runners %}
-    <div class="row mb-4">
-        <div class="col-3"></div>
-        <div class="col border-start border-3 border-black">
-            <h3>
-                <a href="{{ runners.html.runners.file }}" class="link-black link-offset-3-hover">{{ "{:,}".format(runners.info.runners) }} Runners, {{ "{:,}".format(runners.info.self_hosted) }} Self-Hosted</a>
-            </h3>
-            <div class="row">
-                <div class="col"></div>
-                <div class="col text-end">
-                    <a href="{{ runners.csv.runners.file }}"><span class="badge badge-pill bg-black">{{ runners.csv.runners.file }}</span></a>
-                    <a href="{{ runners.csv['runners-workflows'].file }}"><span class="badge badge-pill bg-black">{{ runners.csv['runners-workflows'].file }}</span></a>
-                </div>
-            </div>
-        </div>
-        <div class="col-3"></div>
-    </div>
-    {% endif %}
-
-    {% if errors %}
-    <div class="row mb-4">
-        <div class="col-3"></div>
-        <div class="col border-start border-3 border-black">
-            <h3>
-                <a href="{{ errors.html.errors.file }}" class="link-black link-offset-3-hover">{{ "{:,}".format(errors.info.missing) }} Missing Actions &amp; {{ "{:,}".format(errors.info.errors) }} Errors</a>
-            </h3>
-            <div class="row">
-                <div class="col"></div>
-                <div class="col text-end">
-                    <a href="{{ errors.csv.missing.file }}"><span class="badge badge-pill bg-black">{{ errors.csv.missing.file }}</span></a>
-                    <a href="{{ errors.csv.errors.file }}"><span class="badge badge-pill bg-black">{{ errors.csv.errors.file }}</span></a>
-                </div>
-            </div>
-        </div>
-        <div class="col-3"></div>
-    </div>
-    {% endif %}
-
-    {% if custom_queries %}
-    <div class="row mt-5 mb-4">
-        <div class="col-3"></div>
-        <div class="col">
-            <div class="row mb-4">
-                <div class="col text-center">
-                    <h2>Custom Queries</h2>
-                </div>
-            </div>
-            {% for shortname, info in custom_queries.csv.items() %}
-            <div class="row mt-3">
-                <div class="col border-start border-3 border-black">
-                    <h3>
-                        <a href="{{ info.file }}" class="link-black link-offset-3-hover">
-                            {{ "{:,}".format(info.count) }} {{ info.title }}
-                        </a>
-                    </h3>
-
-                    <div class="row">
-                        <div class="col"></div>
-                        <div class="col text-end">
-                            <a href="{{ info.file }}"><span class="badge badge-pill bg-black">{{ info.file }}</span></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="col-4">
+            <h4 class="mb-3">Workflows</h4>
+            {% for output in outputs if output['group'] == 'workflows' %}
+                {{ index_box(output) }}
             {% endfor %}
         </div>
-        <div class="col-3"></div>
-    </div>
-    {% endif %}
-</div>
 
-<footer class="footer mt-auto py-2 bg-secondary">
-    <div class="container">
-        <div class="row">
-            <div class="col" title="Generated At">{{ generated_at }}</div>
-            <div class="col text-end">
-                <a href="https://github.com/sadreck/Butler" class="text-black"><i class="fa-brands fa-github"></i></a>
-            </div>
+        <div class="col-4">
+            <h4 class="mb-3">Secrets</h4>
+            {% for output in outputs if output['group'] == 'secrets' %}
+                {{ index_box(output) }}
+            {% endfor %}
+        </div>
+
+        <div class="col-4">
+            <h4 class="mb-3">Actions</h4>
+            {% for output in outputs if output['group'] == 'actions' %}
+                {{ index_box(output) }}
+            {% endfor %}
         </div>
     </div>
-</footer>
+
+    <div class="row mb-4">
+        <div class="col-4">
+            <h4 class="mb-3">Runners</h4>
+            {% for output in outputs if output['group'] == 'runners' %}
+                {{ index_box(output) }}
+            {% endfor %}
+        </div>
+
+        <div class="col-4">
+            <h4 class="mb-3">Hygiene</h4>
+            {% for output in outputs if output['group'] == 'hygiene' %}
+                {{ index_box(output) }}
+            {% endfor %}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,73 @@
+<div class="container-fluid mt-2 mb-5">
+    <div class="row">
+        <div class="col text-end"><a href="{{ csv_file }}"><span class="badge badge-pill bg-secondary">download csv</span></a></div>
+    </div>
+    <div class="row mt-3">
+        <div class="col text-center"><h3>{{ name }}</h3></div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <table class="table mt-3 mb-5 table-sm table-hover" id="results">
+            <thead>
+            <tr>
+                {% for label in table.header() %}
+                    <th>{{ label.text }}</th>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for row in table.rows %}
+                <tr>
+                {% for column in row %}
+                    <td class="{{ column.align }}" data-sort="{{ column.contents }}">
+                    {% if column.type == 'link' %}
+                        <a href="{{ column.url }}">{{ column.contents }}</a>
+                    {% elif column.type == 'icon' %}
+                        <i class="{{ column.icon }} {{ column.style }}"></i>
+                    {% else %}
+                        {{ column.contents }}
+                    {% endif %}
+                    </td>
+                {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    let columns = { {% for label in table.header() %}'{{ label.column }}': {{ label.index }},{% endfor %} };
+
+    if (Object.keys(columns).length > 0) {
+        let table = new DataTable('#results', {
+            paging: false,
+            fixedHeader: true,
+            columnControl: ['order', 'search'],
+            ordering: {
+                indicators: false,
+                handler: false
+            },
+            layout: {
+                topStart: [
+                    'info',
+                    { buttons: ['ccSearchClear'] }
+                ],
+                bottomStart: null,
+            },
+            {% if table.has_filters() %}
+            columnDefs: [
+                {% for column, options in table.filters().items() %}
+                    {% if options['column_control'] != '[]' %}
+                    {
+                        targets: [columns['{{ column }}']],
+                        columnControl: {{ options['column_control'] }}
+                    },
+                    {% endif %}
+                {% endfor %}
+            ],
+            {% endif %}
+        });
+    }
+</script>

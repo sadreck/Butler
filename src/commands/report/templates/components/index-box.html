@@ -1,0 +1,19 @@
+{% macro index_box(output) %}
+<div class="row mb-4">
+    <div class="col border-start border-3 border-primary">
+        <h5>
+            <a href="{{ output.html }}">
+                {{ "{:,}".format(output.count) }} {{ output.name }}
+            </a>
+        </h5>
+
+        <div>{{ output.description }}</div>
+
+        <div class="row mt-1">
+            <div class="col">
+                <a href="{{ output.csv }}"><span class="badge badge-pill bg-secondary"><i class="fa-solid fa-file-csv"></i></span></a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endmacro %}
