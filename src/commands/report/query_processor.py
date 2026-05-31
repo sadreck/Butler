@@ -17,6 +17,9 @@ class QueryProcessor(ReportHelper):
     output_path: str = None
     config: dict = None
 
+    csv_output: str = None
+    html_output: str = None
+
     def __init__(self, log: logger, database: Database, org: OrgComponent, output_path: str, config: dict, query_file: str):
         self.log = log
         self.database = database
@@ -24,6 +27,9 @@ class QueryProcessor(ReportHelper):
         self.output_path = output_path
         self.config = config
         self.query = self._load_query_file(query_file)
+
+        self.csv_output = os.path.join(self.output_path, f'{self.query['filename']}.csv')
+        self.html_output = output_html = os.path.join(self.output_path, f'{self.query['filename']}.html')
 
     def _load_query_file(self, file: str) -> dict:
         required_properties = ['version', 'name', 'filename', 'sql', 'group']
@@ -43,19 +49,16 @@ class QueryProcessor(ReportHelper):
 
         self.log.info(f"Processing {len(raw_results)} CSV results")
         results = self._process_results_csv(raw_results)
-
-        output_csv = os.path.join(self.output_path, f'{self.query['filename']}.csv')
-        self.write_to_csv(output_csv, results)
+        self.write_to_csv(self.csv_output, results)
 
         self.log.info(f"Processing {len(raw_results)} HTML results")
         table = self._generate_table(raw_results)
 
-        output_html = os.path.join(self.output_path, f'{self.query['filename']}.html')
-        self.write_to_html(output_html, table)
+        self.write_to_html(self.html_output, table)
         return {
             'count': len(raw_results),
-            'html': os.path.basename(output_html),
-            'csv': os.path.basename(output_csv),
+            'html': os.path.basename(self.html_output),
+            'csv': os.path.basename(self.csv_output),
             'name': self.query['name'],
             'group': self.query['group'],
             'description': self.query['description'],
@@ -110,6 +113,8 @@ class QueryProcessor(ReportHelper):
             'org': self.org.name,
             'template_to_load': 'generic',
             'name': self.query['name'],
+            'csv_file': os.path.basename(self.csv_output),
+            'html_file': os.path.basename(self.html_output),
         }
 
         html = self.render(data)
