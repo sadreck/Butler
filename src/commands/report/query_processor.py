@@ -74,6 +74,12 @@ class QueryProcessor(ReportHelper):
             trusted_params = {f'trusted_org_{i}': org_id for i, org_id in enumerate(org_ids)}
             params.update(trusted_params)
             sql = sql.replace("$_TRUSTED_ORGS_$", ", ".join(f":{k}" for k in trusted_params))
+
+        if '$_UNSUPPORTED_RUNNERS_$' in sql:
+            unsupported_runners = self.config.get('unsupported_runners', []) or []
+            runner_params = {f'unsupported_runner_{i}': runner for i, runner in enumerate(unsupported_runners)}
+            params.update(runner_params)
+            sql = sql.replace("$_UNSUPPORTED_RUNNERS_$", ", ".join(f":{k}" for k in runner_params))
         return sql, params
 
     def _get_trusted_org_ids(self) -> list:
