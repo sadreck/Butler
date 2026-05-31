@@ -1,0 +1,81 @@
+version: "1.1"
+name: "Usage of Workflows in Archived Repos"
+filename: "archived-repo-usage"
+sql: |
+  SELECT
+  	o.name AS org_name,
+  	r.name AS repo_name,
+  	REPLACE(w.path, '.github/workflows/', '') AS workflow_path,
+  	(CASE WHEN r.visibility = 1 THEN 'public' WHEN r.visibility = 2 THEN 'private' ELSE 'unknown' END) AS visibility,
+  	r.archive AS archived,
+  	r.fork AS forked,
+  	CONCAT('https://github.com/', o.name, '/', r.name, '/blob/', r.ref_commit, '/', w.path) AS workflow_url,
+  	CONCAT('https://github.com/', o.name, '/', r.name) AS repo_url,
+
+  	o2.name AS archived_org_name,
+  	r2.name AS archived_repo_name,
+  	CONCAT('https://github.com/', o2.name, '/', r2.name, '/blob/', r2.ref_commit, '/', w2.path) AS archived_workflow_url,
+  	CONCAT('https://github.com/', o2.name, '/', r2.name) AS archived_repo_url
+  FROM workflows w
+  JOIN repositories r ON r.id = w.repo_id
+  JOIN organisations o ON o.id = r.org_id
+
+  JOIN workflow_relationships wr ON wr.parent_id = w.id
+
+  JOIN workflows w2 ON w2.id = wr.child_id
+  JOIN repositories r2 ON r2.id = w2.repo_id
+  JOIN organisations o2 ON o2.id = r2.org_id
+
+  WHERE
+  	o.id = :org
+  	AND r.archive = 0
+  	AND r2.archive = 1
+
+  ORDER BY 1, 2, 3
+columns:
+  org_name: hide
+  workflow_url: hide
+  repo_url: hide
+  archived_workflow_url: hide
+  archived_repo_url: hide
+
+  repo_name:
+    label: 'Repository'
+    type: 'link'
+    link: 'repo_url'
+    filters:
+      column_control_alias: 'list'
+  workflow_path:
+    label: 'Workflow'
+    type: 'link'
+    link: 'workflow_url'
+  visibility:
+    label: 'Visibility'
+    filters:
+      column_control_alias: 'list-no-search'
+  archived:
+    label: 'Archived'
+    align: 'text-center'
+    type: 'icon'
+    format:
+      style_true: 'text-warning'
+    filters:
+      column_control_alias: 'list-no-search'
+  forked:
+    label: 'Forked'
+    align: 'text-center'
+    type: 'icon'
+    format:
+      style_true: 'text-warning'
+    filters:
+      column_control_alias: 'list-no-search'
+  archived_org_name:
+    label: 'Archived Org'
+    filters:
+      column_control_alias: 'list-no-search'
+  archived_repo_name:
+    label: 'Archived Repo'
+    type: 'link'
+    link: 'archived_workflow_url'
+    filters:
+      column_control_alias: 'list-no-search'
