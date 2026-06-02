@@ -1,3 +1,4 @@
+from src.libs.constants import PollStatus
 from src.database.models import OrganisationModel, RepositoryModel
 from src.github.exceptions import HttpNotFound
 from src.libs.components.org import OrgComponent
@@ -167,3 +168,41 @@ class DownloadHelper:
         else:
             org, repo, workflow = self._create_child_workflow_from_action(uses)
         return org, repo, workflow
+
+    def _save_repo(self, repo: RepoComponent) -> None:
+        with self.lock:
+            self.log.info(f"Saving repository {repo}")
+            if repo.org.id == 0:
+                repo.org.id = self._create_org(repo.org).id
+
+            if len(repo.ref) > 0:
+                repo.poll_status = PollStatus.PENDING
+                repo_db = self.database.repos().create(repo)
+                return
+
+            # At this point, there is no `ref` in the object.
+            # Search if the repo is already in the database.
+            repo_db = self.database.repos().find(repo.org.id, repo.name, None)
+            if self._repo_already_stored(repo_db):
+                return
+
+        # Either there's no database record, or the stored one also has an empty ref.
+        fresh_repo = self._fetch_repo(repo)
+        with self.lock:
+            if fresh_repo.org.name.lower() == repo.org.name.lower() and fresh_repo.name.lower() == repo.name.lower():
+                fresh_repo.org.id = repo.org.id
+                fresh_repo.poll_status = PollStatus.SCANNED if repo.status == RepoStatus.MISSING else PollStatus.PENDING
+                if repo_db:
+                    fresh_repo.id = repo_db.id
+                    self.database.repos().update(fresh_repo)
+                else:
+                    self.database.repos().create(fresh_repo)
+                return
+
+            # Here, the fetched repo is different to the one passed to the function, this happens when a repo is redirected.
+            fresh_repo.org.id = self._create_org(fresh_repo.org).id
+            fresh_repo_db = self.database.repos().create(fresh_repo)
+
+            repo.redirect_id = fresh_repo_db.id
+            repo.status = RepoStatus.REDIRECT
+            self.database.repos().create(repo)

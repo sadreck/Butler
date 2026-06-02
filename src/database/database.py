@@ -1,4 +1,5 @@
 import os
+from src.database.helpers.db_secvars import DBSecretsAndVariables
 from src.database.database_helper import DatabaseHelper
 from src.database.helpers.db_config import DBConfig
 from src.database.helpers.db_jobs import DBJob
@@ -14,7 +15,7 @@ from src.libs.exceptions import DatabaseVersionMismatch
 
 
 class Database(DatabaseHelper):
-    __VERSION__: str = '1.0.1'
+    __VERSION__: str = '1.1.0'
     _engine: Engine = None
     _sessionmaker: sessionmaker = None
     _session = None
@@ -26,6 +27,7 @@ class Database(DatabaseHelper):
     _steps: DBStep | None = None
     _vars: DBVars | None = None
     _config: DBConfig | None = None
+    _secvars: DBSecretsAndVariables | None = None
 
     _total_queries: int = 0
     _debug: bool = False
@@ -98,7 +100,6 @@ class Database(DatabaseHelper):
         """
         self.execute(sql)
 
-
     def orgs(self) -> DBOrg:
         if not self._orgs:
             self._orgs = DBOrg(self.session, self.auto_commit)
@@ -133,6 +134,11 @@ class Database(DatabaseHelper):
         if not self._config:
             self._config = DBConfig(self.session, self.auto_commit)
         return self._config
+
+    def secvars(self) -> DBSecretsAndVariables:
+        if not self._secvars:
+            self._secvars = DBSecretsAndVariables(self.session, self.auto_commit)
+        return self._secvars
 
     def commit(self) -> None:
         self.session.commit()

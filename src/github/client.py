@@ -2,6 +2,7 @@ import re
 import base64
 import time
 from loguru import logger
+from src.libs.constants import SecretVariableCategory, SecretVariableType
 from src.github.api import GitHubApi
 from src.github.exceptions import (
     AccountNotFound, UnknownAccountType, HttpNotFound, GitHubException, HttpEmptyRepo, HttpAccessBlocked,
@@ -357,3 +358,70 @@ class GitHubClient:
             self.log.info(f"Reached API rate limit - waiting {minutes} minutes")
             time.sleep(minutes * 60)
             self._api.refresh_tokens()
+
+    def get_secrets(self, org: str, category: SecretVariableCategory, type: SecretVariableType, environment: str | None, repo: str | None) -> list[dict]:
+        params = {'page': 1, 'per_page': 100}
+        url = self._get_secrets_url(org, category, type, environment, repo)
+        all_results = []
+        while True:
+            response_headers = {}
+            try:
+                results = self._api.get(url, params, None, response_headers)
+            except HttpNotFound:
+                raise RepoNotFound(f"{org}/{category}/{type}/{environment}/{repo}")
+
+            name = 'secrets' if 'secrets' in results else 'variables'
+            for item in results[name]:
+                if item.get('visibility', '')  == 'selected':
+                    item['repos'] = self._get_selected_repositories(item['selected_repositories_url'])
+                all_results.append(item)
+
+            # Invalidate as we'll be using the 'next url' from the headers.
+            params = None
+            url = self._get_next_url(response_headers)
+            if not url:
+                break
+
+        return all_results
+
+    def _get_selected_repositories(self, url: str) -> list:
+        url = url.replace('https://api.github.com', '')
+        try:
+            results = self._api.get(url, {'per_page': 999})
+        except HttpNotFound:
+            raise RepoNotFound(url)
+
+        repos = []
+        for result in results['repositories']:
+            repos.append(result['name'])
+        return repos
+
+    def _get_secrets_url(self, org: str, category: SecretVariableCategory, type: SecretVariableType, environment: str | None, repo: str | None) -> str:
+        category_mapping = {
+            # /orgs/{org}/actions/{secrets,variables}
+            # /repos/{owner}/{repo}/actions/{secrets,variables}
+            SecretVariableCategory.ACTIONS: 'actions',
+
+            # /orgs/{org}/agents/{secrets,variables}
+            SecretVariableCategory.AGENTS: 'agents',
+            # /repos/{owner}/{repo}/codespaces/secrets
+            SecretVariableCategory.CODESPACES: 'codespaces',
+            # /orgs/{org}/dependabot/secrets
+            SecretVariableCategory.DEPENDABOT: 'dependabot',
+            # /repos/{owner}/{repo}/environments/{environment_name}/secrets
+            SecretVariableCategory.ENVIRONMENTS: 'environments',
+        }
+
+        type_mapping = {
+            SecretVariableType.SECRET: 'secrets',
+            SecretVariableType.VARIABLE: 'variables',
+        }
+
+        base_path = f"/repos/{org}/{repo}" if repo else f"/orgs/{org}"
+        components = [
+            base_path,
+            category_mapping[category],
+            environment,
+            type_mapping[type]
+        ]
+        return "/".join(comp for comp in components if comp)
