@@ -119,3 +119,23 @@ class ConfigModel(Base):
 
     name = Column(String, primary_key=True, index=True)
     value = Column(String, default='', index=True)
+
+class SecretsVariablesModel(Base):
+    __tablename__ = 'secrets_and_variables'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    repo_id = Column(Integer, default=0, index=True)
+    category = Column(Integer, default=0, index=True)
+    type = Column(Integer, default=0, index=True)
+    name = Column(String, default='', index=True)
+    value = Column(String, default='', index=True)
+    visibility = Column(Integer, default=0, index=True)
+    created_at = Column(Text, default='', index=True)
+    updated_at = Column(Text, default='', index=True)
+
+class SecretsVariablesReposModel(Base):
+    __tablename__ = 'secrets_and_variables_repos'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    secret_variable_id = Column(Integer, default=0, index=True)
+    repo_id = Column(Integer, default=0, index=True)

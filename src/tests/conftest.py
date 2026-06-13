@@ -47,6 +47,8 @@ def client(logger):
 @pytest.fixture
 def database():
     db_file = os.path.join(tempfile.gettempdir(), 'tests.db')
+    if os.path.isfile(db_file):
+        os.unlink(db_file)
     database = Database(db_file)
 
     yield database

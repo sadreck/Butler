@@ -97,3 +97,6 @@ class DBRepo(DBBase):
 
     def count(self) -> int:
         return self.session.query(RepositoryModel).count()
+
+    def all(self, org_id: int) -> any:
+        return self.session.query(RepositoryModel).filter(RepositoryModel.org_id == org_id).all()

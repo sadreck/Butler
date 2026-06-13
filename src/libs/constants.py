@@ -61,3 +61,22 @@ class VariableMappingGroupType(IntEnum):
     ENV = 1
     # INPUTS = 2
     # OUTPUTS = 3
+
+class SecretVariableCategory(IntEnum):
+    NONE = 0
+    ACTIONS = 1
+    AGENTS = 2
+    CODESPACES = 3
+    DEPENDABOT = 4
+    ENVIRONMENTS = 5
+
+class SecretVariableType(IntEnum):
+    NONE = 0
+    SECRET = 1
+    VARIABLE = 2
+
+class SecretVariableVisibility(IntEnum):
+    NONE = 0
+    ALL = 1
+    PRIVATE = 2
+    SELECTED = 3
