@@ -20,7 +20,7 @@
                 <tr>
                 {% for column in row %}
                     <td class="{{ column.align }}" data-sort="{{ column.contents }}">
-                    {% if column.type == 'link' %}
+                    {% if column.type == 'link' and column.url|length > 0 %}
                         <a href="{{ column.url }}">{{ column.contents }}</a>
                     {% elif column.type == 'icon' %}
                         <i class="{{ column.icon }} {{ column.style }}"></i>
