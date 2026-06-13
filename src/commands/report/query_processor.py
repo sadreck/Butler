@@ -74,6 +74,8 @@ class QueryProcessor(ReportHelper):
         params = {}
         if '$_TRUSTED_ORGS_$' in sql:
             org_ids = self._get_trusted_org_ids()
+            if len(org_ids) == 0:
+                org_ids = [0]
             trusted_params = {f'trusted_org_{i}': org_id for i, org_id in enumerate(org_ids)}
             params.update(trusted_params)
             sql = sql.replace("$_TRUSTED_ORGS_$", ", ".join(f":{k}" for k in trusted_params))

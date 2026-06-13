@@ -11,9 +11,7 @@ class TableColumnOptions:
     _style_false: str = None
     _column_control: str = None
     _column_control_alias: str = None
-
-    def __init__(self, name: str):
-        self._name = name
+    _value_mapping: dict = None
 
     @property
     def name(self) -> str:
@@ -117,10 +115,19 @@ class TableColumnOptions:
     def column_control_alias(self, value: str):
         self._column_control_alias = value
 
+    @property
+    def value_mapping(self) -> dict:
+        return self._value_mapping or {}
+
+    @value_mapping.setter
+    def value_mapping(self, value: dict):
+        self._value_mapping = value
+
     def __init__(self, name: str):
         self.name = name
         self.visible = True
         self.type = 'text'
+        self.value_mapping = {}
 
 class TableColumn:
     _name: str = None
@@ -220,6 +227,7 @@ class Table:
                 column.style_false = column_options.get('format', {}).get('style_false', '')
                 column.column_control = column_options.get('filters', {}).get('column_control', '[]')
                 column.column_control_alias = column_options.get('filters', {}).get('column_control_alias', '')
+                column.value_mapping = column_options.get('value_mapping', {})
             all_columns[name] = column
         return all_columns
 
@@ -270,24 +278,40 @@ class Table:
                     continue
 
                 column = TableColumn(raw_column)
-                column.contents = raw_value
+                column.contents = self._map_value(raw_column, raw_value)
 
                 if raw_column in self.columns:
                     column.align = self.columns[raw_column].align
 
                     if self.columns[raw_column].type == 'link':
-                        column.type = 'link'
-                        column.url = raw_result[self.columns[raw_column].link] if self.columns[raw_column].link in raw_result else self.columns[raw_column].link
+                        column = self._format_link(column, raw_result, raw_column)
                     elif self.columns[raw_column].type == 'icon':
-                        column.type = 'icon'
-                        if raw_value:
-                            column.icon = self.columns[raw_column].icon_true
-                            column.style = self.columns[raw_column].style_true
-                            column.contents = 'yes'
-                        else:
-                            column.icon = self.columns[raw_column].icon_false
-                            column.style = self.columns[raw_column].style_false
-                            column.contents = 'no'
+                        column = self._format_icon(column, raw_column, raw_value)
 
                 row.append(column)
             self.rows.append(row)
+
+    def _map_value(self, raw_column: str, raw_value: str) -> str:
+        if len(self.columns[raw_column].value_mapping) > 0:
+            if raw_value in self.columns[raw_column].value_mapping:
+                return self.columns[raw_column].value_mapping[raw_value]
+            elif '_' in self.columns[raw_column].value_mapping:
+                return self.columns[raw_column].value_mapping['_']
+        return raw_value
+
+    def _format_link(self, column: TableColumn, raw_result: dict, raw_column: str) -> TableColumn:
+        column.type = 'link'
+        column.url = raw_result[self.columns[raw_column].link] if self.columns[raw_column].link in raw_result else self.columns[raw_column].link
+        return column
+
+    def _format_icon(self, column: TableColumn, raw_column: str, raw_value: str | None) -> TableColumn:
+        column.type = 'icon'
+        if raw_value:
+            column.icon = self.columns[raw_column].icon_true
+            column.style = self.columns[raw_column].style_true
+            column.contents = 'yes'
+        else:
+            column.icon = self.columns[raw_column].icon_false
+            column.style = self.columns[raw_column].style_false
+            column.contents = 'no'
+        return column
