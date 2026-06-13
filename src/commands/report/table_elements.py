@@ -292,7 +292,7 @@ class Table:
             self.rows.append(row)
 
     def _map_value(self, raw_column: str, raw_value: str) -> str:
-        if len(self.columns[raw_column].value_mapping) > 0:
+        if raw_column in self.columns and len(self.columns[raw_column].value_mapping) > 0:
             if raw_value in self.columns[raw_column].value_mapping:
                 return self.columns[raw_column].value_mapping[raw_value]
             elif '_' in self.columns[raw_column].value_mapping:
