@@ -12,6 +12,8 @@ class TableColumnOptions:
     _column_control: str = None
     _column_control_alias: str = None
     _value_mapping: dict = None
+    _popup_field: str = None
+    _popup_title: str = None
 
     @property
     def name(self) -> str:
@@ -123,6 +125,22 @@ class TableColumnOptions:
     def value_mapping(self, value: dict):
         self._value_mapping = value
 
+    @property
+    def popup_field(self) -> str:
+        return self._popup_field or ''
+
+    @popup_field.setter
+    def popup_field(self, value: str):
+        self._popup_field = value
+
+    @property
+    def popup_title(self) -> str:
+        return self._popup_title
+
+    @popup_title.setter
+    def popup_title(self, value: str):
+        self._popup_title = value
+
     def __init__(self, name: str):
         self.name = name
         self.visible = True
@@ -137,6 +155,8 @@ class TableColumn:
     _align: str = None
     _icon: str = None
     _style: str = None
+    _popup_html: str = None
+    _popup_title: str = None
 
     @property
     def name(self) -> str:
@@ -198,6 +218,22 @@ class TableColumn:
     def style(self, value: str):
         self._style = value
 
+    @property
+    def popup_html(self) -> str:
+        return self._popup_html or ''
+
+    @popup_html.setter
+    def popup_html(self, value: str):
+        self._popup_html = value
+
+    @property
+    def popup_title(self) -> str:
+        return self._popup_title
+
+    @popup_title.setter
+    def popup_title(self, value: str):
+        self._popup_title = value
+
 class Table:
     columns: dict = None
 
@@ -228,6 +264,8 @@ class Table:
                 column.column_control = column_options.get('filters', {}).get('column_control', '[]')
                 column.column_control_alias = column_options.get('filters', {}).get('column_control_alias', '')
                 column.value_mapping = column_options.get('value_mapping', {})
+                column.popup_field = column_options.get('popup', {}).get('field', '')
+                column.popup_title = column_options.get('popup', {}).get('title', '')
             all_columns[name] = column
         return all_columns
 
@@ -287,6 +325,8 @@ class Table:
                         column = self._format_link(column, raw_result, raw_column)
                     elif self.columns[raw_column].type == 'icon':
                         column = self._format_icon(column, raw_column, raw_value)
+                    elif len(self.columns[raw_column].popup_field) > 0:
+                        column = self._format_popup(column, raw_result, raw_column)
 
                 row.append(column)
             self.rows.append(row)
@@ -314,4 +354,15 @@ class Table:
             column.icon = self.columns[raw_column].icon_false
             column.style = self.columns[raw_column].style_false
             column.contents = 'no'
+        return column
+
+    def _format_popup(self, column: TableColumn, raw_result: dict, raw_column: str) -> TableColumn:
+        column.type = 'popup'
+        column.popup_title = self.columns[raw_column].popup_title
+        column.popup_html = ''
+
+        values = [value.strip() for value in raw_result[self.columns[raw_column].popup_field].split(',') if value.strip()]
+        if len(values) > 0:
+            html = "<ul class='list-group'>" + "".join(f"<li class='list-group-item'>{item}</li>" for item in values) + "</ul>"
+            column.popup_html = html
         return column

@@ -24,6 +24,14 @@
                         <a href="{{ column.url }}">{{ column.contents }}</a>
                     {% elif column.type == 'icon' %}
                         <i class="{{ column.icon }} {{ column.style }}"></i>
+                    {% elif column.type == 'popup' %}
+                        {% if column.popup_html|length > 0 %}
+                        <a href="#" data-bs-container="body" data-bs-toggle="popover" data-bs-html="true" data-bs-placement="left" data-bs-content="{{ column.popup_html }}" data-bs-original-title="{{ column.popup_title }}">
+                            {{ column.contents }}
+                        </a>
+                        {% else %}
+                            {{ column.contents }}
+                        {% endif %}
                     {% else %}
                         {{ column.contents }}
                     {% endif %}
@@ -70,4 +78,9 @@
             {% endif %}
         });
     }
+
+    $(document).ready(function() {
+      const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+      const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+  });
 </script>
