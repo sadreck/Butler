@@ -137,5 +137,5 @@ class SecretsVariablesReposModel(Base):
     __tablename__ = 'secrets_and_variables_repos'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    org_secret_variable_id = Column(Integer, default=0, index=True)
+    secret_variable_id = Column(Integer, default=0, index=True)
     repo_id = Column(Integer, default=0, index=True)

@@ -30,7 +30,7 @@ class DBSecretsAndVariables(DBBase):
 
             if secvar.visibility == SecretVariableVisibility.SELECTED:
                 for repo in secvar.repos:
-                    repo_record = SecretsVariablesReposModel(org_secret_variable_id=record.id, repo_id=repo.id)
+                    repo_record = SecretsVariablesReposModel(secret_variable_id=record.id, repo_id=repo.id)
                     self.add(repo_record)
                 self.save()
 
