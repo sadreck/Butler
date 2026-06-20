@@ -15,6 +15,30 @@ If you have 2,000 repositories in your organisation, Butler can help you to iden
   * Usage of `secrets: inherit` across workflows
 * Workflows and actions that have invalid yaml files
 
+## Samples
+
+[Click here for sample reports for organisations like GitHub, OpenAI, Docker, AWS Labs](https://sadreck.github.io/Butler/) - **not** mobile friendly.
+
+**Screenshots**
+
+<div align="center">
+<img src="./docs/images/report-awslabs.png" alt="AWS Labs Report" width="300">
+<img src="./docs/images/report-docker.png" alt="Docker Repot" width="300">
+<br>
+<img src="./docs/images/report-github.png" alt="GitHub Report" width="300">
+<img src="./docs/images/report-openai.png" alt="OpenAI Report" width="300">
+</div>
+
+<!--
+<div align="center">
+<img src="./docs/images/report-index.png" alt="Report Index" width="400">
+<br>
+<img src="./docs/images/report-workflows.png" alt="Report Workflows" width="200">
+<img src="./docs/images/report-third-party.png" alt="Report Third-Party" width="200">
+<img src="./docs/images/report-vars.png" alt="Report Variables" width="200">
+</div>
+-->
+
 # Usage
 
 ## GitHub Tokens
@@ -267,16 +291,3 @@ columns:
       field: 'selected_repos'
   ```
 </details>
-
-
-[Click here for sample reports for organisations like GitHub, OpenAI, Docker, AWS Labs](https://sadreck.github.io/Butler/) - **not** mobile friendly.
-
-**Screenshots**
-
-<div align="center">
-<img src="./docs/images/report-index.png" alt="Report Index" width="400">
-<br>
-<img src="./docs/images/report-workflows.png" alt="Report Workflows" width="200">
-<img src="./docs/images/report-third-party.png" alt="Report Third-Party" width="200">
-<img src="./docs/images/report-vars.png" alt="Report Variables" width="200">
-</div>
