@@ -66,9 +66,7 @@ class SecretVariableCategory(IntEnum):
     NONE = 0
     ACTIONS = 1
     AGENTS = 2
-    CODESPACES = 3
-    DEPENDABOT = 4
-    ENVIRONMENTS = 5
+    DEPENDABOT = 3
 
 class SecretVariableType(IntEnum):
     NONE = 0
