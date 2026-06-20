@@ -154,7 +154,6 @@ class GitHubApi(GitHubApiHelper):
         }
 
         response = requests.post(f"{GitHubApi._api_endpoint}/app/installations/{installation_id}/access_tokens", headers=headers)
-        print(response.json())
         if response.status_code == 201:
             return response.json()['token']
         return None
