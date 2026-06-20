@@ -14,7 +14,7 @@ commands = {
     'database': CommandDatabase,
     'process': CommandProcess,
     'report': CommandReport,
-    'secrets_and_variables': CommandSecretsAndVariables
+    'secrets_and_vars': CommandSecretsAndVariables
 }
 
 parser = argparse.ArgumentParser(prog="butler", description=f"Butler - GitHub Actions Oversight v{__VERSION__}")

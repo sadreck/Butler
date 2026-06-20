@@ -10,7 +10,7 @@ from src.github.client import GitHubClient
 class CommandSecretsAndVariables(Command):
     @staticmethod
     def load_command_line(subparsers: any) -> None:
-        subparser = subparsers.add_parser("secrets_and_variables", help="Download Secrets and Variables from GitHub")
+        subparser = subparsers.add_parser("secrets_and_vars", help="Download Secrets and Variables from GitHub")
 
         subparser.add_argument("--org", type=str, help="Organisation to download secrets and variables for")
         subparser.add_argument("--database", default="database.db", type=str, help="Path to SQLite database to create or connect to")
