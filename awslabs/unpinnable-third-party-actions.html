@@ -1,0 +1,1120 @@
+<!doctype html>
+<html lang="en" class="h-100 dark" data-bs-theme="dark">
+<html>
+<head>
+    <title>
+        GitHub Workflow Insights - awslabs
+        
+            - Unpinnable Third-Party Actions
+        
+    </title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.8/dist/cyborg/bootstrap.min.css" integrity="sha384-qxGSw6SRX7woR/PK/wbYrdowFJ2DdFQF+nwWswHGKp+jqtYAQKCvBzB/3b+Pjx6W" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha384-rWj9FmWWt3OMqd9vBkWRhFavvVUYalYqGPoMdL1brs/qvvqz88gvLShYa4hKNyqb" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.datatables.net/v/bs5/dt-2.3.8/b-3.2.6/b-html5-3.2.6/cc-1.2.1/fh-4.0.6/datatables.min.css" integrity="sha384-/eh87zVjMr4FPG0X49uv6OoKjAmWxIHADjSJ8FfR0kjDpxh95HFR98TVbxGEvzCn" crossorigin="anonymous">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/v/bs5/dt-2.3.8/b-3.2.6/b-html5-3.2.6/cc-1.2.1/fh-4.0.6/datatables.min.js" integrity="sha384-/73R22BY4VJQYJpxUSQwnuQCr8LBpCF2bKrtKhgBlwifVKV8wLraE/LJ431GXj25" crossorigin="anonymous"></script>
+</head>
+
+<body class="d-flex flex-column h-100">
+
+<div class="container-fluid bg-black">
+    <div class="container mt-2 mb-2">
+        <div class="row">
+            <div class="col"><a class="text-white text-decoration-none fs-4" href="index.html">GitHub Workflow Insights</a></div>
+            <div class="col text-end"><a class="text-white text-decoration-none fs-4" href="index.html">awslabs</a></div>
+        </div>
+    </div>
+</div>
+
+
+    <div class="container-fluid mt-2 mb-5">
+    <div class="row">
+        <div class="col text-end"><a href="unpinnable-third-party-actions.csv"><span class="badge badge-pill bg-secondary">download csv</span></a></div>
+    </div>
+    <div class="row mt-3">
+        <div class="col text-center"><h3>Unpinnable Third-Party Actions</h3></div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <table class="table mt-3 mb-5 table-sm table-hover" id="results">
+            <thead>
+            <tr>
+                
+                    <th>Parent Repo</th>
+                
+                    <th>Workflow</th>
+                
+                    <th>Archived</th>
+                
+                    <th>Forked</th>
+                
+                    <th>Unpinnable Repo</th>
+                
+                    <th>Unpinnable Action</th>
+                
+                    <th>Archived</th>
+                
+                    <th>Unpinned Repo</th>
+                
+                    <th>Unpinned Action</th>
+                
+                    <th>Archived</th>
+                
+            </tr>
+            </thead>
+            <tbody>
+            
+                <tr>
+                
+                    <td class="" data-sort="awslabs/aws-iatk@develop">
+                    
+                        awslabs/aws-iatk@develop
+                    
+                    </td>
+                
+                    <td class="" data-sort="release.yml">
+                    
+                        <a href="https://github.com/awslabs/aws-iatk/blob/683196ba2881073db929532c5bfb006c77371ff9/.github/workflows/release.yml">release.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="slsa-framework/slsa-github-generator@v1.9.0">
+                    
+                        slsa-framework/slsa-github-generator@v1.9.0
+                    
+                    </td>
+                
+                    <td class="" data-sort="generator_generic_slsa3.yml">
+                    
+                        <a href="https://github.com/slsa-framework/slsa-github-generator/blob/07e64b653f10a80b6510f4568f685f8b7b9ea830/.github/workflows/generator_generic_slsa3.yml">generator_generic_slsa3.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="slsa-framework/slsa-github-generator@v1.9.0">
+                    
+                        slsa-framework/slsa-github-generator@v1.9.0
+                    
+                    </td>
+                
+                    <td class="" data-sort=".github/actions/detect-workflow-js/action.yml">
+                    
+                        <a href="https://github.com/slsa-framework/slsa-github-generator/blob/07e64b653f10a80b6510f4568f685f8b7b9ea830/.github/actions/detect-workflow-js/action.yml">.github/actions/detect-workflow-js/action.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                </tr>
+            
+                <tr>
+                
+                    <td class="" data-sort="awslabs/aws-iatk@develop">
+                    
+                        awslabs/aws-iatk@develop
+                    
+                    </td>
+                
+                    <td class="" data-sort="release.yml">
+                    
+                        <a href="https://github.com/awslabs/aws-iatk/blob/683196ba2881073db929532c5bfb006c77371ff9/.github/workflows/release.yml">release.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="slsa-framework/slsa-github-generator@v1.9.0">
+                    
+                        slsa-framework/slsa-github-generator@v1.9.0
+                    
+                    </td>
+                
+                    <td class="" data-sort="generator_generic_slsa3.yml">
+                    
+                        <a href="https://github.com/slsa-framework/slsa-github-generator/blob/07e64b653f10a80b6510f4568f685f8b7b9ea830/.github/workflows/generator_generic_slsa3.yml">generator_generic_slsa3.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="slsa-framework/slsa-github-generator@v1.9.0">
+                    
+                        slsa-framework/slsa-github-generator@v1.9.0
+                    
+                    </td>
+                
+                    <td class="" data-sort=".github/actions/generate-builder/action.yml">
+                    
+                        <a href="https://github.com/slsa-framework/slsa-github-generator/blob/07e64b653f10a80b6510f4568f685f8b7b9ea830/.github/actions/generate-builder/action.yml">.github/actions/generate-builder/action.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                </tr>
+            
+                <tr>
+                
+                    <td class="" data-sort="awslabs/aws-iatk@develop">
+                    
+                        awslabs/aws-iatk@develop
+                    
+                    </td>
+                
+                    <td class="" data-sort="release.yml">
+                    
+                        <a href="https://github.com/awslabs/aws-iatk/blob/683196ba2881073db929532c5bfb006c77371ff9/.github/workflows/release.yml">release.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="slsa-framework/slsa-github-generator@v1.9.0">
+                    
+                        slsa-framework/slsa-github-generator@v1.9.0
+                    
+                    </td>
+                
+                    <td class="" data-sort="generator_generic_slsa3.yml">
+                    
+                        <a href="https://github.com/slsa-framework/slsa-github-generator/blob/07e64b653f10a80b6510f4568f685f8b7b9ea830/.github/workflows/generator_generic_slsa3.yml">generator_generic_slsa3.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="slsa-framework/slsa-github-generator@v1.9.0">
+                    
+                        slsa-framework/slsa-github-generator@v1.9.0
+                    
+                    </td>
+                
+                    <td class="" data-sort=".github/actions/secure-download-artifact/action.yml">
+                    
+                        <a href="https://github.com/slsa-framework/slsa-github-generator/blob/07e64b653f10a80b6510f4568f685f8b7b9ea830/.github/actions/secure-download-artifact/action.yml">.github/actions/secure-download-artifact/action.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                </tr>
+            
+                <tr>
+                
+                    <td class="" data-sort="awslabs/aws-iatk@develop">
+                    
+                        awslabs/aws-iatk@develop
+                    
+                    </td>
+                
+                    <td class="" data-sort="release.yml">
+                    
+                        <a href="https://github.com/awslabs/aws-iatk/blob/683196ba2881073db929532c5bfb006c77371ff9/.github/workflows/release.yml">release.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="slsa-framework/slsa-github-generator@v1.9.0">
+                    
+                        slsa-framework/slsa-github-generator@v1.9.0
+                    
+                    </td>
+                
+                    <td class="" data-sort="generator_generic_slsa3.yml">
+                    
+                        <a href="https://github.com/slsa-framework/slsa-github-generator/blob/07e64b653f10a80b6510f4568f685f8b7b9ea830/.github/workflows/generator_generic_slsa3.yml">generator_generic_slsa3.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="slsa-framework/slsa-github-generator@v1.9.0">
+                    
+                        slsa-framework/slsa-github-generator@v1.9.0
+                    
+                    </td>
+                
+                    <td class="" data-sort=".github/actions/secure-builder-checkout/action.yaml">
+                    
+                        <a href="https://github.com/slsa-framework/slsa-github-generator/blob/07e64b653f10a80b6510f4568f685f8b7b9ea830/.github/actions/secure-builder-checkout/action.yaml">.github/actions/secure-builder-checkout/action.yaml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                </tr>
+            
+                <tr>
+                
+                    <td class="" data-sort="awslabs/aws-iatk@develop">
+                    
+                        awslabs/aws-iatk@develop
+                    
+                    </td>
+                
+                    <td class="" data-sort="release.yml">
+                    
+                        <a href="https://github.com/awslabs/aws-iatk/blob/683196ba2881073db929532c5bfb006c77371ff9/.github/workflows/release.yml">release.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="slsa-framework/slsa-github-generator@v1.9.0">
+                    
+                        slsa-framework/slsa-github-generator@v1.9.0
+                    
+                    </td>
+                
+                    <td class="" data-sort="generator_generic_slsa3.yml">
+                    
+                        <a href="https://github.com/slsa-framework/slsa-github-generator/blob/07e64b653f10a80b6510f4568f685f8b7b9ea830/.github/workflows/generator_generic_slsa3.yml">generator_generic_slsa3.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="slsa-framework/slsa-github-generator@v1.9.0">
+                    
+                        slsa-framework/slsa-github-generator@v1.9.0
+                    
+                    </td>
+                
+                    <td class="" data-sort="__BUILDER_CHECKOUT_DIR__/.github/actions/secure-download-artifact">
+                    
+                        <a href="https://github.com/slsa-framework/slsa-github-generator/blob/07e64b653f10a80b6510f4568f685f8b7b9ea830/__BUILDER_CHECKOUT_DIR__/.github/actions/secure-download-artifact">__BUILDER_CHECKOUT_DIR__/.github/actions/secure-download-artifact</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                </tr>
+            
+                <tr>
+                
+                    <td class="" data-sort="awslabs/aws-iatk@develop">
+                    
+                        awslabs/aws-iatk@develop
+                    
+                    </td>
+                
+                    <td class="" data-sort="reusable_release-python-client.yml">
+                    
+                        <a href="https://github.com/awslabs/aws-iatk/blob/683196ba2881073db929532c5bfb006c77371ff9/.github/workflows/reusable_release-python-client.yml">reusable_release-python-client.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="slsa-framework/slsa-github-generator@v1.9.0">
+                    
+                        slsa-framework/slsa-github-generator@v1.9.0
+                    
+                    </td>
+                
+                    <td class="" data-sort="generator_generic_slsa3.yml">
+                    
+                        <a href="https://github.com/slsa-framework/slsa-github-generator/blob/07e64b653f10a80b6510f4568f685f8b7b9ea830/.github/workflows/generator_generic_slsa3.yml">generator_generic_slsa3.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="slsa-framework/slsa-github-generator@v1.9.0">
+                    
+                        slsa-framework/slsa-github-generator@v1.9.0
+                    
+                    </td>
+                
+                    <td class="" data-sort=".github/actions/detect-workflow-js/action.yml">
+                    
+                        <a href="https://github.com/slsa-framework/slsa-github-generator/blob/07e64b653f10a80b6510f4568f685f8b7b9ea830/.github/actions/detect-workflow-js/action.yml">.github/actions/detect-workflow-js/action.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                </tr>
+            
+                <tr>
+                
+                    <td class="" data-sort="awslabs/aws-iatk@develop">
+                    
+                        awslabs/aws-iatk@develop
+                    
+                    </td>
+                
+                    <td class="" data-sort="reusable_release-python-client.yml">
+                    
+                        <a href="https://github.com/awslabs/aws-iatk/blob/683196ba2881073db929532c5bfb006c77371ff9/.github/workflows/reusable_release-python-client.yml">reusable_release-python-client.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="slsa-framework/slsa-github-generator@v1.9.0">
+                    
+                        slsa-framework/slsa-github-generator@v1.9.0
+                    
+                    </td>
+                
+                    <td class="" data-sort="generator_generic_slsa3.yml">
+                    
+                        <a href="https://github.com/slsa-framework/slsa-github-generator/blob/07e64b653f10a80b6510f4568f685f8b7b9ea830/.github/workflows/generator_generic_slsa3.yml">generator_generic_slsa3.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="slsa-framework/slsa-github-generator@v1.9.0">
+                    
+                        slsa-framework/slsa-github-generator@v1.9.0
+                    
+                    </td>
+                
+                    <td class="" data-sort=".github/actions/generate-builder/action.yml">
+                    
+                        <a href="https://github.com/slsa-framework/slsa-github-generator/blob/07e64b653f10a80b6510f4568f685f8b7b9ea830/.github/actions/generate-builder/action.yml">.github/actions/generate-builder/action.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                </tr>
+            
+                <tr>
+                
+                    <td class="" data-sort="awslabs/aws-iatk@develop">
+                    
+                        awslabs/aws-iatk@develop
+                    
+                    </td>
+                
+                    <td class="" data-sort="reusable_release-python-client.yml">
+                    
+                        <a href="https://github.com/awslabs/aws-iatk/blob/683196ba2881073db929532c5bfb006c77371ff9/.github/workflows/reusable_release-python-client.yml">reusable_release-python-client.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="slsa-framework/slsa-github-generator@v1.9.0">
+                    
+                        slsa-framework/slsa-github-generator@v1.9.0
+                    
+                    </td>
+                
+                    <td class="" data-sort="generator_generic_slsa3.yml">
+                    
+                        <a href="https://github.com/slsa-framework/slsa-github-generator/blob/07e64b653f10a80b6510f4568f685f8b7b9ea830/.github/workflows/generator_generic_slsa3.yml">generator_generic_slsa3.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="slsa-framework/slsa-github-generator@v1.9.0">
+                    
+                        slsa-framework/slsa-github-generator@v1.9.0
+                    
+                    </td>
+                
+                    <td class="" data-sort=".github/actions/secure-download-artifact/action.yml">
+                    
+                        <a href="https://github.com/slsa-framework/slsa-github-generator/blob/07e64b653f10a80b6510f4568f685f8b7b9ea830/.github/actions/secure-download-artifact/action.yml">.github/actions/secure-download-artifact/action.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                </tr>
+            
+                <tr>
+                
+                    <td class="" data-sort="awslabs/aws-iatk@develop">
+                    
+                        awslabs/aws-iatk@develop
+                    
+                    </td>
+                
+                    <td class="" data-sort="reusable_release-python-client.yml">
+                    
+                        <a href="https://github.com/awslabs/aws-iatk/blob/683196ba2881073db929532c5bfb006c77371ff9/.github/workflows/reusable_release-python-client.yml">reusable_release-python-client.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="slsa-framework/slsa-github-generator@v1.9.0">
+                    
+                        slsa-framework/slsa-github-generator@v1.9.0
+                    
+                    </td>
+                
+                    <td class="" data-sort="generator_generic_slsa3.yml">
+                    
+                        <a href="https://github.com/slsa-framework/slsa-github-generator/blob/07e64b653f10a80b6510f4568f685f8b7b9ea830/.github/workflows/generator_generic_slsa3.yml">generator_generic_slsa3.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="slsa-framework/slsa-github-generator@v1.9.0">
+                    
+                        slsa-framework/slsa-github-generator@v1.9.0
+                    
+                    </td>
+                
+                    <td class="" data-sort=".github/actions/secure-builder-checkout/action.yaml">
+                    
+                        <a href="https://github.com/slsa-framework/slsa-github-generator/blob/07e64b653f10a80b6510f4568f685f8b7b9ea830/.github/actions/secure-builder-checkout/action.yaml">.github/actions/secure-builder-checkout/action.yaml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                </tr>
+            
+                <tr>
+                
+                    <td class="" data-sort="awslabs/aws-iatk@develop">
+                    
+                        awslabs/aws-iatk@develop
+                    
+                    </td>
+                
+                    <td class="" data-sort="reusable_release-python-client.yml">
+                    
+                        <a href="https://github.com/awslabs/aws-iatk/blob/683196ba2881073db929532c5bfb006c77371ff9/.github/workflows/reusable_release-python-client.yml">reusable_release-python-client.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="slsa-framework/slsa-github-generator@v1.9.0">
+                    
+                        slsa-framework/slsa-github-generator@v1.9.0
+                    
+                    </td>
+                
+                    <td class="" data-sort="generator_generic_slsa3.yml">
+                    
+                        <a href="https://github.com/slsa-framework/slsa-github-generator/blob/07e64b653f10a80b6510f4568f685f8b7b9ea830/.github/workflows/generator_generic_slsa3.yml">generator_generic_slsa3.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="slsa-framework/slsa-github-generator@v1.9.0">
+                    
+                        slsa-framework/slsa-github-generator@v1.9.0
+                    
+                    </td>
+                
+                    <td class="" data-sort="__BUILDER_CHECKOUT_DIR__/.github/actions/secure-download-artifact">
+                    
+                        <a href="https://github.com/slsa-framework/slsa-github-generator/blob/07e64b653f10a80b6510f4568f685f8b7b9ea830/__BUILDER_CHECKOUT_DIR__/.github/actions/secure-download-artifact">__BUILDER_CHECKOUT_DIR__/.github/actions/secure-download-artifact</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                </tr>
+            
+                <tr>
+                
+                    <td class="" data-sort="awslabs/aws-sdk-v3-js-proxy@main">
+                    
+                        awslabs/aws-sdk-v3-js-proxy@main
+                    
+                    </td>
+                
+                    <td class="" data-sort="auto-merge.yml">
+                    
+                        <a href="https://github.com/awslabs/aws-sdk-v3-js-proxy/blob/58b719bba68f35a7716e86d10d603a1a2e593abc/.github/workflows/auto-merge.yml">auto-merge.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="ryansonshine/ryansonshine@main">
+                    
+                        ryansonshine/ryansonshine@main
+                    
+                    </td>
+                
+                    <td class="" data-sort="automerge.yml">
+                    
+                        <a href="https://github.com/ryansonshine/ryansonshine/blob/81ff5a5296b61b77d8e6543f16f1fc81824b7839/.github/workflows/automerge.yml">automerge.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="dependabot/fetch-metadata@v1.3.1">
+                    
+                        dependabot/fetch-metadata@v1.3.1
+                    
+                    </td>
+                
+                    <td class="" data-sort="action.yml">
+                    
+                        <a href="https://github.com/dependabot/fetch-metadata/blob/bfac3fa29cc6834ca2e3fd659343da191a65d971/action.yml">action.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                </tr>
+            
+                <tr>
+                
+                    <td class="" data-sort="awslabs/aws-sdk-v3-js-proxy@main">
+                    
+                        awslabs/aws-sdk-v3-js-proxy@main
+                    
+                    </td>
+                
+                    <td class="" data-sort="pr.yml">
+                    
+                        <a href="https://github.com/awslabs/aws-sdk-v3-js-proxy/blob/58b719bba68f35a7716e86d10d603a1a2e593abc/.github/workflows/pr.yml">pr.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="ryansonshine/ryansonshine@main">
+                    
+                        ryansonshine/ryansonshine@main
+                    
+                    </td>
+                
+                    <td class="" data-sort="pr.yml">
+                    
+                        <a href="https://github.com/ryansonshine/ryansonshine/blob/81ff5a5296b61b77d8e6543f16f1fc81824b7839/.github/workflows/pr.yml">pr.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="codecov/codecov-action@v3.1.0">
+                    
+                        codecov/codecov-action@v3.1.0
+                    
+                    </td>
+                
+                    <td class="" data-sort="action.yml">
+                    
+                        <a href="https://github.com/codecov/codecov-action/blob/66b3de25f6f91f65eb92c514d31d6b6f13d5ab18/action.yml">action.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                </tr>
+            
+                <tr>
+                
+                    <td class="" data-sort="awslabs/aws-sdk-v3-js-proxy@main">
+                    
+                        awslabs/aws-sdk-v3-js-proxy@main
+                    
+                    </td>
+                
+                    <td class="" data-sort="release.yml">
+                    
+                        <a href="https://github.com/awslabs/aws-sdk-v3-js-proxy/blob/58b719bba68f35a7716e86d10d603a1a2e593abc/.github/workflows/release.yml">release.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="ryansonshine/ryansonshine@main">
+                    
+                        ryansonshine/ryansonshine@main
+                    
+                    </td>
+                
+                    <td class="" data-sort="release.yml">
+                    
+                        <a href="https://github.com/ryansonshine/ryansonshine/blob/81ff5a5296b61b77d8e6543f16f1fc81824b7839/.github/workflows/release.yml">release.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="codecov/codecov-action@v3.1.0">
+                    
+                        codecov/codecov-action@v3.1.0
+                    
+                    </td>
+                
+                    <td class="" data-sort="action.yml">
+                    
+                        <a href="https://github.com/codecov/codecov-action/blob/66b3de25f6f91f65eb92c514d31d6b6f13d5ab18/action.yml">action.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                </tr>
+            
+                <tr>
+                
+                    <td class="" data-sort="awslabs/swift-aws-lambda-events@main">
+                    
+                        awslabs/swift-aws-lambda-events@main
+                    
+                    </td>
+                
+                    <td class="" data-sort="pull_request.yml">
+                    
+                        <a href="https://github.com/awslabs/swift-aws-lambda-events/blob/d18360e63624019bddf418de28d83007acd60956/.github/workflows/pull_request.yml">pull_request.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="swiftlang/github-workflows@main">
+                    
+                        swiftlang/github-workflows@main
+                    
+                    </td>
+                
+                    <td class="" data-sort="swift_package_test.yml">
+                    
+                        <a href="https://github.com/swiftlang/github-workflows/blob/c8aaa3d93d0750fc30d5e965dbdec5c21e6751dd/.github/workflows/swift_package_test.yml">swift_package_test.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="vmactions/freebsd-vm@v1">
+                    
+                        vmactions/freebsd-vm@v1
+                    
+                    </td>
+                
+                    <td class="" data-sort="action.yml">
+                    
+                        <a href="https://github.com/vmactions/freebsd-vm/blob/b84ab5559b5a1bb4b8ee2737d2506a16e1737636/action.yml">action.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                </tr>
+            
+                <tr>
+                
+                    <td class="" data-sort="awslabs/swift-aws-lambda-runtime@main">
+                    
+                        awslabs/swift-aws-lambda-runtime@main
+                    
+                    </td>
+                
+                    <td class="" data-sort="pull_request.yml">
+                    
+                        <a href="https://github.com/awslabs/swift-aws-lambda-runtime/blob/998c0f189b2dd504cfc9d0b29751eff85e9c1b56/.github/workflows/pull_request.yml">pull_request.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="swiftlang/github-workflows@main">
+                    
+                        swiftlang/github-workflows@main
+                    
+                    </td>
+                
+                    <td class="" data-sort="swift_package_test.yml">
+                    
+                        <a href="https://github.com/swiftlang/github-workflows/blob/c8aaa3d93d0750fc30d5e965dbdec5c21e6751dd/.github/workflows/swift_package_test.yml">swift_package_test.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="vmactions/freebsd-vm@v1">
+                    
+                        vmactions/freebsd-vm@v1
+                    
+                    </td>
+                
+                    <td class="" data-sort="action.yml">
+                    
+                        <a href="https://github.com/vmactions/freebsd-vm/blob/b84ab5559b5a1bb4b8ee2737d2506a16e1737636/action.yml">action.yml</a>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                </tr>
+            
+            </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    let columns = { 'parent_fullname': 0,'parent_path': 1,'parent_archived': 2,'parent_forked': 3,'unpinnable_action_fullname': 4,'unpinnable_action_path': 5,'unpinnable_action_archived': 6,'unpinned_action_fullname': 7,'unpinned_action_path': 8,'unpinned_action_archived': 9, };
+
+    if (Object.keys(columns).length > 0) {
+        let table = new DataTable('#results', {
+            paging: false,
+            fixedHeader: true,
+            columnControl: ['order', 'search'],
+            ordering: {
+                indicators: false,
+                handler: false
+            },
+            layout: {
+                topStart: [
+                    'info',
+                    { buttons: ['ccSearchClear'] }
+                ],
+                bottomStart: null,
+            },
+            
+            columnDefs: [
+                
+                    
+                    {
+                        targets: [columns['parent_fullname']],
+                        columnControl: ['order', [{ extend: 'searchList' }]]
+                    },
+                    
+                
+                    
+                    {
+                        targets: [columns['parent_archived']],
+                        columnControl: ['order', [{ extend: 'searchList', search: false }]]
+                    },
+                    
+                
+                    
+                    {
+                        targets: [columns['parent_forked']],
+                        columnControl: ['order', [{ extend: 'searchList', search: false }]]
+                    },
+                    
+                
+                    
+                    {
+                        targets: [columns['unpinnable_action_fullname']],
+                        columnControl: ['order', [{ extend: 'searchList' }]]
+                    },
+                    
+                
+                    
+                    {
+                        targets: [columns['unpinnable_action_archived']],
+                        columnControl: ['order', [{ extend: 'searchList', search: false }]]
+                    },
+                    
+                
+                    
+                    {
+                        targets: [columns['unpinned_action_fullname']],
+                        columnControl: ['order', [{ extend: 'searchList' }]]
+                    },
+                    
+                
+                    
+                    {
+                        targets: [columns['unpinned_action_archived']],
+                        columnControl: ['order', [{ extend: 'searchList', search: false }]]
+                    },
+                    
+                
+            ],
+            
+        });
+    }
+
+    $(document).ready(function() {
+      const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+      const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+  });
+</script>
+
+
+</body>
+</html>

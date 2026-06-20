@@ -1,0 +1,745 @@
+<!doctype html>
+<html lang="en" class="h-100 dark" data-bs-theme="dark">
+<html>
+<head>
+    <title>
+        GitHub Workflow Insights - openai
+        
+            - Usages of Workflows in Archived Repos
+        
+    </title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.8/dist/cyborg/bootstrap.min.css" integrity="sha384-qxGSw6SRX7woR/PK/wbYrdowFJ2DdFQF+nwWswHGKp+jqtYAQKCvBzB/3b+Pjx6W" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha384-rWj9FmWWt3OMqd9vBkWRhFavvVUYalYqGPoMdL1brs/qvvqz88gvLShYa4hKNyqb" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.datatables.net/v/bs5/dt-2.3.8/b-3.2.6/b-html5-3.2.6/cc-1.2.1/fh-4.0.6/datatables.min.css" integrity="sha384-/eh87zVjMr4FPG0X49uv6OoKjAmWxIHADjSJ8FfR0kjDpxh95HFR98TVbxGEvzCn" crossorigin="anonymous">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/v/bs5/dt-2.3.8/b-3.2.6/b-html5-3.2.6/cc-1.2.1/fh-4.0.6/datatables.min.js" integrity="sha384-/73R22BY4VJQYJpxUSQwnuQCr8LBpCF2bKrtKhgBlwifVKV8wLraE/LJ431GXj25" crossorigin="anonymous"></script>
+</head>
+
+<body class="d-flex flex-column h-100">
+
+<div class="container-fluid bg-black">
+    <div class="container mt-2 mb-2">
+        <div class="row">
+            <div class="col"><a class="text-white text-decoration-none fs-4" href="index.html">GitHub Workflow Insights</a></div>
+            <div class="col text-end"><a class="text-white text-decoration-none fs-4" href="index.html">openai</a></div>
+        </div>
+    </div>
+</div>
+
+
+    <div class="container-fluid mt-2 mb-5">
+    <div class="row">
+        <div class="col text-end"><a href="archived-workflows-usage.csv"><span class="badge badge-pill bg-secondary">download csv</span></a></div>
+    </div>
+    <div class="row mt-3">
+        <div class="col text-center"><h3>Usages of Workflows in Archived Repos</h3></div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <table class="table mt-3 mb-5 table-sm table-hover" id="results">
+            <thead>
+            <tr>
+                
+                    <th>Repository</th>
+                
+                    <th>Workflow</th>
+                
+                    <th>Visibility</th>
+                
+                    <th>Archived</th>
+                
+                    <th>Forked</th>
+                
+                    <th>Archived Org</th>
+                
+                    <th>Archived Repo</th>
+                
+            </tr>
+            </thead>
+            <tbody>
+            
+                <tr>
+                
+                    <td class="" data-sort="GABRIEL">
+                    
+                        <a href="https://github.com/openai/GABRIEL">GABRIEL</a>
+                    
+                    </td>
+                
+                    <td class="" data-sort="cla.yml">
+                    
+                        <a href="https://github.com/openai/GABRIEL/blob/559be86498ad61f7ea822fdb0ea80cfde1bd88c6/.github/workflows/cla.yml">cla.yml</a>
+                    
+                    </td>
+                
+                    <td class="" data-sort="public">
+                    
+                        public
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="contributor-assistant">
+                    
+                        contributor-assistant
+                    
+                    </td>
+                
+                    <td class="" data-sort="github-action">
+                    
+                        <a href="https://github.com/contributor-assistant/github-action/blob/ca4a40a7d1004f18d9960b404b97e5f30a505a08/action.yml">github-action</a>
+                    
+                    </td>
+                
+                </tr>
+            
+                <tr>
+                
+                    <td class="" data-sort="codex">
+                    
+                        <a href="https://github.com/openai/codex">codex</a>
+                    
+                    </td>
+                
+                    <td class="" data-sort="cla.yml">
+                    
+                        <a href="https://github.com/openai/codex/blob/d66708232299bdbf373ec55b0d6b938c246cfa60/.github/workflows/cla.yml">cla.yml</a>
+                    
+                    </td>
+                
+                    <td class="" data-sort="public">
+                    
+                        public
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="contributor-assistant">
+                    
+                        contributor-assistant
+                    
+                    </td>
+                
+                    <td class="" data-sort="github-action">
+                    
+                        <a href="https://github.com/contributor-assistant/github-action/blob/ca4a40a7d1004f18d9960b404b97e5f30a505a08/action.yml">github-action</a>
+                    
+                    </td>
+                
+                </tr>
+            
+                <tr>
+                
+                    <td class="" data-sort="codex-action">
+                    
+                        <a href="https://github.com/openai/codex-action">codex-action</a>
+                    
+                    </td>
+                
+                    <td class="" data-sort="cla.yml">
+                    
+                        <a href="https://github.com/openai/codex-action/blob/9cdb6f3861cdefafeeaec70dfb42687be5ca62d3/.github/workflows/cla.yml">cla.yml</a>
+                    
+                    </td>
+                
+                    <td class="" data-sort="public">
+                    
+                        public
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="contributor-assistant">
+                    
+                        contributor-assistant
+                    
+                    </td>
+                
+                    <td class="" data-sort="github-action">
+                    
+                        <a href="https://github.com/contributor-assistant/github-action/blob/ca4a40a7d1004f18d9960b404b97e5f30a505a08/action.yml">github-action</a>
+                    
+                    </td>
+                
+                </tr>
+            
+                <tr>
+                
+                    <td class="" data-sort="openai-cli">
+                    
+                        <a href="https://github.com/openai/openai-cli">openai-cli</a>
+                    
+                    </td>
+                
+                    <td class="" data-sort="create-releases.yml">
+                    
+                        <a href="https://github.com/openai/openai-cli/blob/4e4f718c50d5ebbb58c3a64802c0d1d80284939f/.github/workflows/create-releases.yml">create-releases.yml</a>
+                    
+                    </td>
+                
+                    <td class="" data-sort="public">
+                    
+                        public
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="stainless-api">
+                    
+                        stainless-api
+                    
+                    </td>
+                
+                    <td class="" data-sort="trigger-release-please">
+                    
+                        <a href="https://github.com/stainless-api/trigger-release-please/blob/bb6677c5a04578eec1ccfd9e1913b5b78ed64c61/action.yml">trigger-release-please</a>
+                    
+                    </td>
+                
+                </tr>
+            
+                <tr>
+                
+                    <td class="" data-sort="openai-go">
+                    
+                        <a href="https://github.com/openai/openai-go">openai-go</a>
+                    
+                    </td>
+                
+                    <td class="" data-sort="create-releases.yml">
+                    
+                        <a href="https://github.com/openai/openai-go/blob/83efaf1d2caf2015327fc7aee97e27c053f4fce8/.github/workflows/create-releases.yml">create-releases.yml</a>
+                    
+                    </td>
+                
+                    <td class="" data-sort="public">
+                    
+                        public
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="stainless-api">
+                    
+                        stainless-api
+                    
+                    </td>
+                
+                    <td class="" data-sort="trigger-release-please">
+                    
+                        <a href="https://github.com/stainless-api/trigger-release-please/blob/bb6677c5a04578eec1ccfd9e1913b5b78ed64c61/action.yml">trigger-release-please</a>
+                    
+                    </td>
+                
+                </tr>
+            
+                <tr>
+                
+                    <td class="" data-sort="openai-java">
+                    
+                        <a href="https://github.com/openai/openai-java">openai-java</a>
+                    
+                    </td>
+                
+                    <td class="" data-sort="ci.yml">
+                    
+                        <a href="https://github.com/openai/openai-java/blob/40124064c4cc42a6f82b3f367a7cde516bf449f6/.github/workflows/ci.yml">ci.yml</a>
+                    
+                    </td>
+                
+                    <td class="" data-sort="public">
+                    
+                        public
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="gradle">
+                    
+                        gradle
+                    
+                    </td>
+                
+                    <td class="" data-sort="gradle-build-action">
+                    
+                        <a href="https://github.com/gradle/gradle-build-action/blob/fe583dc97e032f41ccc310ea5176f2d7306abbc4/">gradle-build-action</a>
+                    
+                    </td>
+                
+                </tr>
+            
+                <tr>
+                
+                    <td class="" data-sort="openai-java">
+                    
+                        <a href="https://github.com/openai/openai-java">openai-java</a>
+                    
+                    </td>
+                
+                    <td class="" data-sort="create-releases.yml">
+                    
+                        <a href="https://github.com/openai/openai-java/blob/40124064c4cc42a6f82b3f367a7cde516bf449f6/.github/workflows/create-releases.yml">create-releases.yml</a>
+                    
+                    </td>
+                
+                    <td class="" data-sort="public">
+                    
+                        public
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="stainless-api">
+                    
+                        stainless-api
+                    
+                    </td>
+                
+                    <td class="" data-sort="trigger-release-please">
+                    
+                        <a href="https://github.com/stainless-api/trigger-release-please/blob/bb6677c5a04578eec1ccfd9e1913b5b78ed64c61/action.yml">trigger-release-please</a>
+                    
+                    </td>
+                
+                </tr>
+            
+                <tr>
+                
+                    <td class="" data-sort="openai-java">
+                    
+                        <a href="https://github.com/openai/openai-java">openai-java</a>
+                    
+                    </td>
+                
+                    <td class="" data-sort="create-releases.yml">
+                    
+                        <a href="https://github.com/openai/openai-java/blob/40124064c4cc42a6f82b3f367a7cde516bf449f6/.github/workflows/create-releases.yml">create-releases.yml</a>
+                    
+                    </td>
+                
+                    <td class="" data-sort="public">
+                    
+                        public
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="gradle">
+                    
+                        gradle
+                    
+                    </td>
+                
+                    <td class="" data-sort="gradle-build-action">
+                    
+                        <a href="https://github.com/gradle/gradle-build-action/blob/fe583dc97e032f41ccc310ea5176f2d7306abbc4/">gradle-build-action</a>
+                    
+                    </td>
+                
+                </tr>
+            
+                <tr>
+                
+                    <td class="" data-sort="openai-java">
+                    
+                        <a href="https://github.com/openai/openai-java">openai-java</a>
+                    
+                    </td>
+                
+                    <td class="" data-sort="detect-breaking-changes.yml">
+                    
+                        <a href="https://github.com/openai/openai-java/blob/40124064c4cc42a6f82b3f367a7cde516bf449f6/.github/workflows/detect-breaking-changes.yml">detect-breaking-changes.yml</a>
+                    
+                    </td>
+                
+                    <td class="" data-sort="public">
+                    
+                        public
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="gradle">
+                    
+                        gradle
+                    
+                    </td>
+                
+                    <td class="" data-sort="gradle-build-action">
+                    
+                        <a href="https://github.com/gradle/gradle-build-action/blob/fe583dc97e032f41ccc310ea5176f2d7306abbc4/">gradle-build-action</a>
+                    
+                    </td>
+                
+                </tr>
+            
+                <tr>
+                
+                    <td class="" data-sort="openai-java">
+                    
+                        <a href="https://github.com/openai/openai-java">openai-java</a>
+                    
+                    </td>
+                
+                    <td class="" data-sort="publish-sonatype.yml">
+                    
+                        <a href="https://github.com/openai/openai-java/blob/40124064c4cc42a6f82b3f367a7cde516bf449f6/.github/workflows/publish-sonatype.yml">publish-sonatype.yml</a>
+                    
+                    </td>
+                
+                    <td class="" data-sort="public">
+                    
+                        public
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="gradle">
+                    
+                        gradle
+                    
+                    </td>
+                
+                    <td class="" data-sort="gradle-build-action">
+                    
+                        <a href="https://github.com/gradle/gradle-build-action/blob/fe583dc97e032f41ccc310ea5176f2d7306abbc4/">gradle-build-action</a>
+                    
+                    </td>
+                
+                </tr>
+            
+                <tr>
+                
+                    <td class="" data-sort="openai-node">
+                    
+                        <a href="https://github.com/openai/openai-node">openai-node</a>
+                    
+                    </td>
+                
+                    <td class="" data-sort="create-releases.yml">
+                    
+                        <a href="https://github.com/openai/openai-node/blob/e1bd0c2d609dbd56b8457b7ae415fa0054e9c763/.github/workflows/create-releases.yml">create-releases.yml</a>
+                    
+                    </td>
+                
+                    <td class="" data-sort="public">
+                    
+                        public
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="stainless-api">
+                    
+                        stainless-api
+                    
+                    </td>
+                
+                    <td class="" data-sort="trigger-release-please">
+                    
+                        <a href="https://github.com/stainless-api/trigger-release-please/blob/bb6677c5a04578eec1ccfd9e1913b5b78ed64c61/action.yml">trigger-release-please</a>
+                    
+                    </td>
+                
+                </tr>
+            
+                <tr>
+                
+                    <td class="" data-sort="openai-python">
+                    
+                        <a href="https://github.com/openai/openai-python">openai-python</a>
+                    
+                    </td>
+                
+                    <td class="" data-sort="create-releases.yml">
+                    
+                        <a href="https://github.com/openai/openai-python/blob/e20b6b82c145091f0d8412a7e4a9bc5900a40462/.github/workflows/create-releases.yml">create-releases.yml</a>
+                    
+                    </td>
+                
+                    <td class="" data-sort="public">
+                    
+                        public
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="stainless-api">
+                    
+                        stainless-api
+                    
+                    </td>
+                
+                    <td class="" data-sort="trigger-release-please">
+                    
+                        <a href="https://github.com/stainless-api/trigger-release-please/blob/bb6677c5a04578eec1ccfd9e1913b5b78ed64c61/action.yml">trigger-release-please</a>
+                    
+                    </td>
+                
+                </tr>
+            
+                <tr>
+                
+                    <td class="" data-sort="openai-ruby">
+                    
+                        <a href="https://github.com/openai/openai-ruby">openai-ruby</a>
+                    
+                    </td>
+                
+                    <td class="" data-sort="create-releases.yml">
+                    
+                        <a href="https://github.com/openai/openai-ruby/blob/362bcffc6f4e260a89f99769ee85b3e83274bb2b/.github/workflows/create-releases.yml">create-releases.yml</a>
+                    
+                    </td>
+                
+                    <td class="" data-sort="public">
+                    
+                        public
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="text-center" data-sort="no">
+                    
+                        <i class="fa-solid fa-circle-xmark "></i>
+                    
+                    </td>
+                
+                    <td class="" data-sort="stainless-api">
+                    
+                        stainless-api
+                    
+                    </td>
+                
+                    <td class="" data-sort="trigger-release-please">
+                    
+                        <a href="https://github.com/stainless-api/trigger-release-please/blob/bb6677c5a04578eec1ccfd9e1913b5b78ed64c61/action.yml">trigger-release-please</a>
+                    
+                    </td>
+                
+                </tr>
+            
+            </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    let columns = { 'repo_name': 0,'workflow_path': 1,'visibility': 2,'archived': 3,'forked': 4,'archived_org_name': 5,'archived_repo_name': 6, };
+
+    if (Object.keys(columns).length > 0) {
+        let table = new DataTable('#results', {
+            paging: false,
+            fixedHeader: true,
+            columnControl: ['order', 'search'],
+            ordering: {
+                indicators: false,
+                handler: false
+            },
+            layout: {
+                topStart: [
+                    'info',
+                    { buttons: ['ccSearchClear'] }
+                ],
+                bottomStart: null,
+            },
+            
+            columnDefs: [
+                
+                    
+                    {
+                        targets: [columns['repo_name']],
+                        columnControl: ['order', [{ extend: 'searchList' }]]
+                    },
+                    
+                
+                    
+                    {
+                        targets: [columns['visibility']],
+                        columnControl: ['order', [{ extend: 'searchList', search: false }]]
+                    },
+                    
+                
+                    
+                    {
+                        targets: [columns['archived']],
+                        columnControl: ['order', [{ extend: 'searchList', search: false }]]
+                    },
+                    
+                
+                    
+                    {
+                        targets: [columns['forked']],
+                        columnControl: ['order', [{ extend: 'searchList', search: false }]]
+                    },
+                    
+                
+                    
+                    {
+                        targets: [columns['archived_org_name']],
+                        columnControl: ['order', [{ extend: 'searchList', search: false }]]
+                    },
+                    
+                
+                    
+                    {
+                        targets: [columns['archived_repo_name']],
+                        columnControl: ['order', [{ extend: 'searchList', search: false }]]
+                    },
+                    
+                
+            ],
+            
+        });
+    }
+
+    $(document).ready(function() {
+      const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+      const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+  });
+</script>
+
+
+</body>
+</html>

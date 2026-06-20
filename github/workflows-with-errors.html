@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en" class="h-100 dark" data-bs-theme="dark">
+<html>
+<head>
+    <title>
+        GitHub Workflow Insights - github
+        
+            - Workflows & Actions With Errors
+        
+    </title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.8/dist/cyborg/bootstrap.min.css" integrity="sha384-qxGSw6SRX7woR/PK/wbYrdowFJ2DdFQF+nwWswHGKp+jqtYAQKCvBzB/3b+Pjx6W" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha384-rWj9FmWWt3OMqd9vBkWRhFavvVUYalYqGPoMdL1brs/qvvqz88gvLShYa4hKNyqb" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.datatables.net/v/bs5/dt-2.3.8/b-3.2.6/b-html5-3.2.6/cc-1.2.1/fh-4.0.6/datatables.min.css" integrity="sha384-/eh87zVjMr4FPG0X49uv6OoKjAmWxIHADjSJ8FfR0kjDpxh95HFR98TVbxGEvzCn" crossorigin="anonymous">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/v/bs5/dt-2.3.8/b-3.2.6/b-html5-3.2.6/cc-1.2.1/fh-4.0.6/datatables.min.js" integrity="sha384-/73R22BY4VJQYJpxUSQwnuQCr8LBpCF2bKrtKhgBlwifVKV8wLraE/LJ431GXj25" crossorigin="anonymous"></script>
+</head>
+
+<body class="d-flex flex-column h-100">
+
+<div class="container-fluid bg-black">
+    <div class="container mt-2 mb-2">
+        <div class="row">
+            <div class="col"><a class="text-white text-decoration-none fs-4" href="index.html">GitHub Workflow Insights</a></div>
+            <div class="col text-end"><a class="text-white text-decoration-none fs-4" href="index.html">github</a></div>
+        </div>
+    </div>
+</div>
+
+
+    <div class="container-fluid mt-2 mb-5">
+    <div class="row">
+        <div class="col text-end"><a href="workflows-with-errors.csv"><span class="badge badge-pill bg-secondary">download csv</span></a></div>
+    </div>
+    <div class="row mt-3">
+        <div class="col text-center"><h3>Workflows & Actions With Errors</h3></div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <table class="table mt-3 mb-5 table-sm table-hover" id="results">
+            <thead>
+            <tr>
+                
+                    <th>Repository</th>
+                
+                    <th>Workflow</th>
+                
+                    <th>Type</th>
+                
+                    <th>Visibility</th>
+                
+                    <th>Archived</th>
+                
+                    <th>Forked</th>
+                
+                    <th>Reusable</th>
+                
+                    <th>Broken Action</th>
+                
+            </tr>
+            </thead>
+            <tbody>
+            
+            </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    let columns = { 'repo_name': 0,'workflow_path': 1,'workflow_type': 2,'visibility': 3,'archived': 4,'forked': 5,'reusable_workflow': 6,'error_repo': 7, };
+
+    if (Object.keys(columns).length > 0) {
+        let table = new DataTable('#results', {
+            paging: false,
+            fixedHeader: true,
+            columnControl: ['order', 'search'],
+            ordering: {
+                indicators: false,
+                handler: false
+            },
+            layout: {
+                topStart: [
+                    'info',
+                    { buttons: ['ccSearchClear'] }
+                ],
+                bottomStart: null,
+            },
+            
+            columnDefs: [
+                
+                    
+                    {
+                        targets: [columns['repo_name']],
+                        columnControl: ['order', [{ extend: 'searchList' }]]
+                    },
+                    
+                
+                    
+                    {
+                        targets: [columns['workflow_type']],
+                        columnControl: ['order', [{ extend: 'searchList', search: false }]]
+                    },
+                    
+                
+                    
+                    {
+                        targets: [columns['visibility']],
+                        columnControl: ['order', [{ extend: 'searchList', search: false }]]
+                    },
+                    
+                
+                    
+                    {
+                        targets: [columns['archived']],
+                        columnControl: ['order', [{ extend: 'searchList', search: false }]]
+                    },
+                    
+                
+                    
+                    {
+                        targets: [columns['forked']],
+                        columnControl: ['order', [{ extend: 'searchList', search: false }]]
+                    },
+                    
+                
+                    
+                    {
+                        targets: [columns['reusable_workflow']],
+                        columnControl: ['order', [{ extend: 'searchList', search: false }]]
+                    },
+                    
+                
+                    
+                    {
+                        targets: [columns['error_repo']],
+                        columnControl: ['order', [{ extend: 'searchList' }]]
+                    },
+                    
+                
+            ],
+            
+        });
+    }
+
+    $(document).ready(function() {
+      const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+      const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+  });
+</script>
+
+
+</body>
+</html>
