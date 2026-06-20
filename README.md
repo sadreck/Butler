@@ -177,7 +177,7 @@ python butler.py report --database ./microsoft.db --output ./report --repo "gith
 
 **Use Custom Configuration**
 
-By default the configuration used for generating reports is `.src/commands/report/default_config.yaml`. To use a custom version use the `--config` argument.
+By default, the configuration used for generating reports is `.src/commands/report/default_config.yaml`. To use a custom version use the `--config` argument.
 
 ```
 python butler.py report --database ./microsoft.db --output ./report --repo "github" --config ./custom-config.yaml
@@ -185,7 +185,88 @@ python butler.py report --database ./microsoft.db --output ./report --repo "gith
 
 **Custom Queries**
 
-Default queries are stored in `./src/commands/report/queries`, to write custom queries use this guide.
+Default queries are stored in `./src/commands/report/queries`, [to write custom queries use this guide](./docs/writing_custom_queries.md).
+
+```
+python butler.py report --database ./microsoft.db --output ./report --repo "github" --custom-query-path ./my-queries
+```
+
+#### Writing Custom Queries
+
+<details>
+  <summary>For the custom query reference click here</summary>
+
+  ```yaml
+# Only v2.0 is supported.
+version: '2.0'
+# Name of query, will appear as the hyperlink/title in the report.
+name: 'Usages of Workflows in Archived Repos'
+# Short description, will appear under the hyperlink/title in the report.
+description: 'Usage of archived workflows and actions from non-archived ones'
+# CSV/HTML filename that results will be written to.
+filename: 'archived-workflows-usage'
+# Group under which these results will appear in the report, supported values are:
+#   * actions
+#   * hygiene
+#   * runners
+#   * secrets
+#   * workflows
+group: 'workflows'
+# SQL query, filtering by the organisation the report is being generated for can use the :org placeholder.
+sql: |
+  # Filter by org.
+  SELECT * FROM organisations WHERE id = :org;
+  
+  # Filter by trusted orgs.
+  SELECT * FROM organisations WHERE id NOT IN (:org, $_TRUSTED_ORGS_$)
+  
+  # Filter by runners.
+  SELECT * FROM job_data WHERE jd.value NOT IN($_UNSUPPORTED_RUNNERS_$)
+# The keys to columns are the names that are returned from the query.
+columns:
+  # Hide a column.
+  org_name: hide
+
+  # This column must be in the results, like "SELECT name AS repo_name FROM repositories"
+  repo_name:
+    # Table header label.
+    label: 'Repository'
+    # Result values will be URL links and use the value of whichever column the 'link' property points to.
+    type: 'link'
+    link: 'repo_url'
+    # Filtering available for the column, available values are:
+    #   * list: Display a list of all values and allow text searches.
+    #   * list-no-search: Display a list of all values and disable text searches.
+    filters:
+      column_control_alias: 'list'
+  archived:
+    label: 'Archived'
+    # Value alignment, bootstrap class and one of:
+    #   * text-start (default)
+    #   * text-center
+    #   * text-end
+    align: 'text-center'
+    # Display an icon based on a 1 or 0 value.
+    type: 'icon'
+    format:
+      # Bootstrap class when value is 1.
+      style_true: 'text-warning'
+      # Bootstrap class when value is 0.
+      style_false: 'text-info'
+  category:
+    # Map query raw values to hardcoded ones, '_' is a catch-all/default value (when omitted the raw column value will be displayed)
+    value_mapping:
+      actions: 'Actions'
+      agents: 'Agents'
+      dependabot: 'Dependabot'
+      _: 'Default'
+    popup:
+      # The values will have a link which will show a popup with whichever values appear in wherever the 'field' property is pointing.
+      # Values must be comma-separated and will be displayed as a list.
+      title: 'Repositories'
+      field: 'selected_repos'
+  ```
+</details>
 
 
 [Click here for sample reports for organisations like GitHub, OpenAI, Docker, AWS Labs](https://sadreck.github.io/Butler/) - **not** mobile friendly.
