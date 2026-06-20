@@ -1,5 +1,7 @@
 from json import JSONDecodeError
 import requests
+import time
+import jwt
 from loguru import logger
 from requests.models import Response
 from src.github.api_helper import GitHubApiHelper
@@ -134,3 +136,24 @@ class GitHubApi(GitHubApiHelper):
 
     def has_valid_token(self) -> bool:
         return self.token_manager.has_valid_token()
+
+    @staticmethod
+    def generate_pat_from_gh_app(private_key: str, installation_id: str, client_id: str) -> str | None:
+        current_time = int(time.time())
+        payload = {
+            'iat': current_time - 60,
+            'exp': current_time + (1 * 60), # 1 minute lifetime
+            'iss': client_id
+        }
+        encoded_jwt = jwt.encode(payload, private_key, algorithm='RS256')
+
+        headers = {
+            'Authorization': f'Bearer {encoded_jwt}',
+            'Accept': 'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28'
+        }
+
+        response = requests.post(f"{GitHubApi._api_endpoint}/app/installations/{installation_id}/access_tokens", headers=headers)
+        if response.status_code == 201:
+            return response.json()['token']
+        return None

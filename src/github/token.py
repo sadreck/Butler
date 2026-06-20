@@ -16,7 +16,7 @@ class TokenInstance:
 
     @property
     def access_token_masked(self) -> str:
-        size = 8 if self.access_token.startswith('ghp_') else 16
+        size = 8 if self._is_access_token(self.access_token) else 16
         return f"{self.access_token[:size]}****"
 
     @property
@@ -38,6 +38,12 @@ class TokenInstance:
     def __init__(self, access_token: str):
         self._access_token = access_token
         self._usage = 0
+
+    def _is_access_token(self, token: str) -> bool:
+        for prefix in ['ghp_', 'gho_', 'ghu_', 'ghs_', 'ghr_']:
+            if token.startswith(prefix):
+                return True
+        return False
 
     def _get_rate_limit(self) -> tuple[int, datetime]:
         response = requests.get(

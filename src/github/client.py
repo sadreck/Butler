@@ -404,12 +404,8 @@ class GitHubClient:
 
             # /orgs/{org}/agents/{secrets,variables}
             SecretVariableCategory.AGENTS: 'agents',
-            # /repos/{owner}/{repo}/codespaces/secrets
-            SecretVariableCategory.CODESPACES: 'codespaces',
             # /orgs/{org}/dependabot/secrets
             SecretVariableCategory.DEPENDABOT: 'dependabot',
-            # /repos/{owner}/{repo}/environments/{environment_name}/secrets
-            SecretVariableCategory.ENVIRONMENTS: 'environments',
         }
 
         type_mapping = {

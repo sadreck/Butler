@@ -26,7 +26,6 @@ class ServiceSecretsAndVariables(Service, DownloadHelper):
         {'label': 'actions / variables', 'category': SecretVariableCategory.ACTIONS, 'type': SecretVariableType.VARIABLE},
         {'label': 'agents / secrets', 'category': SecretVariableCategory.AGENTS, 'type': SecretVariableType.SECRET},
         {'label': 'agents / variables', 'category': SecretVariableCategory.AGENTS, 'type': SecretVariableType.VARIABLE},
-        {'label': 'codespaces / secrets', 'category': SecretVariableCategory.CODESPACES, 'type': SecretVariableType.SECRET},
         {'label': 'dependabot / secrets', 'category': SecretVariableCategory.DEPENDABOT, 'type': SecretVariableType.SECRET},
     ]
 

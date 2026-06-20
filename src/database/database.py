@@ -15,7 +15,7 @@ from src.libs.exceptions import DatabaseVersionMismatch
 
 
 class Database(DatabaseHelper):
-    __VERSION__: str = '1.1.0'
+    __VERSION__: str = '2.0.0'
     _engine: Engine = None
     _sessionmaker: sessionmaker = None
     _session = None
