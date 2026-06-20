@@ -2,7 +2,7 @@ import argparse
 from src.commands.database.command import CommandDatabase
 from src.commands.process.command import CommandProcess
 from src.commands.report.command import CommandReport
-from src.commands.secvars.command import CommandSecretsAndVariables
+from src.commands.secrets_and_variables.command import CommandSecretsAndVariables
 from src.libs.utils import Utils
 from src.libs.exceptions import InvalidCommandLine
 from src.commands.download.command import CommandDownload
@@ -14,7 +14,7 @@ commands = {
     'database': CommandDatabase,
     'process': CommandProcess,
     'report': CommandReport,
-    'secvars': CommandSecretsAndVariables
+    'secrets_and_variables': CommandSecretsAndVariables
 }
 
 parser = argparse.ArgumentParser(prog="butler", description=f"Butler - GitHub Actions Oversight v{__VERSION__}")
