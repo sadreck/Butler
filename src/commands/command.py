@@ -30,7 +30,6 @@ class Command:
         subparser.add_argument("--very-verbose", "-vv", action="store_true", default=False, help="Trace output")
         subparser.add_argument("--token", default=[], action="append", help="Environment variable(s) to load PAT from (default is GITHUB_TOKEN), and supports wildcards like GITHUB_TOKEN_*")
         subparser.add_argument("--gh-app-key", default="", help="Environment variable to load the GitHub App's secret key from")
-        subparser.add_argument("--gh-app-installation-id", default="", help="GitHub App Installation ID")
         subparser.add_argument("--gh-app-client-id", default="", help="GitHub App Client ID")
         subparser.add_argument("--db-debug", action="store_true", default=False, help="Enable Database Debug Stats")
         subparser.add_argument("--db-debug-auto-commit", action="store_true", default=False, help="Enable Database Auto-Commit")
@@ -63,12 +62,12 @@ class Command:
 
     def load_default_arguments(self, arguments: argparse.Namespace) -> dict:
         gh_app = {
-            'key': arguments.gh_app_key if len(arguments.gh_app_key) > 0 else '',
-            'client_id': arguments.gh_app_client_id if len(arguments.gh_app_client_id) > 0 else '',
-            'installation_id': arguments.gh_app_installation_id if len(arguments.gh_app_installation_id) > 0 else '',
+            'key': arguments.gh_app_key if 'gh_app_key' in arguments and len(arguments.gh_app_key) > 0 else '',
+            'client_id': arguments.gh_app_client_id if 'gh_app_client_id' in arguments and len(arguments.gh_app_client_id) > 0 else '',
+            'org': arguments.org if 'org' in arguments and arguments.org is not None and len(arguments.org) > 0 else '',
             'defined': False
         }
-        gh_app['defined'] = len(gh_app['key']) > 0 and len(gh_app['client_id']) > 0 and len(gh_app['installation_id']) > 0
+        gh_app['defined'] = len(gh_app['key']) > 0 and len(gh_app['client_id']) > 0 and len(gh_app['org']) > 0
 
         token_names = sorted(set(arguments.token))
         # Fallback to GITHUB_TOKEN only when a GH App Key was not passed
@@ -95,12 +94,12 @@ class Command:
     def _load_tokens(self, token_names: list, gh_app: dict) -> list:
         tokens = []
         if gh_app['defined']:
-            self.log.info(f"Generating PAT from GitHub App (environment variable is {gh_app['key']}, AppId {gh_app['installation_id']}, ClientId {gh_app['client_id']})")
+            self.log.info(f"Generating PAT from GitHub App (environment variable is {gh_app['key']}, ClientId {gh_app['client_id']})")
             gh_app_key = os.getenv(gh_app['key'], '')
             if len(gh_app_key) == 0:
                 raise InvalidCommandLine(f"Environment variable passed in --gh-app-key is empty: {gh_app['key']}")
 
-            token = GitHubApi.generate_pat_from_gh_app(gh_app_key, gh_app['installation_id'], gh_app['client_id'])
+            token = GitHubApi.generate_pat_from_gh_app(gh_app['org'], gh_app_key, gh_app['client_id'])
             if token is None:
                 raise InvalidCommandLine(f"Could not generate PAT for GitHub App")
             tokens.append(token)

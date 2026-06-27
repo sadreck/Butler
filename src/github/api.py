@@ -138,7 +138,7 @@ class GitHubApi(GitHubApiHelper):
         return self.token_manager.has_valid_token()
 
     @staticmethod
-    def generate_pat_from_gh_app(private_key: str, installation_id: str, client_id: str) -> str | None:
+    def generate_pat_from_gh_app(org: str, private_key: str, client_id: str) -> str | None:
         current_time = int(time.time())
         payload = {
             'iat': current_time - 60,
@@ -152,6 +152,12 @@ class GitHubApi(GitHubApiHelper):
             'Accept': 'application/vnd.github+json',
             'X-GitHub-Api-Version': '2022-11-28'
         }
+
+        response = requests.get(f"{GitHubApi._api_endpoint}/orgs/{org}/installation", headers=headers)
+        if response.status_code != 200:
+            return None
+
+        installation_id = response.json()['id']
 
         response = requests.post(f"{GitHubApi._api_endpoint}/app/installations/{installation_id}/access_tokens", headers=headers)
         if response.status_code == 201:
