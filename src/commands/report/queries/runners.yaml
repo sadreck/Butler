@@ -1,4 +1,4 @@
-version: '1.1'
+version: '2.0'
 name: 'Runners'
 description: 'List of all runners across all jobs'
 filename: 'runners'

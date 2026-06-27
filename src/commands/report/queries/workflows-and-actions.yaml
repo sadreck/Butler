@@ -1,4 +1,4 @@
-version: '1.1'
+version: '2.0'
 name: 'Workflows & Actions'
 description: 'All Workflows & Actions across the organisation'
 filename: 'workflows-and-actions'

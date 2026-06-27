@@ -1,4 +1,4 @@
-version: '1.1'
+version: '2.0'
 name: 'Workflows & Actions With Errors'
 description: 'List of all workflows & actions that contain parsing errors'
 filename: 'workflows-with-errors'
